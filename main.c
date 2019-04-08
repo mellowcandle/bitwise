@@ -3,10 +3,19 @@
 #include <ctype.h>
 #include <stdint.h>
 #include <assert.h>
+#include <fcntl.h>
+#include <sys/stat.h>
+
+#define MAX_DEC_DIGITS 19
+#define MAX_HEX_DIGITS 16
+#define MAX_OCTA_DIGITS 32
+
+
 #if 1
 static FIELD *field[5];
 static FORM  *form;
 static uint64_t val;
+FILE *fd;
 
 static void init_terminal(void)
 {
@@ -20,7 +29,7 @@ int base[4] = {
 	10,
 	16,
 	8,
-	10,
+	2,
 };
 
 static void deinit_terminal(void)
@@ -41,6 +50,8 @@ static void lltostr(uint64_t val, char *buf, int base)
 	case 8:
 		sprintf(buf, "%llo", val);
 		return;
+	case 2:
+		sprintf(buf, "Not implemeted");
 	}
 }
 
@@ -51,13 +62,37 @@ static void update_fields(int index)
 
 	for (int i=0; i < 4; i++) {
 		if (i == index)
-			break;
+			continue;
 		base = field_userptr(field[i]);
-		lltostr(val, number, *base);
-		set_field_buffer(field[i], 0, number);
+		lltostr(val, number, field_buffer(field[i], 0));
+		fprintf(fd, "updating field %d\n", i);
+//		set_field_buffer(field[i], 0, number);
 	}
 	form_driver(form, REQ_VALIDATION);
 	refresh();
+}
+
+int validate_input(int ch, int base)
+{
+	switch (base) {
+	case 2:
+		if (ch == '0' || ch == '1')
+			return 0;
+		break;
+	case 8:
+		if (ch >= '0' && ch <= '7')
+			return 0;
+		break;
+	case 16: if ((ch >= '0' && ch <= '9') || (ch >= 'A' && ch <= 'F') || (ch >= 'a' && ch <= 'f'))
+			 return 0;
+		 break;
+	case 10:
+		 if (isalpha(ch))
+			 return 0;
+		 break;
+	}
+
+	return 1;
 }
 
 int main(int argc, char *argv[])
@@ -65,6 +100,8 @@ int main(int argc, char *argv[])
 
 	int ch;
 	char *buffer;
+
+	fd = fopen("log.txt", "w");
 
 	init_terminal();
 /* Initialize the fields */
@@ -95,7 +132,7 @@ int main(int argc, char *argv[])
 	int times = 0;
 
 	while((ch = getch()) != KEY_F(1)) {
-//			mvprintw(LINES -1, 0, "place: %u ch= %d", times++, ch);
+			mvprintw(LINES -1, 0, "place: %u ch= %d", times++, ch);
 		switch(ch) {
 		case KEY_DOWN:
 			/* Go to next field */
@@ -111,22 +148,24 @@ int main(int argc, char *argv[])
 			break;
 		default:
 			{
-				int *cur_base;
-				FIELD *tmp_field;
+				FIELD *tmp_field = current_field(form);
+				int *cur_base = field_userptr(tmp_field);
 
-//				if (!isdigit(ch))
-//					break;
+				if (!isdigit(ch) || ch != KEY_BACKSPACE)
+					break;
+
+				if (validate_input(ch, *cur_base))
+					break;
 
 				if (ch == KEY_BACKSPACE)
 					form_driver(form, REQ_DEL_PREV);
-				else
+				else 
 					form_driver(form, ch);
 
 				form_driver(form, REQ_VALIDATION);
 				tmp_field = current_field(form);
 				buffer = field_buffer(tmp_field, 0);
 				assert(buffer);
-				cur_base = field_userptr(tmp_field);
 				val = strtoll(buffer, NULL, *cur_base);
 				update_fields(field_index(tmp_field));
 				mvprintw(LINES - 1, 0, "base = %u buffer = %s val = %llu",*cur_base, buffer, val);
