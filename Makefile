@@ -3,7 +3,7 @@ CFLAGS := -Wall -lncurses -lform
 LDFLAGS := -lncurses -lform
 
 all: $(OBJS)
-	$(CC) $(LDFLAGS) -o bitwise $(OBJS)
+	$(CC) -o bitwise $(OBJS) $(LDFLAGS)
 
 clean:
 	rm -rf *.o bitwise
