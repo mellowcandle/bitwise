@@ -1,0 +1,10 @@
+language: c
+
+compiler: gcc
+
+before_install:
+        - sudo apt-get -qq update
+
+script:
+- "make all"
+
