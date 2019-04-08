@@ -1,5 +1,5 @@
 OBJS := main.o
-CFLAGS := -Wall -lncurses -lform
+CFLAGS := -std=c99 -Wall -lncurses -lform
 LDFLAGS := -lncurses -lform
 
 all: $(OBJS)
