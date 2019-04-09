@@ -5,6 +5,32 @@
 #include <ctype.h>
 #include "bitwise.h"
 
+void init_terminal(void)
+{
+	initscr();
+	start_color();
+	cbreak();
+	noecho();
+	keypad(stdscr, TRUE);
+	curs_set(0);
+}
+
+void deinit_terminal(void)
+{
+	endwin();
+}
+
+void die(const char *fmt, ...)
+{
+	va_list args;
+	va_start(args, fmt);
+
+	deinit_terminal();
+	vfprintf(stderr, fmt, args);
+
+	exit(1);
+}
+
 int validate_input(int ch, int base)
 {
 	switch (base) {

@@ -8,10 +8,15 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <form.h>
 #define TRACE
 
 int validate_input(int ch, int base);
 void lltostr(uint64_t val, char *buf, int base);
+void init_terminal(void);
+void deinit_terminal(void);
+
+void die(const char *fmt, ...);
 
 #ifdef TRACE
 #define LOG(...) fprintf(fd, __VA_ARGS__);fflush(fd)
