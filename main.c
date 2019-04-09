@@ -6,10 +6,17 @@
 #include <fcntl.h>
 #include <sys/stat.h>
 
+#define TRACE
+
 #define MAX_DEC_DIGITS 19
 #define MAX_HEX_DIGITS 16
 #define MAX_OCTA_DIGITS 32
 
+#ifdef TRACE
+#define LOG(...) fprintf(fd, __VA_ARGS__);fflush(fd)
+#else
+#define LOG(...)
+#endif
 
 #if 1
 static FIELD *field[5];
@@ -42,13 +49,13 @@ static void lltostr(uint64_t val, char *buf, int base)
 {
 	switch (base) {
 	case 10:
-		sprintf(buf, "%llu", val);
+		sprintf(buf, "%lu", val);
 		return;
 	case 16:
-		sprintf(buf, "%llx", val);
+		sprintf(buf, "%lx", val);
 		return;
 	case 8:
-		sprintf(buf, "%llo", val);
+		sprintf(buf, "%lo", val);
 		return;
 	case 2:
 		sprintf(buf, "Not implemeted");
@@ -57,16 +64,23 @@ static void lltostr(uint64_t val, char *buf, int base)
 
 static void update_fields(int index)
 {
-	char *number[32];
+	FIELD *tmp_field = current_field(form);
+	int *cur_base = field_userptr(tmp_field);
+	char *buffer;
+	char number[64];
 	int *base;
 
+	buffer = field_buffer(tmp_field, 0);
+	assert(buffer);
+	val = strtoll(buffer, NULL, *cur_base);
+	LOG("Val = %lu\n", val);
 	for (int i=0; i < 4; i++) {
 		if (i == index)
 			continue;
 		base = field_userptr(field[i]);
-		lltostr(val, number, field_buffer(field[i], 0));
-		fprintf(fd, "updating field %d\n", i);
-//		set_field_buffer(field[i], 0, number);
+		lltostr(val, number, *base);
+		LOG("updating field %d\n", i);
+		set_field_buffer(field[i], 0, number);
 	}
 	form_driver(form, REQ_VALIDATION);
 	refresh();
@@ -76,22 +90,34 @@ int validate_input(int ch, int base)
 {
 	switch (base) {
 	case 2:
+		 LOG("validating 2\n");
 		if (ch == '0' || ch == '1')
 			return 0;
 		break;
 	case 8:
+		 LOG("validating 8\n");
 		if (ch >= '0' && ch <= '7')
 			return 0;
 		break;
-	case 16: if ((ch >= '0' && ch <= '9') || (ch >= 'A' && ch <= 'F') || (ch >= 'a' && ch <= 'f'))
+	case 16:
+		 LOG("validating 16\n");
+		if ((ch >= '0' && ch <= '9') ||
+		     (ch >= 'A' && ch <= 'F') ||
+		     (ch >= 'a' && ch <= 'f'))
 			 return 0;
 		 break;
 	case 10:
-		 if (isalpha(ch))
+		 LOG("validating 10\n");
+		 if (isdigit(ch))
 			 return 0;
+		 break;
+	default:
+		 LOG("What the fuck\n");
 		 break;
 	}
 
+
+	LOG("validating input failed\n");
 	return 1;
 }
 
@@ -101,8 +127,9 @@ int main(int argc, char *argv[])
 	int ch;
 	char *buffer;
 
+#ifdef TRACE
 	fd = fopen("log.txt", "w");
-
+#endif
 	init_terminal();
 /* Initialize the fields */
 	field[0] = new_field(1, 15, 4, 20, 0, 0);
@@ -132,9 +159,11 @@ int main(int argc, char *argv[])
 	int times = 0;
 
 	while((ch = getch()) != KEY_F(1)) {
-			mvprintw(LINES -1, 0, "place: %u ch= %d", times++, ch);
+		LOG("times: %u ch= %d\n", times++, ch);
+
 		switch(ch) {
 		case KEY_DOWN:
+			LOG("Key down\n");
 			/* Go to next field */
 			form_driver(form, REQ_NEXT_FIELD);
 			/* Go to the end of the present buffer */
@@ -142,33 +171,31 @@ int main(int argc, char *argv[])
 			form_driver(form, REQ_END_LINE);
 			break;
 		case KEY_UP:
+			LOG("Key up\n");
 			/* Go to previous field */
 			form_driver(form, REQ_PREV_FIELD);
 			form_driver(form, REQ_END_LINE);
+			break;
+		case KEY_BACKSPACE:
+		case 127:
+			LOG("Backspace\n");
+			form_driver(form, REQ_DEL_PREV);
+			form_driver(form, REQ_VALIDATION);
+			update_fields(field_index(current_field(form)));
 			break;
 		default:
 			{
 				FIELD *tmp_field = current_field(form);
 				int *cur_base = field_userptr(tmp_field);
 
-				if (!isdigit(ch) || ch != KEY_BACKSPACE)
-					break;
+				LOG("default char\n");
 
 				if (validate_input(ch, *cur_base))
 					break;
 
-				if (ch == KEY_BACKSPACE)
-					form_driver(form, REQ_DEL_PREV);
-				else 
-					form_driver(form, ch);
-
+				form_driver(form, ch);
 				form_driver(form, REQ_VALIDATION);
-				tmp_field = current_field(form);
-				buffer = field_buffer(tmp_field, 0);
-				assert(buffer);
-				val = strtoll(buffer, NULL, *cur_base);
 				update_fields(field_index(tmp_field));
-				mvprintw(LINES - 1, 0, "base = %u buffer = %s val = %llu",*cur_base, buffer, val);
 				break;
 			}
 		}
@@ -176,11 +203,13 @@ int main(int argc, char *argv[])
 		refresh();
 
 	}
+
 	unpost_form(form);
 	free_form(form);
 	for (int i=0; i < 4; i++)
 		free_field(field[i]);
 
+	fclose(fd);
 	deinit_terminal();
 
 	return 0;
