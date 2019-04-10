@@ -25,6 +25,6 @@ extern FILE *fd;
 #define LOG(...)
 #endif
 
-
+extern WINDOW *fields_win;
 
 #endif /* end of include guard: BITWISE_H */
