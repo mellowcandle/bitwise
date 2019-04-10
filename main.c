@@ -46,17 +46,29 @@ static void update_binary()
 	int i;
 	int pos = 0;
 
-	for (i = 63; i >= 0; i--) {
-		if (val & BIT(i))
+	for (i = 64; i > 0; i--) {
+		if ((i % 8 == 0) && (i != 64)) {
+			binary_field[pos] = '|';
+			binary_field[pos+1] = ' ';
+			pos += 2;
+		}
+		if (val & BIT(i-1))
 			binary_field[pos] = '1';
 		else
 			binary_field[pos] = '0';
 		binary_field[pos+1] = ' ';
 		pos+=2;
 	}
-	binary_field[pos] = '\0';
 
+
+	binary_field[pos] = '\0';
 	mvwprintw(binary_win, 1, 2, "%s", binary_field);
+
+	pos = 6;
+	wattron(binary_win, COLOR_PAIR(3));
+	for (i = 0; i < 8; i++, pos += 18)
+		mvwprintw(binary_win, 2, pos, "%2d - %2d", 63 - (i * 8));
+	wattroff(binary_win, COLOR_PAIR(3));
 	wrefresh(binary_win);
 }
 
@@ -136,6 +148,7 @@ int main(int argc, char *argv[])
 
 	init_pair(1, COLOR_BLUE, COLOR_BLACK);
 	init_pair(2, COLOR_BLUE, COLOR_BLACK);
+	init_pair(3, COLOR_GREEN, COLOR_BLACK);
 
 
 
@@ -150,7 +163,7 @@ int main(int argc, char *argv[])
 	fields_win = newwin(rows + 3, cols + 3, 0, 4);
 	keypad(fields_win, TRUE);
 
-	binary_win = newwin(4, COLS - 1, 8,1);
+	binary_win = newwin(4, 145, 8,1);
 	box(binary_win, 0, 0);
 
 	rc = set_form_win(form, fields_win);

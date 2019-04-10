@@ -8,6 +8,8 @@
 void init_terminal(void)
 {
 	initscr();
+	if(has_colors() == FALSE)
+		die("Your terminal does not support color\n");
 	start_color();
 	cbreak();
 	noecho();
