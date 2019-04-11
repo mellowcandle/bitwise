@@ -1,6 +1,6 @@
 # Copyright Ramon Fried (2019)
 OBJS := main.o misc.o
-CFLAGS := -std=c99 -Wall -lncurses -lform
+CFLAGS := -g -std=c99 -Wall -lncurses -lform
 LDFLAGS := -lncurses -lform
 
 #DEPFILES := $(patsubst %.o,%.d,$(OBJS))
