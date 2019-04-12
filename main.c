@@ -34,7 +34,7 @@ static void update_binary();
 static FIELD *field[5];
 static FORM  *form;
 static uint64_t val;
-static int bit_pos = 0;
+static int bit_pos;
 static int view = FIELDS_VIEW;
 
 WINDOW *fields_win;
@@ -161,13 +161,14 @@ void set_active_field(bool none)
 void position_binary_curser(int previous_pos, int next_pos)
 {
 
-	int pos = 2 + (2 * next_pos) + (2 * (next_pos / 8));
-	mvwchgat(binary_win, 1, pos, 1, A_UNDERLINE, COLOR_PAIR(0), NULL);
-	if (previous_pos) {
-		pos = 2 + (2 * previous_pos) + (2 * (previous_pos / 8));
+	int pos;
 
-		mvwchgat(binary_win, 1, pos, 1, A_NORMAL, COLOR_PAIR(0), NULL);
-	}
+	pos = 2 + (2 * previous_pos) + (2 * (previous_pos / 8));
+	mvwchgat(binary_win, 1, pos, 1, A_NORMAL, COLOR_PAIR(0), NULL);
+
+	pos = 2 + (2 * next_pos) + (2 * (next_pos / 8));
+	mvwchgat(binary_win, 1, pos, 1, A_UNDERLINE, COLOR_PAIR(0), NULL);
+
 	mvprintw(LINES - 2, 0, "bit %u: position %d  ", 63 - next_pos,
 		 2 + (2 * next_pos) + (2 * (next_pos / 8)));
 	wrefresh(binary_win);
@@ -291,7 +292,6 @@ int main(int argc, char *argv[])
 	init_terminal();
 	refresh();
 
-
 	/* Initialize the fields */
 	field[0] = new_field(1, MAX_DEC_DIGITS, 1,
 			     10, 0, 0);
@@ -312,10 +312,6 @@ int main(int argc, char *argv[])
 	init_pair(1, COLOR_BLUE, COLOR_BLACK);
 	init_pair(2, COLOR_BLUE, COLOR_BLACK);
 	init_pair(3, COLOR_GREEN, COLOR_BLACK);
-
-
-
-	//refresh();
 
 	form = new_form(field);
 	if (!form)
@@ -373,7 +369,9 @@ int main(int argc, char *argv[])
 	delwin(fields_win);
 	delwin(binary_win);
 
+#ifdef TRACE
 	fclose(fd);
+#endif
 	deinit_terminal();
 
 	return 0;
