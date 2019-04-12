@@ -12,11 +12,6 @@
 #include "bitwise.h"
 
 #define BIT(nr) (1ULL << (nr))
-/*
-
-   01010101 | 01010101|
-   32  
-   */
 #define MAX_DEC_DIGITS 19
 #define MAX_HEX_DIGITS 16
 #define MAX_OCTA_DIGITS 32
@@ -39,6 +34,8 @@ static void update_binary();
 static FIELD *field[5];
 static FORM  *form;
 static uint64_t val;
+static int bit_pos = 0;
+static int view = FIELDS_VIEW;
 
 WINDOW *fields_win;
 WINDOW *binary_win;
@@ -56,9 +53,9 @@ int base[4] = {
 #if 0
 int bit_positions[142] = {
 	0, 0, 63, 0, 62, 0, 61, 0, 60, 0, 59, 0, 58, 0, 57, 0, 56, 0 
-	0, 0, 55, 0, 54, 0, 53, 0, 52, 0, 51, 0, 50, 0, 49, 0, 48, 0
-	0, 0, 47, 0, 46, 0, 45, 0, 43, 0, 42, 0, 60, 0, 59, 0, 58, 0
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 55, 0, 54, 0, 53, 0, 52, 0, 51, 0, 50, 0, 49, 0, 48, 0
+		0, 0, 47, 0, 46, 0, 45, 0, 43, 0, 42, 0, 60, 0, 59, 0, 58, 0
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -83,7 +80,7 @@ static void update_bit(int pos, int op)
 	else
 		val ^= BIT(63-pos);
 
-//	mvwprintw(binary_win, 1, pos, "%c", value ? '1': '0');
+	//	mvwprintw(binary_win, 1, pos, "%c", value ? '1': '0');
 	update_binary();
 	position_binary_curser(pos, pos + 1 == 63 ? (pos) : (pos + 1));
 	update_fields(-1);
@@ -164,7 +161,6 @@ void set_active_field(bool none)
 void position_binary_curser(int previous_pos, int next_pos)
 {
 
-	int ch;
 	int pos = 2 + (2 * next_pos) + (2 * (next_pos / 8));
 	mvwchgat(binary_win, 1, pos, 1, A_UNDERLINE, COLOR_PAIR(0), NULL);
 	if (previous_pos) {
@@ -176,6 +172,111 @@ void position_binary_curser(int previous_pos, int next_pos)
 		 2 + (2 * next_pos) + (2 * (next_pos / 8)));
 	wrefresh(binary_win);
 	refresh();
+}
+
+void process_binary(int ch)
+{
+	switch(ch) {
+	case KEY_RIGHT:
+	case 'l':
+		LOG("Key right\n");
+		if (bit_pos == 63) {
+			beep();
+			break;
+		}
+		position_binary_curser(bit_pos, bit_pos + 1);
+		bit_pos++;
+		break;
+	case KEY_LEFT:
+	case 'h':
+		LOG("Key left\n");
+		if (bit_pos == 0) {
+			beep();
+			break;
+		}
+		position_binary_curser(bit_pos, bit_pos - 1);
+		bit_pos--;
+		break;
+	case KEY_UP:
+	case 'k':
+		LOG("Key up\n");
+		view = FIELDS_VIEW;
+		set_active_field(false);
+		form_driver(form, REQ_VALIDATION);
+		wrefresh(fields_win);
+		break;
+	default:
+		if (ch == '1')
+			update_bit(bit_pos, SET_BIT);
+		else if (ch == '0')
+			update_bit(bit_pos, CLEAR_BIT);
+		else if (ch == ' ')
+			update_bit(bit_pos, TOGGLE_BIT);
+
+		if (bit_pos != 63)
+			bit_pos++;
+		break;
+	}
+}
+
+void process_fields(int ch)
+{
+	FIELD *tmp_field;
+	int *cur_base;
+
+	switch(ch) {
+	case KEY_RIGHT:
+	case 'l':
+		LOG("Key right\n");
+		/* Go to next field */
+		form_driver(form, REQ_NEXT_FIELD);
+		/* Go to the end of the present buffer */
+		/* Leaves nicely at the last character */
+		form_driver(form, REQ_END_LINE);
+		set_active_field(false);
+		wrefresh(fields_win);
+		break;
+	case KEY_LEFT:
+	case 'h':
+		LOG("Key left\n");
+		/* Go to previous field */
+		form_driver(form, REQ_PREV_FIELD);
+		form_driver(form, REQ_END_LINE);
+		set_active_field(false);
+		wrefresh(fields_win);
+		break;
+	case KEY_DOWN:
+	case 'j':
+		LOG("Key down\n");
+		view = BINARY_VIEW;
+		set_active_field(true);
+		form_driver(form, REQ_VALIDATION);
+		wrefresh(fields_win);
+		position_binary_curser(0, bit_pos);
+		break;
+	case KEY_BACKSPACE:
+	case 127:
+		LOG("Backspace\n");
+		form_driver(form, REQ_DEL_PREV);
+		form_driver(form, REQ_VALIDATION);
+		update_fields(field_index(current_field(form)));
+		update_binary();
+		break;
+	default:
+		LOG("default char\n");
+
+		tmp_field = current_field(form);
+		cur_base = field_userptr(tmp_field);
+
+		if (validate_input(ch, *cur_base))
+			break;
+
+		form_driver(form, ch);
+		form_driver(form, REQ_VALIDATION);
+		update_fields(field_index(tmp_field));
+		update_binary();
+		break;
+	}
 }
 
 int main(int argc, char *argv[])
@@ -254,110 +355,23 @@ int main(int argc, char *argv[])
 	if (rc != E_OK)
 		die("post_form failed: %d\n", rc);
 
-	int times = 0;
+	while((ch = wgetch(fields_win)) != 'q') {
+		LOG("ch= %d\n", ch);
 
-	while((ch = wgetch(fields_win)) != KEY_F(1)) {
-		LOG("times: %u ch= %d\n", times++, ch);
-		static int bit_pos = 0;
-		static int view = FIELDS_VIEW;
-		switch(ch) {
-		case KEY_RIGHT:
-			LOG("Key right\n");
-			if (view == BINARY_VIEW) {
-				if (bit_pos == 63) {
-					beep();
-					break;
-				}
-				position_binary_curser(bit_pos, bit_pos + 1);
-				bit_pos++;
-			} else {
-				/* Go to next field */
-				form_driver(form, REQ_NEXT_FIELD);
-				/* Go to the end of the present buffer */
-				/* Leaves nicely at the last character */
-				form_driver(form, REQ_END_LINE);
-				set_active_field(false);
-				wrefresh(fields_win);
-			}
-			break;
-		case KEY_LEFT:
-			LOG("Key left\n");
-			if (view == BINARY_VIEW) {
-				if (bit_pos == 0) {
-					beep();
-					break;
-				}
-				position_binary_curser(bit_pos, bit_pos - 1);
-				bit_pos--;
-			} else {
-				/* Go to previous field */
-				form_driver(form, REQ_PREV_FIELD);
-				form_driver(form, REQ_END_LINE);
-				set_active_field(false);
-				wrefresh(fields_win);
-			}
-			break;
-		case KEY_DOWN:
-			LOG("Key down\n");
-			view = BINARY_VIEW;
-			set_active_field(true);
-			form_driver(form, REQ_VALIDATION);
-			wrefresh(fields_win);
-			position_binary_curser(0, bit_pos);
-			break;
-		case KEY_UP:
-			LOG("Key up\n");
-			view = FIELDS_VIEW;
-			set_active_field(false);
-			form_driver(form, REQ_VALIDATION);
-			wrefresh(fields_win);
-			break;
+		if (view == BINARY_VIEW)
+			process_binary(ch);
+		else
+			process_fields(ch);
 
-		case KEY_BACKSPACE:
-		case 127:
-			LOG("Backspace\n");
-			form_driver(form, REQ_DEL_PREV);
-			form_driver(form, REQ_VALIDATION);
-			update_fields(field_index(current_field(form)));
-			update_binary();
-			break;
-		default:
-			{
-				if (view == FIELDS_VIEW) {
-					FIELD *tmp_field = current_field(form);
-					int *cur_base = field_userptr(tmp_field);
-
-					LOG("default char\n");
-
-					if (validate_input(ch, *cur_base))
-						break;
-
-					form_driver(form, ch);
-					form_driver(form, REQ_VALIDATION);
-					update_fields(field_index(tmp_field));
-					update_binary();
-				} else {
-					if (ch == '1')
-						update_bit(bit_pos, SET_BIT);
-					else if (ch == '0')
-						update_bit(bit_pos, CLEAR_BIT);
-					else if (ch == ' ')
-						update_bit(bit_pos, TOGGLE_BIT);
-
-					if (bit_pos != 63)
-						bit_pos++;
-				}
-				break;
-			}
-		}
-		//		wrefresh(fields_win);
 		refresh();
 	}
-	getch();
+
 	unpost_form(form);
 	free_form(form);
 	for (int i=0; i < 4; i++)
 		free_field(field[i]);
+	delwin(fields_win);
+	delwin(binary_win);
 
 	fclose(fd);
 	deinit_terminal();
