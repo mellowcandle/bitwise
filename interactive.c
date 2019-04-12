@@ -11,7 +11,6 @@
 #include <sys/stat.h>
 #include "bitwise.h"
 
-#define BIT(nr) (1ULL << (nr))
 #define MAX_DEC_DIGITS 19
 #define MAX_HEX_DIGITS 16
 #define MAX_OCTA_DIGITS 32
@@ -41,7 +40,7 @@ static uint64_t val;
 static int bit_pos;
 static int view = FIELDS_VIEW;
 
-char binary_field[128];
+char binary_field[180];
 int base[4] = {
 	10,
 	16,
