@@ -15,6 +15,7 @@ int validate_input(int ch, int base);
 void lltostr(uint64_t val, char *buf, int base);
 void init_terminal(void);
 void deinit_terminal(void);
+uint64_t base_scanf(const char *buf, int base);
 
 void die(const char *fmt, ...);
 int start_interactive(void);

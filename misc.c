@@ -68,6 +68,35 @@ int validate_input(int ch, int base)
 	return 1;
 }
 
+uint64_t base_scanf(const char *buf, int base)
+{
+	uint64_t value;
+	int ret;
+
+	switch (base) {
+	case 10:
+		ret = sscanf(buf, "%lu", &value);
+		break;
+	case 16:
+		ret = sscanf(buf, "%lx", &value);
+		break;
+	case 8:
+		ret = sscanf(buf, "%lo", &value);
+		break;
+	default:
+		fprintf(stderr, "Unknown base\n");
+		break;
+	}
+
+	if (ret == EOF || !ret) {
+		fprintf(stderr, "Couldn't parse parameter\n");
+		exit(1);
+	}
+
+	return value;
+}
+
+
 void lltostr(uint64_t val, char *buf, int base)
 {
 	switch (base) {
