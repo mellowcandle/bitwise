@@ -17,7 +17,7 @@ void init_terminal(void);
 void deinit_terminal(void);
 
 void die(const char *fmt, ...);
-
+int start_interactive(void);
 #ifdef TRACE
 #define LOG(...) fprintf(fd, __VA_ARGS__);fflush(fd)
 extern FILE *fd;

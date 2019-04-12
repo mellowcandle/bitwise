@@ -1,5 +1,5 @@
 # Copyright Ramon Fried (2019)
-OBJS := main.o misc.o
+OBJS := interactive.o main.o misc.o
 CFLAGS := -g -std=c99 -Wall -lncurses -lform
 LDFLAGS := -lncurses -lform
 
