@@ -1,5 +1,5 @@
 /* Copyright 2019
- * Ramon Fried <ramon.fried@gmail.com
+ * Ramon Fried <ramon.fried@gmail.com>
  */
 
 #include <stdlib.h>
@@ -7,8 +7,6 @@
 #include <getopt.h>
 
 #include "bitwise.h"
-
-#define BASE_DECIMAL 0
 
 int print_conversions(char *input)
 {
@@ -31,7 +29,6 @@ int print_conversions(char *input)
 	printf("Decimal: %lu\tHexdecimal: 0x%lX\tOctal:0%lo\n", val, val, val);
 
 	for (i = 64; i > 0; i--) {
-		printf("pos: %d\n", pos);
 		if ((i % 8 == 0) && (i != 64)) {
 			binary[pos] = '|';
 			binary[pos+1] = ' ';
@@ -45,15 +42,11 @@ int print_conversions(char *input)
 		pos+=2;
 	}
 
-
 	binary[pos] = '\0';
-
 	printf("%s", binary);
 
 	return 0;
 }
-
-
 
 int main(int argc, char *argv[])
 {
@@ -63,4 +56,3 @@ int main(int argc, char *argv[])
 
 	return start_interactive();
 }
-

@@ -1,5 +1,5 @@
 /* Copyright 2019
- * Ramon Fried <ramon.fried@gmail.com
+ * Ramon Fried <ramon.fried@gmail.com>
  */
 
 #include <ctype.h>
@@ -96,7 +96,6 @@ uint64_t base_scanf(const char *buf, int base)
 	return value;
 }
 
-
 void lltostr(uint64_t val, char *buf, int base)
 {
 	switch (base) {
@@ -113,4 +112,3 @@ void lltostr(uint64_t val, char *buf, int base)
 		sprintf(buf, "Not implemeted");
 	}
 }
-

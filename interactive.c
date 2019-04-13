@@ -1,5 +1,5 @@
 /* Copyright 2019
- * Ramon Fried <ramon.fried@gmail.com
+ * Ramon Fried <ramon.fried@gmail.com>
  */
 
 #include <stdlib.h>
