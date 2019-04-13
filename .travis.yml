@@ -6,5 +6,5 @@ before_install:
         - sudo apt-get -qq update
 
 script:
-- "make all"
+- "make"
 
