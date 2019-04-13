@@ -43,7 +43,7 @@ int print_conversions(char *input)
 	}
 
 	binary[pos] = '\0';
-	printf("%s", binary);
+	printf("%s\n", binary);
 
 	return 0;
 }
