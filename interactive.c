@@ -171,8 +171,7 @@ void position_binary_curser(int previous_pos, int next_pos)
 	pos = 2 + (2 * next_pos) + (2 * (next_pos / 8));
 	mvwchgat(binary_win, 1, pos, 1, A_UNDERLINE, COLOR_PAIR(0), NULL);
 
-	mvprintw(LINES - 2, 0, "bit %u: position %d  ", 63 - next_pos,
-		 2 + (2 * next_pos) + (2 * (next_pos / 8)));
+	mvprintw(LINES - 2, 0, "bit %u  \n", 63 - next_pos);
 	wrefresh(binary_win);
 	refresh();
 }
@@ -205,6 +204,7 @@ void process_binary(int ch)
 		LOG("Key up\n");
 		view = FIELDS_VIEW;
 		set_active_field(false);
+		form_driver(form, REQ_END_LINE);
 		form_driver(form, REQ_VALIDATION);
 		wrefresh(fields_win);
 		break;
@@ -260,6 +260,7 @@ void process_fields(int ch)
 	case KEY_BACKSPACE:
 	case 127:
 		LOG("Backspace\n");
+		LOG("Userptr field %d\n", *((int *)current_field(form)->usrptr));
 		form_driver(form, REQ_DEL_PREV);
 		form_driver(form, REQ_VALIDATION);
 		update_fields(field_index(current_field(form)));
