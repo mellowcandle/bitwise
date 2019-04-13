@@ -3,15 +3,11 @@ OBJS := interactive.o main.o misc.o
 CFLAGS := -g -std=c99 -Wall -Werror -lncurses -lform
 LDFLAGS := -lncurses -lform
 
-#DEPFILES := $(patsubst %.o,%.d,$(OBJS))
-#include $(DEPFILES)   # include all dep files in the makefile
-
-
-all: $(OBJS)
+bitwise: $(OBJS)
 	$(CC) -o bitwise $(OBJS) $(LDFLAGS)
 
-#%.d: %.c
-#	$(CC) $(CFLAGS) $< -MM -MT $(@:.d=.o) >$@
-
+install: bitwise
+		install -m 711 bitwise /usr/local/bin/bitwise
 clean:
 	rm -rf *.o bitwise
+
