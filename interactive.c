@@ -6,6 +6,7 @@
 #include <form.h>
 #include <ctype.h>
 #include <stdint.h>
+#include <string.h>
 #include <assert.h>
 #include <fcntl.h>
 #include <sys/stat.h>
@@ -29,6 +30,8 @@ FILE *fd;
 static void update_fields(int index);
 void position_binary_curser(int previous_pos, int next_pos);
 static void update_binary();
+
+char title[] = "Bitwise manipulator version 0.1 By Ramon Fried";
 
 static FIELD *field[5];
 WINDOW *fields_win;
@@ -321,11 +324,11 @@ int start_interactive(void)
 
 	scale_form(form, &rows, &cols);
 
-	fields_win = newwin(rows + 3, cols + 3, 0, 4);
+	fields_win = newwin(rows + 3, cols + 3, 2, (COLS - cols) / 2);
 	//	fields_win = subwin(stdscr, rows + 3, cols + 3, 0, 4);
 	keypad(fields_win, TRUE);
 
-	binary_win = newwin(4, 145, 8,1);
+	binary_win = newwin(4, 145, 8, (COLS - 145) / 2);
 	//	binary_win = subwin(stdscr, 4, 145, 8,1);
 	box(binary_win, 0, 0);
 
@@ -340,6 +343,7 @@ int start_interactive(void)
 	set_current_field(form, field[0]);
 	set_active_field(false);
 
+	mvprintw(0, (COLS - strlen(title)) / 2, "%s", title);
 	box(fields_win, 0, 0);
 	mvwprintw(fields_win, 1, 10, "Decimal:");
 	mvwprintw(fields_win, 1, 40, "Hexdecimal:");
