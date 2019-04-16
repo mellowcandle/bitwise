@@ -8,8 +8,8 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <stdbool.h>
 #include <form.h>
-#define TRACE
 
 #define BIT(nr) (1ULL << (nr))
 
@@ -29,5 +29,5 @@ extern FILE *fd;
 #endif
 
 extern WINDOW *fields_win;
-
+extern bool has_color;
 #endif /* end of include guard: BITWISE_H */

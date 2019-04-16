@@ -114,10 +114,12 @@ static void update_binary()
 	mvwprintw(binary_win, 1, 2, "%s", binary_field);
 
 	pos = 6;
-	wattron(binary_win, COLOR_PAIR(3));
+	if (has_color)
+		wattron(binary_win, COLOR_PAIR(3));
 	for (i = 0; i < 8; i++, pos += 18)
 		mvwprintw(binary_win, 2, pos, "%2d - %2d", 63 - (i * 8));
-	wattroff(binary_win, COLOR_PAIR(3));
+	if (has_color)
+		wattroff(binary_win, COLOR_PAIR(3));
 	wrefresh(binary_win);
 }
 
@@ -150,6 +152,9 @@ static void update_fields(int index)
 
 void set_active_field(bool none)
 {
+	if (!has_color)
+		return;
+
 	if (!none) {
 		set_field_fore(current_field(form), COLOR_PAIR(1));/* Put the field with blue background */
 		set_field_back(current_field(form), COLOR_PAIR(2));/* and white foreground (characters */
@@ -314,9 +319,11 @@ int start_interactive(void)
 		set_field_userptr(field[i], &base[i]);
 	}
 
-	init_pair(1, COLOR_BLUE, COLOR_BLACK);
-	init_pair(2, COLOR_BLUE, COLOR_BLACK);
-	init_pair(3, COLOR_GREEN, COLOR_BLACK);
+	if (has_color) {
+		init_pair(1, COLOR_BLUE, COLOR_BLACK);
+		init_pair(2, COLOR_BLUE, COLOR_BLACK);
+		init_pair(3, COLOR_GREEN, COLOR_BLACK);
+	}
 
 	form = new_form(field);
 	if (!form)

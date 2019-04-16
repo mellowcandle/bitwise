@@ -5,12 +5,16 @@
 #include <ctype.h>
 #include "bitwise.h"
 
+bool has_color;
+
 void init_terminal(void)
 {
 	initscr();
-	if(has_colors() == FALSE)
-		die("Your terminal does not support color\n");
-	start_color();
+	if(has_colors() == TRUE) {
+		has_color = true;
+		start_color();
+	}
+
 	cbreak();
 	noecho();
 	keypad(stdscr, TRUE);
@@ -71,7 +75,7 @@ int validate_input(int ch, int base)
 uint64_t base_scanf(const char *buf, int base)
 {
 	uint64_t value;
-	int ret;
+	int ret = 0;
 
 	switch (base) {
 	case 10:
