@@ -51,30 +51,6 @@ int base[4] = {
 	2,
 };
 
-/* reverse lookup table for bit positions on screen,
- * much easier than to calculate everytime.
- */
-#if 0
-int bit_positions[142] = {
-	0, 0, 63, 0, 62, 0, 61, 0, 60, 0, 59, 0, 58, 0, 57, 0, 56, 0 
-		0, 0, 55, 0, 54, 0, 53, 0, 52, 0, 51, 0, 50, 0, 49, 0, 48, 0
-		0, 0, 47, 0, 46, 0, 45, 0, 43, 0, 42, 0, 60, 0, 59, 0, 58, 0
-		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0
-};
-#endif
-
 static void update_bit(int pos, int op)
 {
 	LOG("update bit: %u %u\n", pos, op);
@@ -85,10 +61,7 @@ static void update_bit(int pos, int op)
 	else
 		val ^= BIT(63-pos);
 
-	//	mvwprintw(binary_win, 1, pos, "%c", value ? '1': '0');
 	update_binary();
-	position_binary_curser(pos, pos + 1 == 63 ? (pos) : (pos + 1));
-	update_fields(-1);
 }
 
 static void update_binary()
@@ -216,16 +189,42 @@ void process_binary(int ch)
 		form_driver(form, REQ_VALIDATION);
 		wrefresh(fields_win);
 		break;
-	default:
-		if (ch == '1')
-			update_bit(bit_pos, SET_BIT);
-		else if (ch == '0')
+	case KEY_BACKSPACE:
+	case 127:
+		LOG("Backspace\n");
+		if (bit_pos != 0) {
+			bit_pos--;
 			update_bit(bit_pos, CLEAR_BIT);
-		else if (ch == ' ')
+			update_fields(-1);
+		}
+		else
+			beep();
+		break;
+	default:
+		if (ch == '1') {
+			update_bit(bit_pos, SET_BIT);
+			position_binary_curser(bit_pos, (bit_pos + 1) == 63 ?
+					       (bit_pos) : (bit_pos + 1));
+			update_fields(-1);
+			if (bit_pos != 63)
+				bit_pos++;
+			else
+				beep();
+			break;
+		} else if (ch == '0') {
+			update_bit(bit_pos, CLEAR_BIT);
+			position_binary_curser(bit_pos, (bit_pos + 1) == 63 ?
+					       (bit_pos) : (bit_pos + 1));
+			update_fields(-1);
+			if (bit_pos != 63)
+				bit_pos++;
+			else
+				beep();
+			break;
+		} else if (ch == ' ') {
 			update_bit(bit_pos, TOGGLE_BIT);
-
-		if (bit_pos != 63)
-			bit_pos++;
+			update_fields(-1);
+		}
 		break;
 	}
 }
