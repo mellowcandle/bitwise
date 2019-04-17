@@ -54,7 +54,10 @@ static void print_version(void)
 
 static void print_help(FILE *out)
 {
-	fprintf(out, "help menu\n");
+	fprintf(out, "Usage: bitwise [OPTION...] [number]\n\n");
+	fprintf(out, "  -h, --help\t\t Display this help and exit\n");
+	fprintf(out, "  -v, --version\t\t Output version information and exit\n");
+	fprintf(out, "      --no-color\t Start without color support\n\n");
 }
 
 int main(int argc, char *argv[])
@@ -84,7 +87,6 @@ int main(int argc, char *argv[])
 			print_help(stdout);
 			exit(0);
 		case '?':
-			break;
 		default:
 			print_help(stderr);
 			exit(1);
