@@ -35,4 +35,4 @@ To move around use the arrow keys, or use _vi_ key bindings : <kbd> h </kbd> <kb
 
 You can toggle a bit bit using the <kbd> space </kbd> key.
 
-Leave the program by pressing <kbd> q </kdb>.
+Leave the program by pressing <kbd> q </kbd>.
