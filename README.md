@@ -26,7 +26,7 @@ $
 ```
 
 ### Interactive mode
-_bitwise_ starts in interactive mode if no command line parameters are passed.
+_bitwise_ starts in interactive mode if no command line parameters are passed or if the _-i | --interactive_ flag is passed.
 In this mode, you can input a number and manipulate it and see the other bases change dynamically.
 It also allows changing individual bits in the binary.
 
