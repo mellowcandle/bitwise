@@ -5,16 +5,15 @@
 #include <ctype.h>
 #include "bitwise.h"
 
-bool has_color;
+int has_color = 1;
 
 void init_terminal(void)
 {
 	initscr();
-	if(has_colors() == TRUE) {
-		has_color = true;
+	if(has_colors() == FALSE)
+		has_color = 0;
+	else
 		start_color();
-	}
-
 	cbreak();
 	noecho();
 	keypad(stdscr, TRUE);
@@ -41,34 +40,27 @@ int validate_input(int ch, int base)
 {
 	switch (base) {
 	case 2:
-		 LOG("validating 2\n");
 		if (ch == '0' || ch == '1')
 			return 0;
 		break;
 	case 8:
-		 LOG("validating 8\n");
 		if (ch >= '0' && ch <= '7')
 			return 0;
 		break;
 	case 16:
-		 LOG("validating 16\n");
 		if ((ch >= '0' && ch <= '9') ||
 		     (ch >= 'A' && ch <= 'F') ||
 		     (ch >= 'a' && ch <= 'f'))
 			 return 0;
 		 break;
 	case 10:
-		 LOG("validating 10\n");
 		 if (isdigit(ch))
 			 return 0;
 		 break;
 	default:
-		 LOG("What the fuck\n");
 		 break;
 	}
 
-
-	LOG("validating input failed\n");
 	return 1;
 }
 

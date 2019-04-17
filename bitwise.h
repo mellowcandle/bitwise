@@ -29,5 +29,5 @@ extern FILE *fd;
 #endif
 
 extern WINDOW *fields_win;
-extern bool has_color;
+extern int has_color;
 #endif /* end of include guard: BITWISE_H */

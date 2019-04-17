@@ -5,7 +5,6 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <getopt.h>
-
 #include "bitwise.h"
 
 int print_conversions(char *input)
@@ -48,11 +47,52 @@ int print_conversions(char *input)
 	return 0;
 }
 
+static void print_version(void)
+{
+	printf("Bitwise v0.1\n");
+}
+
+static void print_help(FILE *out)
+{
+	fprintf(out, "help menu\n");
+}
+
 int main(int argc, char *argv[])
 {
+	int c;
 
-	if (argc > 1)
-		return print_conversions(argv[1]);
+	while (1) {
+		static struct option long_options[] = {
+	          {"no-color", no_argument, &has_color, 0},
+	          {"version", no_argument, 0, 'v'},
+	          {"help", no_argument, 0, 'h'},
+	          {0, 0, 0, 0}
+		};
+
+		int option_index = 0;
+
+		c = getopt_long (argc, argv, "vh", long_options, &option_index);
+		if (c == -1)
+			break;
+		switch (c) {
+		case 0:
+			break;
+		case 'v':
+			print_version();
+			exit(0);
+		case 'h':
+			print_help(stdout);
+			exit(0);
+		case '?':
+			break;
+		default:
+			print_help(stderr);
+			exit(1);
+		}
+	}
+
+	if (optind < argc)
+		return print_conversions(argv[optind]);
 
 	return start_interactive();
 }

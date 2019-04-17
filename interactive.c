@@ -44,11 +44,10 @@ static int bit_pos;
 static int view = FIELDS_VIEW;
 
 char binary_field[180];
-int base[4] = {
+int base[3] = {
 	10,
 	16,
 	8,
-	2,
 };
 
 static void update_bit(int pos, int op)
