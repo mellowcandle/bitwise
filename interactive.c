@@ -89,7 +89,7 @@ static void update_binary()
 	if (has_color)
 		wattron(binary_win, COLOR_PAIR(3));
 	for (i = 0; i < 8; i++, pos += 18)
-		mvwprintw(binary_win, 2, pos, "%2d - %2d", 63 - (i * 8));
+		mvwprintw(binary_win, 2, pos, "%2d - %2d", 63 - (i * 8), 56 - (i * 8));
 	if (has_color)
 		wattroff(binary_win, COLOR_PAIR(3));
 	wrefresh(binary_win);
