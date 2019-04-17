@@ -289,10 +289,12 @@ void process_fields(int ch)
 	}
 }
 
-int start_interactive(void)
+int start_interactive(uint64_t start)
 {
 	int ch, rows, cols;
 	int rc;
+
+	val = start;
 
 #ifdef TRACE
 	fd = fopen("log.txt", "w");
@@ -313,7 +315,6 @@ int start_interactive(void)
 	for (int i=0; i < 3; i++) {
 		set_field_back(field[i], A_UNDERLINE);
 		field_opts_off(field[i], O_AUTOSKIP );
-		set_field_buffer(field[i], 0, "0");
 		set_field_userptr(field[i], &base[i]);
 	}
 
@@ -330,11 +331,9 @@ int start_interactive(void)
 	scale_form(form, &rows, &cols);
 
 	fields_win = newwin(rows + 3, cols + 3, 2, (COLS - cols) / 2);
-	//	fields_win = subwin(stdscr, rows + 3, cols + 3, 0, 4);
 	keypad(fields_win, TRUE);
 
 	binary_win = newwin(4, 145, 8, (COLS - 145) / 2);
-	//	binary_win = subwin(stdscr, 4, 145, 8,1);
 	box(binary_win, 0, 0);
 
 	rc = set_form_win(form, fields_win);
@@ -356,6 +355,7 @@ int start_interactive(void)
 
 	wrefresh(fields_win);
 	update_binary();
+	update_fields(-1);
 	refresh();
 
 	rc = post_form(form);

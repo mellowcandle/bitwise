@@ -20,7 +20,7 @@ void deinit_terminal(void);
 uint64_t base_scanf(const char *buf, int base);
 
 void die(const char *fmt, ...);
-int start_interactive(void);
+int start_interactive(uint64_t start);
 #ifdef TRACE
 #define LOG(...) fprintf(fd, __VA_ARGS__);fflush(fd)
 extern FILE *fd;

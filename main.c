@@ -7,13 +7,9 @@
 #include <getopt.h>
 #include "bitwise.h"
 
-int print_conversions(char *input)
+static uint64_t parse_input(char *input)
 {
-	char binary[180];
-	uint64_t val;
 	int base;
-	int i;
-	int pos = 0;
 
 	if (input[0] == '0')
 		if (input[1] == 'x' || input[1] == 'X')
@@ -23,7 +19,14 @@ int print_conversions(char *input)
 	else
 		base = 10;
 
-	val = base_scanf(input, base);
+	return base_scanf(input, base);
+}
+
+int print_conversions(uint64_t val)
+{
+	char binary[180];
+	int pos = 0;
+	int i;
 
 	printf("Decimal: %lu\tHexdecimal: 0x%lX\tOctal:0%lo\n", val, val, val);
 
@@ -54,7 +57,9 @@ static void print_version(void)
 
 static void print_help(FILE *out)
 {
-	fprintf(out, "Usage: bitwise [OPTION...] [number]\n\n");
+	fprintf(out, "Usage: bitwise [OPTION...] [input]\n\n");
+	fprintf(out, "[input] can be decimal, hexdecimal or octal number, depending on the prefix (0x | 0)\n\n");
+	fprintf(out, "  -i, --interactive\t Load interactive mode (default if no input)\n");
 	fprintf(out, "  -h, --help\t\t Display this help and exit\n");
 	fprintf(out, "  -v, --version\t\t Output version information and exit\n");
 	fprintf(out, "      --no-color\t Start without color support\n\n");
@@ -63,18 +68,21 @@ static void print_help(FILE *out)
 int main(int argc, char *argv[])
 {
 	int c;
+	int interactive = 0;
+	uint64_t val = 0;
 
 	while (1) {
 		static struct option long_options[] = {
 	          {"no-color", no_argument, &has_color, 0},
 	          {"version", no_argument, 0, 'v'},
 	          {"help", no_argument, 0, 'h'},
+	          {"interactive", no_argument, 0, 'i'},
 	          {0, 0, 0, 0}
 		};
 
 		int option_index = 0;
 
-		c = getopt_long (argc, argv, "vh", long_options, &option_index);
+		c = getopt_long (argc, argv, "vhi", long_options, &option_index);
 		if (c == -1)
 			break;
 		switch (c) {
@@ -86,6 +94,10 @@ int main(int argc, char *argv[])
 		case 'h':
 			print_help(stdout);
 			exit(0);
+		case 'i':
+			interactive = 1;
+			break;
+
 		case '?':
 		default:
 			print_help(stderr);
@@ -93,8 +105,11 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	if (optind < argc)
-		return print_conversions(argv[optind]);
+	if (optind < argc) {
+		val = parse_input(argv[optind]);
+		if (!interactive)
+			return print_conversions(val);
+	}
 
-	return start_interactive();
+	return start_interactive(val);
 }
