@@ -5,6 +5,12 @@
 #include <ctype.h>
 #include "bitwise.h"
 
+#define KB (1ULL << 10)
+#define MB (1ULL << 20)
+#define GB (1ULL << 30)
+#define TB (1ULL << 40)
+#define PB (1ULL << 50)
+
 int has_color = 1;
 
 void init_terminal(void)
@@ -108,3 +114,22 @@ void lltostr(uint64_t val, char *buf, int base)
 		sprintf(buf, "Not implemeted");
 	}
 }
+
+int sprintf_size(uint64_t val, char *buf)
+{
+	int ret;
+
+	if (val >= PB)
+		ret = sprintf(buf, "%luPB", val >> 50);
+	else if (val >= TB)
+		ret = sprintf(buf, "%luTB", val >> 40);
+	else if (val >= GB)
+		ret = sprintf(buf, "%luGB", val >> 30);
+	else if (val >= MB)
+		ret = sprintf(buf, "%luMB", val >> 20);
+	else if (val >= KB)
+		ret = sprintf(buf, "%luKB", val >> 10);
+
+	return ret;
+}
+

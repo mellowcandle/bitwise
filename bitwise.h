@@ -18,6 +18,7 @@ void lltostr(uint64_t val, char *buf, int base);
 void init_terminal(void);
 void deinit_terminal(void);
 uint64_t base_scanf(const char *buf, int base);
+int sprintf_size(uint64_t val, char *buf);
 
 void die(const char *fmt, ...);
 int start_interactive(uint64_t start);

@@ -7,6 +7,7 @@
 #include <getopt.h>
 #include "bitwise.h"
 
+
 static uint64_t parse_input(char *input)
 {
 	int base;
@@ -24,12 +25,20 @@ static uint64_t parse_input(char *input)
 
 int print_conversions(uint64_t val)
 {
+	char buf_size[16];
 	char binary[180];
 	int pos = 0;
-	int i;
+	int i, j;
 
-	printf("Decimal: %lu\tHexdecimal: 0x%lX\tOctal:0%lo\n", val, val, val);
+	buf_size[0] = '\0';
+	sprintf_size(val, buf_size);
 
+	printf("Decimal: %lu\n", val);
+	printf("Hexdecimal: 0x%lX\n", val);
+	printf("Octal: 0%lo\n", val);
+	if (buf_size[0])
+		printf("Size: %s\n", buf_size);
+	printf("Binary:\n");
 	for (i = 64; i > 0; i--) {
 		if ((i % 8 == 0) && (i != 64)) {
 			binary[pos] = '|';
@@ -45,8 +54,13 @@ int print_conversions(uint64_t val)
 	}
 
 	binary[pos] = '\0';
-	printf("%s\n", binary);
-
+	printf("%s\n    ", binary);
+	for (i = 0; i < 8; i++) {
+		printf("%2d - %2d", 63 - (i * 8), 56 - (i * 8));
+		for (j = 0; j < 11; j++)
+			putchar(' ');
+	}
+	printf("\n");
 	return 0;
 }
 
