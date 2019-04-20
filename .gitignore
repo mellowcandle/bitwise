@@ -50,3 +50,14 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+
+# Autotools stuff
+Makefile
+Makefile.in
+aclocal.m4
+autom4te.cache/
+build-aux/
+config.status
+configure
+pre-inst-env
+

@@ -6,5 +6,7 @@ before_install:
         - sudo apt-get -qq update
 
 script:
+- "./bootstrap.sh"
+- "./configure"
 - "make"
 
