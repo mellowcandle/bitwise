@@ -118,17 +118,18 @@ void lltostr(uint64_t val, char *buf, int base)
 int sprintf_size(uint64_t val, char *buf)
 {
 	int ret;
+	double f_val = val;
 
 	if (val >= PB)
-		ret = sprintf(buf, "%luPB", val >> 50);
+		ret = sprintf(buf, "%.2lfPB", f_val / PB);
 	else if (val >= TB)
-		ret = sprintf(buf, "%luTB", val >> 40);
+		ret = sprintf(buf, "%.2lfTB", f_val / TB);
 	else if (val >= GB)
-		ret = sprintf(buf, "%luGB", val >> 30);
+		ret = sprintf(buf, "%.2lfGB", f_val / GB);
 	else if (val >= MB)
-		ret = sprintf(buf, "%luMB", val >> 20);
+		ret = sprintf(buf, "%.2lfMB", f_val / MB);
 	else if (val >= KB)
-		ret = sprintf(buf, "%luKB", val >> 10);
+		ret = sprintf(buf, "%.2lfKB", f_val / KB);
 
 	return ret;
 }
