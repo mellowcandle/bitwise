@@ -41,7 +41,14 @@ You can toggle a bit bit using the <kbd> space </kbd> key.
 
 Leave the program by pressing <kbd> q </kbd>.
 
+## Installation
+
+## Arch
+Your can use the AUR repository: https://aur.archlinux.org/packages/bitwise/
+
 ## Building from source
+
+*Make sure you have ncurses package installed*
 1. Clone the source code.
 2. ./bootstrap.sh
 3. ./configure
