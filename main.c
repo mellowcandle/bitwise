@@ -7,7 +7,6 @@
 #include <getopt.h>
 #include "bitwise.h"
 
-
 static uint64_t parse_input(char *input)
 {
 	int base;
@@ -39,8 +38,8 @@ int print_conversions(uint64_t val)
 	if (buf_size[0])
 		printf("Size: %s\n", buf_size);
 	printf("Binary:\n");
-	for (i = 64; i > 0; i--) {
-		if ((i % 8 == 0) && (i != 64)) {
+	for (i = g_width; i > 0; i--) {
+		if ((i % 8 == 0) && (i != g_width)) {
 			binary[pos] = '|';
 			binary[pos+1] = ' ';
 			pos += 2;
@@ -55,8 +54,8 @@ int print_conversions(uint64_t val)
 
 	binary[pos] = '\0';
 	printf("%s\n    ", binary);
-	for (i = 0; i < 8; i++) {
-		printf("%2d - %2d", 63 - (i * 8), 56 - (i * 8));
+	for (i = 0; i < g_width / 8; i++) {
+		printf("%2d - %2d", g_width - 1 - (i * 8), (g_width - 8) - (i * 8));
 		for (j = 0; j < 11; j++)
 			putchar(' ');
 	}
@@ -89,7 +88,7 @@ int main(int argc, char *argv[])
 
 	while (1) {
 		static struct option long_options[] = {
-	          {"no-color", no_argument, &has_color, 0},
+	          {"no-color", no_argument, &g_has_color, 0},
 	          {"version", no_argument, 0, 'v'},
 	          {"help", no_argument, 0, 'h'},
 	          {"interactive", no_argument, 0, 'i'},
@@ -125,9 +124,12 @@ int main(int argc, char *argv[])
 			exit(1);
 		}
 	}
-
 	if (optind < argc) {
 		val = parse_input(argv[optind]);
+		if (!g_width) {
+			set_width_by_val(val);
+		}
+		val &= MASK(g_width);
 		if (!interactive)
 			return print_conversions(val);
 	}

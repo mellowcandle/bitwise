@@ -12,8 +12,10 @@
 #include <form.h>
 
 #define BIT(nr) (1ULL << (nr))
+#define MASK(s) (~0ULL >> (64 - s))
 
 int set_width(char width);
+void set_width_by_val(uint64_t val);
 
 int validate_input(int ch, int base);
 void lltostr(uint64_t val, char *buf, int base);
@@ -32,5 +34,7 @@ extern FILE *fd;
 #endif
 
 extern WINDOW *fields_win;
-extern int has_color;
+extern int g_has_color;
+extern int g_width;
+
 #endif /* end of include guard: BITWISE_H */

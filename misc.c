@@ -11,13 +11,14 @@
 #define TB (1ULL << 40)
 #define PB (1ULL << 50)
 
-int has_color = 1;
+int g_has_color = 1;
+int g_width = 0;
 
 void init_terminal(void)
 {
 	initscr();
 	if(has_colors() == FALSE)
-		has_color = 0;
+		g_has_color = 0;
 	else
 		start_color();
 	cbreak();
@@ -134,18 +135,33 @@ int sprintf_size(uint64_t val, char *buf)
 	return ret;
 }
 
+void set_width_by_val(uint64_t val)
+{
+	if (val & 0xFFFFFFFF00000000)
+		g_width = 64;
+	else if (val & 0xFFFF0000)
+		g_width = 32;
+	else if (val & 0xFF00)
+		g_width = 16;
+	else if (val & 0xFF)
+		g_width = 8;
+	else
+		g_width = 32;
+}
+
+
 int set_width(char width)
 {
 	int size;
 
 	if (tolower(width) == 'b')
-		size = 8;
+		g_width = 8;
 	else if (tolower(width) == 'w')
-		size = 16;
+		g_width = 16;
 	else if (tolower(width) == 'l')
-		size = 32;
+		g_width = 32;
 	else if (tolower(width) == 'd')
-		size = 64;
+		g_width = 64;
 	else
 		return 1;
 
