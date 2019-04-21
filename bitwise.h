@@ -13,6 +13,8 @@
 
 #define BIT(nr) (1ULL << (nr))
 
+int set_width(char width);
+
 int validate_input(int ch, int base);
 void lltostr(uint64_t val, char *buf, int base);
 void init_terminal(void);

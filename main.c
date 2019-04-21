@@ -74,6 +74,7 @@ static void print_help(FILE *out)
 	fprintf(out, "Usage: bitwise [OPTION...] [input]\n\n");
 	fprintf(out, "[input] can be decimal, hexdecimal or octal number, depending on the prefix (0x | 0)\n\n");
 	fprintf(out, "  -i, --interactive\t Load interactive mode (default if no input)\n");
+	fprintf(out, "  -w, --width[b|w|l|d]\t Set bit width (default: l)\n");
 	fprintf(out, "  -h, --help\t\t Display this help and exit\n");
 	fprintf(out, "  -v, --version\t\t Output version information and exit\n");
 	fprintf(out, "      --no-color\t Start without color support\n\n");
@@ -82,6 +83,7 @@ static void print_help(FILE *out)
 int main(int argc, char *argv[])
 {
 	int c;
+	char width;
 	int interactive = 0;
 	uint64_t val = 0;
 
@@ -91,12 +93,13 @@ int main(int argc, char *argv[])
 	          {"version", no_argument, 0, 'v'},
 	          {"help", no_argument, 0, 'h'},
 	          {"interactive", no_argument, 0, 'i'},
+		  {"width", required_argument, 0, 'w'},
 	          {0, 0, 0, 0}
 		};
 
 		int option_index = 0;
 
-		c = getopt_long (argc, argv, "vhi", long_options, &option_index);
+		c = getopt_long(argc, argv, "vhiw:", long_options, &option_index);
 		if (c == -1)
 			break;
 		switch (c) {
@@ -111,7 +114,11 @@ int main(int argc, char *argv[])
 		case 'i':
 			interactive = 1;
 			break;
-
+		case 'w':
+			width = *optarg;
+			if (!set_width(width))
+				break;
+			fprintf(stderr, "Unsupported width size: accepted values are: [b|w|l|d]\n");
 		case '?':
 		default:
 			print_help(stderr);

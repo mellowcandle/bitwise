@@ -134,3 +134,20 @@ int sprintf_size(uint64_t val, char *buf)
 	return ret;
 }
 
+int set_width(char width)
+{
+	int size;
+
+	if (tolower(width) == 'b')
+		size = 8;
+	else if (tolower(width) == 'w')
+		size = 16;
+	else if (tolower(width) == 'l')
+		size = 32;
+	else if (tolower(width) == 'd')
+		size = 64;
+	else
+		return 1;
+
+	return 0;
+}
