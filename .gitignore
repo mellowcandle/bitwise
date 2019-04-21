@@ -61,3 +61,5 @@ config.status
 configure
 pre-inst-env
 
+# tracing stuff
+log.txt
