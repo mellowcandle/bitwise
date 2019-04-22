@@ -175,10 +175,11 @@ void position_binary_curser(int previous_pos, int next_pos)
 	pos = 2 + (2 * previous_pos) + (2 * (previous_pos / 8));
 	mvwchgat(binary_win, 1, pos, 1, A_NORMAL, COLOR_PAIR(0), NULL);
 
-	pos = 2 + (2 * next_pos) + (2 * (next_pos / 8));
-	mvwchgat(binary_win, 1, pos, 1, A_UNDERLINE, COLOR_PAIR(0), NULL);
-
-	mvprintw(LINES - 2, 0, "bit %u  \n", g_width - 1 - next_pos);
+	if (next_pos != -1) {
+		pos = 2 + (2 * next_pos) + (2 * (next_pos / 8));
+		mvwchgat(binary_win, 1, pos, 1, A_UNDERLINE, COLOR_PAIR(0), NULL);
+		mvprintw(LINES - 2, 0, "bit %u  \n", g_width - 1 - next_pos);
+	}
 	wrefresh(binary_win);
 	refresh();
 }
@@ -208,9 +209,11 @@ void process_binary(int ch)
 		break;
 	case KEY_UP:
 	case 'k':
+	case '\t':
 		LOG("Key up\n");
 		view = FIELDS_VIEW;
 		set_active_field(false);
+		position_binary_curser(bit_pos, -1);
 		form_driver(form, REQ_END_LINE);
 		form_driver(form, REQ_VALIDATION);
 		wrefresh(fields_win);
@@ -280,6 +283,7 @@ void process_fields(int ch)
 		break;
 	case KEY_DOWN:
 	case 'j':
+	case '\t':
 		LOG("Key down\n");
 		view = BINARY_VIEW;
 		set_active_field(true);
