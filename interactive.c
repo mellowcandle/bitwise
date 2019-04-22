@@ -402,7 +402,7 @@ int start_interactive(uint64_t start)
 
 	unpost_form(form);
 	free_form(form);
-	for (int i=0; i < 4; i++)
+	for (int i=0; i < 3; i++)
 		free_field(field[i]);
 	delwin(fields_win);
 	delwin(binary_win);
