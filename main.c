@@ -134,5 +134,7 @@ int main(int argc, char *argv[])
 			return print_conversions(val);
 	}
 
+	if (!g_width)
+		g_width = 32;
 	return start_interactive(val);
 }
