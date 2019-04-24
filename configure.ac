@@ -2,11 +2,11 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.69])
-AC_INIT([bitwise], [0.1], [rfried.dev@gmail.com])
+AC_INIT([bitwise], [0.11], [rfried.dev@gmail.com])
 AC_CONFIG_SRCDIR([misc.c])
 AC_CONFIG_HEADERS([config.h])
 
-AM_INIT_AUTOMAKE
+AM_INIT_AUTOMAKE([-Wall -Werror foreign])
 
 # Checks for programs.
 AC_PROG_CC
