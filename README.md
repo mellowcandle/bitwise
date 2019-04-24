@@ -43,14 +43,19 @@ Leave the program by pressing <kbd> q </kbd>.
 
 ## Installation
 
+## Snap
+If your distribution supports Snap just type:
+`
+sudo snap install bitwise --beta
+`
+
 ## Arch
 Your can use the AUR repository: https://aur.archlinux.org/packages/bitwise/
 
 ## Building from source
-
 *Make sure you have ncurses package installed*
-1. Clone the source code.
-2. ./bootstrap.sh
+1. Download latest release.
+2. unpack release
 3. ./configure
 4. make
 5. sudo make install
