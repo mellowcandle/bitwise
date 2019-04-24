@@ -132,7 +132,7 @@ int sprintf_size(uint64_t val, char *buf)
 	else if (val >= KB)
 		ret = sprintf(buf, "%.2lfKB", f_val / KB);
 	else
-		ret = sprintf(buf, "%uB", val);
+		ret = sprintf(buf, "%luB", val);
 
 	return ret;
 }
