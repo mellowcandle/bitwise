@@ -19,14 +19,14 @@ _bitwise_ detects the base by the preface of the input (0x/0X for hexedecimal, l
 #### Example:
 
 ```
-$ bitwise 0x12312311
+$ ./bitwise 0x12312311
 Decimal: 305210129
 Hexdecimal: 0x12312311
 Octal: 02214221421
 Size: 291.07MB
 Binary:
-0 0 0 0 0 0 0 0 | 0 0 0 0 0 0 0 0 | 0 0 0 0 0 0 0 0 | 0 0 0 0 0 0 0 0 | 0 0 0 1 0 0 1 0 | 0 0 1 1 0 0 0 1 | 0 0 1 0 0 0 1 1 | 0 0 0 1 0 0 0 1 
-    63 - 56           55 - 48           47 - 40           39 - 32           31 - 24           23 - 16           15 -  8            7 -  0     
+0 0 0 1 0 0 1 0 | 0 0 1 1 0 0 0 1 | 0 0 1 0 0 0 1 1 | 0 0 0 1 0 0 0 1 
+    31 - 24           23 - 16           15 -  8            7 -  0     
 ```
 
 ### Interactive mode
