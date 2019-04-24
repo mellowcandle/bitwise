@@ -12,9 +12,21 @@
 #include <sys/stat.h>
 #include "bitwise.h"
 
-#define MAX_DEC_DIGITS 19
-#define MAX_HEX_DIGITS 16
-#define MAX_OCTA_DIGITS 32
+#define MAX_DEC_DIGITS_64 19
+#define MAX_HEX_DIGITS_64 16
+#define MAX_OCT_DIGITS_64 32
+
+#define MAX_DEC_DIGITS_32 10
+#define MAX_HEX_DIGITS_32 8
+#define MAX_OCT_DIGITS_32 16
+
+#define MAX_DEC_DIGITS_16 5
+#define MAX_HEX_DIGITS_16 4
+#define MAX_OCT_DIGITS_16 8
+
+#define MAX_DEC_DIGITS_8 3
+#define MAX_HEX_DIGITS_8 2
+#define MAX_OCT_DIGITS_8 4
 
 #define FIELDS_VIEW 0
 #define BINARY_VIEW 1
@@ -27,7 +39,9 @@
 FILE *fd;
 #endif
 
-static void update_fields(int index);
+int max_dec_digits, max_hex_digits, max_oct_digits;
+
+static int update_fields(int index);
 void position_binary_curser(int previous_pos, int next_pos);
 static void update_binary();
 
@@ -63,15 +77,27 @@ static void set_fields_width(int width)
 	switch (width) {
 	case 64:
 		binary_field_size = DBL_BINARY_WIN_LEN;
+		max_dec_digits = MAX_DEC_DIGITS_64;
+		max_hex_digits = MAX_HEX_DIGITS_64;
+		max_oct_digits = MAX_OCT_DIGITS_64;
 		break;
 	case 32:
 		binary_field_size = LONG_BINARY_WIN_LEN;
+		max_dec_digits = MAX_DEC_DIGITS_32;
+		max_hex_digits = MAX_HEX_DIGITS_32;
+		max_oct_digits = MAX_OCT_DIGITS_32;
 		break;
 	case 16:
 		binary_field_size = WORD_BINARY_WIN_LEN;
+		max_dec_digits = MAX_DEC_DIGITS_16;
+		max_hex_digits = MAX_HEX_DIGITS_16;
+		max_oct_digits = MAX_OCT_DIGITS_16;
 		break;
 	case 8:
 		binary_field_size = BYTE_BINARY_WIN_LEN;
+		max_dec_digits = MAX_DEC_DIGITS_8;
+		max_hex_digits = MAX_HEX_DIGITS_8;
+		max_oct_digits = MAX_OCT_DIGITS_8;
 		break;
 	}
 }
@@ -115,38 +141,50 @@ static void update_binary()
 	if (g_has_color)
 		wattron(binary_win, COLOR_PAIR(3));
 	for (i = 0; i < g_width / 8; i++, pos += 18)
-		mvwprintw(binary_win, 2, pos, "%2d - %2d", g_width - 1 - (i * 8),
+		mvwprintw(binary_win, 2, pos, "%2d - %2d",
+			  (g_width - 1) - (i * 8),
 			  (g_width - 8) - (i * 8));
 	if (g_has_color)
 		wattroff(binary_win, COLOR_PAIR(3));
 	wrefresh(binary_win);
 }
 
-static void update_fields(int index)
+static int update_fields(int index)
 {
 	FIELD *tmp_field = current_field(form);
 	int *cur_base = field_userptr(tmp_field);
 	char *buffer;
 	char number[64];
 	int *base;
-
+	uint64_t tmp_val;
 	if (index != -1) {
 		buffer = field_buffer(tmp_field, 0);
 		assert(buffer);
-		val = strtoll(buffer, NULL, *cur_base);
+
+		tmp_val = strtoll(buffer, NULL, *cur_base);
+		if (tmp_val > MASK(g_width)) {
+			beep();
+			return 1;
+		}
+		val = tmp_val;
 	}
 	LOG("Val = %lu\n", val);
 	for (int i=0; i < 3; i++) {
 		if (i == index)
 			continue;
 		base = field_userptr(field[i]);
-		lltostr(val, number, *base);
+		if (val)
+			lltostr(val, number, *base);
+		else
+			number[0] = '\0';
 		LOG("updating field %d\n", i);
 		set_field_buffer(field[i], 0, number);
 	}
 	form_driver(form, REQ_VALIDATION);
 	wrefresh(fields_win);
 	refresh();
+
+	return 0;
 }
 
 void set_active_field(bool none)
@@ -295,7 +333,8 @@ void process_fields(int ch)
 	case 127:
 		LOG("Backspace\n");
 		LOG("Userptr field %d\n", *((int *)current_field(form)->usrptr));
-		form_driver(form, REQ_DEL_PREV);
+		form_driver(form, REQ_DEL_CHAR);
+		form_driver(form, REQ_PREV_CHAR);
 		form_driver(form, REQ_VALIDATION);
 		update_fields(field_index(current_field(form)));
 		update_binary();
@@ -311,7 +350,12 @@ void process_fields(int ch)
 
 		form_driver(form, ch);
 		form_driver(form, REQ_VALIDATION);
-		update_fields(field_index(tmp_field));
+		if (update_fields(field_index(tmp_field))) {
+			form_driver(form, REQ_DEL_CHAR);
+			form_driver(form, REQ_PREV_CHAR);
+			form_driver(form, REQ_VALIDATION);
+		}
+
 		update_binary();
 		break;
 	}
@@ -333,12 +377,12 @@ int start_interactive(uint64_t start)
 	set_fields_width(g_width);
 
 	/* Initialize the fields */
-	field[0] = new_field(1, MAX_DEC_DIGITS, 1,
+	field[0] = new_field(1, max_dec_digits, 1,
 			     10, 0, 0);
 
-	field[1] = new_field(1, MAX_HEX_DIGITS, 1,
+	field[1] = new_field(1, max_hex_digits, 1,
 			     40, 0, 0);
-	field[2] = new_field(1, MAX_OCTA_DIGITS, 1,
+	field[2] = new_field(1, max_oct_digits, 1,
 			     70, 0, 0);
 	field[3] = NULL;
 
