@@ -6,6 +6,7 @@
 #include <stdint.h>
 #include <getopt.h>
 #include "bitwise.h"
+#include "config.h"
 
 static uint64_t parse_input(char *input)
 {
@@ -65,7 +66,7 @@ int print_conversions(uint64_t val)
 
 static void print_version(void)
 {
-	printf("Bitwise v0.1\n");
+	printf(PACKAGE " " VERSION "\n");
 }
 
 static void print_help(FILE *out)
