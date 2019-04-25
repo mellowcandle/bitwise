@@ -7,6 +7,8 @@ before_install:
 
 script:
 - "./bootstrap.sh"
-- "./configure"
+- "./configure --enable-gcov"
 - "make"
 
+after_success:
+        - bash <(curl -s https://codecov.io/bash)

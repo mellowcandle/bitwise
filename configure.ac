@@ -31,4 +31,12 @@ AC_FUNC_STRCOLL
 AC_CHECK_FUNCS([memchr memmove memset stpcpy strchr strcspn strdup strerror strpbrk strrchr strspn strstr])
 
 AC_CONFIG_FILES([Makefile])
+
+AC_ARG_ENABLE([gcov],
+	[AS_HELP_STRING([--enable-gcov],
+		[Build with coverage support])],
+	[],
+	[enable_gcov=no])
+AM_CONDITIONAL([COND_GCOV],[test '!' "$enable_gcov" = no])
+
 AC_OUTPUT
