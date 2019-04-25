@@ -13,7 +13,6 @@
 
 int g_has_color = 1;
 int g_width = 0;
-
 void init_terminal(void)
 {
 	initscr();
@@ -39,7 +38,7 @@ void die(const char *fmt, ...)
 
 	deinit_terminal();
 	vfprintf(stderr, fmt, args);
-
+	va_end(args);
 	exit(1);
 }
 

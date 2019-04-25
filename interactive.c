@@ -40,29 +40,28 @@ FILE *fd;
 #endif
 
 int max_dec_digits, max_hex_digits, max_oct_digits;
-
-static int update_fields(int index);
-void position_binary_curser(int previous_pos, int next_pos);
+int min_frame_size;
 static void update_binary();
-
-char title[] = "Bitwise manipulator version 0.1 By Ramon Fried";
-
-static FIELD *field[5];
+static char title[] = "Bitwise";
+static char *width_str;
 WINDOW *fields_win;
 WINDOW *binary_win;
+
+static FIELD *field[5];
 static FORM  *form;
-
 static uint64_t val;
-
 static int bit_pos;
 static int view = FIELDS_VIEW;
-
 static int binary_field_size;
-int base[3] = {
+
+static int base[3] = {
 	10,
 	16,
 	8,
 };
+
+static int update_fields(int index);
+static void position_binary_curser(int previous_pos, int next_pos);
 
 #define BINARY_WIN_LEN 17
 #define BYTE_BINARY_WIN_LEN (BINARY_WIN_LEN + 2)
@@ -71,35 +70,52 @@ int base[3] = {
 #define DBL_BINARY_WIN_LEN  (BINARY_WIN_LEN * 8) + 9
 
 char binary_field[DBL_BINARY_WIN_LEN];
-
+int dec_pos, hex_pos, oct_pos;
 static void set_fields_width(int width)
 {
+	int min_field_distance;
+
 	switch (width) {
 	case 64:
 		binary_field_size = DBL_BINARY_WIN_LEN;
 		max_dec_digits = MAX_DEC_DIGITS_64;
 		max_hex_digits = MAX_HEX_DIGITS_64;
 		max_oct_digits = MAX_OCT_DIGITS_64;
+		min_field_distance = 4;
+		width_str = " 64Bit ";
 		break;
 	case 32:
+		val &= 0xFFFFFFFF;
 		binary_field_size = LONG_BINARY_WIN_LEN;
 		max_dec_digits = MAX_DEC_DIGITS_32;
 		max_hex_digits = MAX_HEX_DIGITS_32;
 		max_oct_digits = MAX_OCT_DIGITS_32;
+		min_field_distance = 6;
+		width_str = " 32Bit ";
 		break;
 	case 16:
+		val &= 0xFFFF;
 		binary_field_size = WORD_BINARY_WIN_LEN;
 		max_dec_digits = MAX_DEC_DIGITS_16;
 		max_hex_digits = MAX_HEX_DIGITS_16;
 		max_oct_digits = MAX_OCT_DIGITS_16;
+		min_field_distance = 8;
+		width_str = " 16Bit ";
 		break;
 	case 8:
+		val &= 0xFF;
 		binary_field_size = BYTE_BINARY_WIN_LEN;
 		max_dec_digits = MAX_DEC_DIGITS_8;
 		max_hex_digits = MAX_HEX_DIGITS_8;
 		max_oct_digits = MAX_OCT_DIGITS_8;
+		min_field_distance = 10;
+		width_str = " 8Bit ";
 		break;
 	}
+
+	dec_pos = 0;
+	hex_pos = dec_pos + max_dec_digits + min_field_distance - 2;
+	oct_pos = hex_pos + max_hex_digits + min_field_distance + 1;
 }
 
 static void update_bit(int pos, int op)
@@ -193,8 +209,9 @@ void set_active_field(bool none)
 		return;
 
 	if (!none) {
-		set_field_fore(current_field(form), COLOR_PAIR(1));/* Put the field with blue background */
-		set_field_back(current_field(form), COLOR_PAIR(1));/* and white foreground (characters */
+		set_field_fore(current_field(form), COLOR_PAIR(1));
+		set_field_back(current_field(form),
+			       A_UNDERLINE | COLOR_PAIR(1));
 	}
 
 	for (int i=0; i < 3; i++) {
@@ -215,7 +232,8 @@ void position_binary_curser(int previous_pos, int next_pos)
 
 	if (next_pos != -1) {
 		pos = 2 + (2 * next_pos) + (2 * (next_pos / 8));
-		mvwchgat(binary_win, 1, pos, 1, A_UNDERLINE, COLOR_PAIR(0), NULL);
+		mvwchgat(binary_win, 1, pos, 1, A_UNDERLINE,
+			 COLOR_PAIR(0), NULL);
 		mvprintw(LINES - 2, 0, "bit %u  \n", g_width - 1 - next_pos);
 	}
 	wrefresh(binary_win);
@@ -270,7 +288,8 @@ void process_binary(int ch)
 	default:
 		if (ch == '1') {
 			update_bit(bit_pos, SET_BIT);
-			position_binary_curser(bit_pos, (bit_pos + 1) == (g_width) ?
+			position_binary_curser(bit_pos,
+					       (bit_pos + 1) == (g_width) ?
 					       (bit_pos) : (bit_pos + 1));
 			update_fields(-1);
 			if (bit_pos != g_width - 1)
@@ -278,7 +297,8 @@ void process_binary(int ch)
 			break;
 		} else if (ch == '0') {
 			update_bit(bit_pos, CLEAR_BIT);
-			position_binary_curser(bit_pos, (bit_pos + 1) == (g_width) ?
+			position_binary_curser(bit_pos,
+					       (bit_pos + 1) == (g_width) ?
 					       (bit_pos) : (bit_pos + 1));
 			update_fields(-1);
 			if (bit_pos != g_width - 1)
@@ -368,17 +388,17 @@ void paint_screen(void)
 
 	/* Initialize the fields */
 	field[0] = new_field(1, max_dec_digits, 1,
-			     10, 0, 0);
+			     dec_pos, 0, 0);
 
 	field[1] = new_field(1, max_hex_digits, 1,
-			     40, 0, 0);
+			     hex_pos, 0, 0);
 	field[2] = new_field(1, max_oct_digits, 1,
-			     70, 0, 0);
+			     oct_pos, 0, 0);
 	field[3] = NULL;
 
 	for (int i=0; i < 3; i++) {
 		set_field_back(field[i], A_UNDERLINE);
-		field_opts_off(field[i], O_AUTOSKIP );
+		field_opts_off(field[i], O_AUTOSKIP);
 		set_field_userptr(field[i], &base[i]);
 	}
 
@@ -393,7 +413,7 @@ void paint_screen(void)
 
 	scale_form(form, &rows, &cols);
 
-	fields_win = newwin(rows + 3, cols + 3, 2, (COLS - cols) / 2);
+	fields_win = newwin(rows + 3, cols + 6, 2, 0 );
 	keypad(fields_win, TRUE);
 
 	binary_win = newwin(4, binary_field_size,
@@ -413,9 +433,11 @@ void paint_screen(void)
 
 	mvprintw(0, (COLS - strlen(title)) / 2, "%s", title);
 	box(fields_win, 0, 0);
-	mvwprintw(fields_win, 1, 10, "Decimal:");
-	mvwprintw(fields_win, 1, 40, "Hexdecimal:");
-	mvwprintw(fields_win, 1, 70, "Octal:");
+	mvwprintw(fields_win, 0, (cols + 6 - strlen(width_str)) / 2, "%s",
+		  width_str);
+	mvwprintw(fields_win, 1, dec_pos + 2, "Decimal:");
+	mvwprintw(fields_win, 1, hex_pos + 2, "Hexdecimal:");
+	mvwprintw(fields_win, 1, oct_pos + 2, "Octal:");
 
 	wrefresh(fields_win);
 	update_binary();
@@ -454,8 +476,12 @@ int start_interactive(uint64_t start)
 	set_fields_width(g_width);
 
 	paint_screen();
-	while((ch = wgetch(fields_win)) != 'q') {
+	while(true) {
+		ch = wgetch(fields_win);
 		LOG("ch= %d\n", ch);
+
+		if (ch == 'q' || ch == 'Q')
+			break;
 
 		if (ch == KEY_RESIZE) {
 			LOG("Terminal resize\n");
