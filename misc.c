@@ -72,7 +72,7 @@ int validate_input(int ch, int base)
 
 uint64_t base_scanf(const char *buf, int base)
 {
-	uint64_t value;
+	uint64_t value = 0;
 	int ret = 0;
 
 	switch (base) {
