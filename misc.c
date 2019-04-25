@@ -91,8 +91,7 @@ uint64_t base_scanf(const char *buf, int base)
 	}
 
 	if (ret == EOF || !ret) {
-		fprintf(stderr, "Couldn't parse parameter\n");
-		exit(1);
+		die("Couldn't parse parameter\n");
 	}
 
 	return value;
