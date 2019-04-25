@@ -361,20 +361,10 @@ void process_fields(int ch)
 	}
 }
 
-int start_interactive(uint64_t start)
+void paint_screen(void)
 {
-	int ch, rows, cols;
+	int rows, cols;
 	int rc;
-
-	val = start;
-
-#ifdef TRACE
-	fd = fopen("log.txt", "w");
-#endif
-	init_terminal();
-	refresh();
-
-	set_fields_width(g_width);
 
 	/* Initialize the fields */
 	field[0] = new_field(1, max_dec_digits, 1,
@@ -436,9 +426,44 @@ int start_interactive(uint64_t start)
 	rc = post_form(form);
 	if (rc != E_OK)
 		die("post_form failed: %d\n", rc);
+}
 
+void unpaint_screen(void)
+{
+	int i;
+
+	unpost_form(form);
+	free_form(form);
+	for (i=0; i < 3; i++)
+		free_field(field[i]);
+	delwin(fields_win);
+	delwin(binary_win);
+}
+
+int start_interactive(uint64_t start)
+{
+	int ch;
+
+	val = start;
+
+#ifdef TRACE
+	fd = fopen("log.txt", "w");
+#endif
+	init_terminal();
+	refresh();
+
+	set_fields_width(g_width);
+
+	paint_screen();
 	while((ch = wgetch(fields_win)) != 'q') {
 		LOG("ch= %d\n", ch);
+
+		if (ch == KEY_RESIZE) {
+			LOG("Terminal resize\n");
+			unpaint_screen();
+			paint_screen();
+			continue;
+		}
 
 		if (view == BINARY_VIEW)
 			process_binary(ch);
@@ -448,13 +473,7 @@ int start_interactive(uint64_t start)
 		refresh();
 	}
 
-	unpost_form(form);
-	free_form(form);
-	for (int i=0; i < 3; i++)
-		free_field(field[i]);
-	delwin(fields_win);
-	delwin(binary_win);
-
+	unpaint_screen();
 #ifdef TRACE
 	fclose(fd);
 #endif
