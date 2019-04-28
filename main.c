@@ -107,10 +107,10 @@ int main(int argc, char *argv[])
 			break;
 		case 'v':
 			print_version();
-			exit(0);
+			exit(EXIT_SUCCESS);
 		case 'h':
 			print_help(stdout);
-			exit(0);
+			exit(EXIT_SUCCESS);
 		case 'i':
 			interactive = 1;
 			break;
@@ -122,7 +122,7 @@ int main(int argc, char *argv[])
 		case '?':
 		default:
 			print_help(stderr);
-			exit(1);
+			exit(EXIT_FAILURE);
 		}
 	}
 	if (optind < argc) {

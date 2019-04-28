@@ -39,7 +39,7 @@ void die(const char *fmt, ...)
 	deinit_terminal();
 	vfprintf(stderr, fmt, args);
 	va_end(args);
-	exit(1);
+	exit(EXIT_FAILURE);
 }
 
 int validate_input(int ch, int base)
