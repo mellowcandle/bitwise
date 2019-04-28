@@ -416,8 +416,7 @@ void paint_screen(void)
 	fields_win = newwin(rows + 3, cols + 6, 2, 0 );
 	keypad(fields_win, TRUE);
 
-	binary_win = newwin(4, binary_field_size,
-			    8, (COLS - binary_field_size) / 2);
+	binary_win = newwin(4, binary_field_size, 8, 0);
 	box(binary_win, 0, 0);
 
 	rc = set_form_win(form, fields_win);
