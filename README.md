@@ -9,6 +9,9 @@ Terminal based bitwise calculator in curses
 
 ## 
 
+![alt text](https://github.com/mellowcandle/bitwise/raw/master/resources/bitwise.gif "Bitwise demo")
+
+
 ## Usage
 _bitwise_ can be used both interactivly and in command line mode.
 
