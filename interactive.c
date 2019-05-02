@@ -74,7 +74,7 @@ int dec_pos, hex_pos, oct_pos;
 static void set_fields_width(int width)
 {
 	int min_field_distance;
-
+	g_width = width;
 	switch (width) {
 	case 64:
 		binary_field_size = DBL_BINARY_WIN_LEN;
@@ -458,6 +458,8 @@ void unpaint_screen(void)
 		free_field(field[i]);
 	delwin(fields_win);
 	delwin(binary_win);
+	clear();
+	refresh();
 }
 
 int start_interactive(uint64_t start)
@@ -479,24 +481,48 @@ int start_interactive(uint64_t start)
 		ch = wgetch(fields_win);
 		LOG("ch= %d\n", ch);
 
-		if (ch == 'q' || ch == 'Q')
-			break;
+		switch (ch) {
 
-		if (ch == KEY_RESIZE) {
+		case 'q':
+		case 'Q':
+			goto exit;
+			break;
+		case KEY_RESIZE:
 			LOG("Terminal resize\n");
 			unpaint_screen();
 			paint_screen();
 			continue;
+			break;
+		case '!':
+			unpaint_screen();
+			set_fields_width(8);
+			paint_screen();
+			break;
+		case '@':
+			unpaint_screen();
+			set_fields_width(16);
+			paint_screen();
+			break;
+		case '$':
+			unpaint_screen();
+			set_fields_width(32);
+			paint_screen();
+			break;
+		case '*':
+			unpaint_screen();
+			set_fields_width(64);
+			paint_screen();
+			break;
+		default:
+			if (view == BINARY_VIEW)
+				process_binary(ch);
+			else
+				process_fields(ch);
 		}
-
-		if (view == BINARY_VIEW)
-			process_binary(ch);
-		else
-			process_fields(ch);
 
 		refresh();
 	}
-
+exit:
 	unpaint_screen();
 #ifdef TRACE
 	fclose(fd);
