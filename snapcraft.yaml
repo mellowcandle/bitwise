@@ -12,6 +12,6 @@ apps:
 parts:
         bitwise:
                 plugin: autotools
-                source: https://github.com/mellowcandle/bitwise/releases/download/0.12/bitwise-0.12.tar.gz
+                source: https://github.com/mellowcandle/bitwise/releases/download/v0.12/bitwise-v0.12.tar.gz
                 build-packages: [libncurses5-dev]
 
