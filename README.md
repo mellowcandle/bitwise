@@ -43,11 +43,11 @@ To move around use the arrow keys, or use _vi_ key bindings : <kbd> h </kbd> <kb
 
 You can toggle a bit bit using the <kbd> space </kbd> key.
 
-Reducing or extending the bit width interactivblly is also very easy, just use:
+Reducing or extending the bit width interactively is also very easy, just use:
 
 <kbd> ! </kbd> for 8bit, <kbd> @ </kbd>  for 16Bit, <kbd> $ </kbd> for 32Bit and <kbd> * </kbd> for 64Bit.
 
-When chaning bit width, the number is *masked* with the new width, so you might lost precision, use with care.
+When changing the bit width, the number is *masked* with the new width, so you might lost precision, use with care.
 
 Leave the program by pressing <kbd> q </kbd>.
 
