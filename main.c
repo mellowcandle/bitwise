@@ -81,6 +81,7 @@ static void print_help(FILE *out)
 	fprintf(out, "  -h, --help\t\t Display this help and exit\n");
 	fprintf(out, "  -v, --version\t\t Output version information and exit\n");
 	fprintf(out, "      --no-color\t Start without color support\n\n");
+
 }
 
 int main(int argc, char *argv[])

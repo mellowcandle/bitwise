@@ -29,9 +29,6 @@
 #define MAX_HEX_DIGITS_8 2
 #define MAX_OCT_DIGITS_8 4
 
-#define FIELDS_VIEW 0
-#define BINARY_VIEW 1
-
 #define CLEAR_BIT 0
 #define SET_BIT 1
 #define TOGGLE_BIT 2
@@ -47,12 +44,15 @@ static char title[] = "Bitwise";
 static char *width_str;
 WINDOW *fields_win;
 WINDOW *binary_win;
+WINDOW *cmd_win;
+
+WINDOW *active_win;
+WINDOW *last_win;
 
 static FIELD *field[5];
 static FORM  *form;
 static uint64_t val;
 static int bit_pos;
-static int view = FIELDS_VIEW;
 static int binary_field_size;
 
 static int base[3] = {
@@ -72,6 +72,7 @@ static void position_binary_curser(int previous_pos, int next_pos);
 
 char binary_field[DBL_BINARY_WIN_LEN];
 int dec_pos, hex_pos, oct_pos;
+bool g_leave_req;
 static void set_fields_width(int width)
 {
 	int min_field_distance;
@@ -269,6 +270,7 @@ void process_binary(int ch)
 		position_binary_curser(bit_pos, tmp);
 		bit_pos = tmp;
 		break;
+
 	case KEY_RIGHT:
 	case 'l':
 		LOG("Key right\n");
@@ -293,7 +295,7 @@ void process_binary(int ch)
 	case 'k':
 	case '\t':
 		LOG("Key up\n");
-		view = FIELDS_VIEW;
+		active_win = fields_win;
 		set_active_field(false);
 		position_binary_curser(bit_pos, -1);
 		form_driver(form, REQ_END_LINE);
@@ -339,6 +341,32 @@ void process_binary(int ch)
 	}
 }
 
+void process_cmd(int ch)
+{
+	/* If TAB || ESC || BACKSPACE (to -1) */
+	if (ch == '\t' || ch == 27 ||
+	    (ch == 127 && !rl_point)) {
+		active_win = last_win;
+		if (active_win == fields_win) {
+			set_active_field(false);
+			wrefresh(fields_win);
+
+		} else if (active_win == binary_win) {
+			position_binary_curser(0, bit_pos);
+		}
+
+		keypad(stdscr, FALSE);
+		curs_set(0);
+		werase(cmd_win);
+		wrefresh(cmd_win);
+		return;
+	}
+
+	g_input = ch;
+	g_input_avail = true;
+	rl_callback_read_char();
+}
+
 void process_fields(int ch)
 {
 	FIELD *tmp_field;
@@ -369,7 +397,7 @@ void process_fields(int ch)
 	case 'j':
 	case '\t':
 		LOG("Key down\n");
-		view = BINARY_VIEW;
+		active_win = binary_win;
 		set_active_field(true);
 		form_driver(form, REQ_VALIDATION);
 		wrefresh(fields_win);
@@ -442,7 +470,10 @@ void paint_screen(void)
 	keypad(fields_win, TRUE);
 
 	binary_win = newwin(4, binary_field_size, 8, 0);
+	keypad(binary_win, TRUE);
 	box(binary_win, 0, 0);
+
+	cmd_win = newwin(1, COLS, LINES - 1, 0);
 
 	rc = set_form_win(form, fields_win);
 	if (rc != E_OK)
@@ -464,6 +495,7 @@ void paint_screen(void)
 	mvwprintw(fields_win, 1, oct_pos + 2, "Octal:");
 
 	wrefresh(fields_win);
+	wrefresh(cmd_win);
 	update_binary();
 	update_fields(-1);
 	refresh();
@@ -483,6 +515,7 @@ void unpaint_screen(void)
 		free_field(field[i]);
 	delwin(fields_win);
 	delwin(binary_win);
+	delwin(cmd_win);
 	clear();
 	refresh();
 }
@@ -499,26 +532,38 @@ int start_interactive(uint64_t start)
 	fd = fopen("log.txt", "w");
 #endif
 	init_terminal();
+	init_readline();
 	refresh();
 
 	set_fields_width(g_width);
 
 	paint_screen();
+	last_win = active_win = fields_win;
+
 	while(true) {
-		ch = wgetch(fields_win);
-		LOG("ch= %d\n", ch);
+		if (g_leave_req)
+			break;
+
+		ch = wgetch(active_win);
+		LOG("active_win = %d ch= %d\n",(uint64_t)active_win, ch);
+
+		if (active_win == cmd_win) {
+			process_cmd(ch);
+			refresh();
+			continue;
+		}
 
 		switch (ch) {
 
 		case 'q':
 		case 'Q':
-			goto exit;
-			break;
+			g_leave_req = true;
+			continue;
 		case KEY_RESIZE:
 			LOG("Terminal resize\n");
 			unpaint_screen();
 			paint_screen();
-			continue;
+			rl_resize_terminal();
 			break;
 		case '!':
 			unpaint_screen();
@@ -545,21 +590,45 @@ int start_interactive(uint64_t start)
 			val = ~val & MASK(g_width);
 			paint_screen();
 			break;
+		case ':':
+			last_win = active_win;
+			active_win = cmd_win;
+			if(last_win == fields_win) {
+				set_active_field(true);
+				form_driver(form, REQ_VALIDATION);
+				wrefresh(fields_win);
+
+			} else if (last_win == binary_win) {
+				position_binary_curser(bit_pos, -1);
+			}
+
+			keypad(stdscr, FALSE);
+			intrflush(NULL, FALSE);
+			readline_redisplay();
+			break;
 		default:
-			if (view == BINARY_VIEW)
+			if (active_win == binary_win)
 				process_binary(ch);
-			else
+			else if (active_win == fields_win)
 				process_fields(ch);
 		}
 
 		refresh();
 	}
-exit:
+
 	unpaint_screen();
 #ifdef TRACE
 	fclose(fd);
 #endif
-	deinit_terminal();
+	/* OK. this is really weird, it seems that by calling
+	 * deinit_readline() before exiting is breaking bash
+	 * afterwards and must be fixed by typing reset in the
+	 * terminal.
+	 * I couldn't figure this one out, let's just leave it like
+	 * this, hopefully it won't affect other env */
 
+	/* deinit_readline(); */
+
+	deinit_terminal();
 	return 0;
 }
