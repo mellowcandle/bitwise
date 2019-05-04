@@ -242,7 +242,32 @@ void position_binary_curser(int previous_pos, int next_pos)
 
 void process_binary(int ch)
 {
+	int tmp;
+
 	switch(ch) {
+	case 'w':
+	case 'W':
+		LOG("word right\n");
+		tmp = (bit_pos + 8) & ~(8-1);
+		if (tmp >= g_width - 1) {
+			beep();
+			break;
+		}
+		position_binary_curser(bit_pos, tmp);
+		bit_pos = tmp;
+		break;
+
+	case 'b':
+	case 'B':
+		LOG("word left\n");
+		tmp = (bit_pos - 8) & ~(8-1);
+		if (tmp <  0) {
+			beep();
+			break;
+		}
+		position_binary_curser(bit_pos, tmp);
+		bit_pos = tmp;
+		break;
 	case KEY_RIGHT:
 	case 'l':
 		LOG("Key right\n");
