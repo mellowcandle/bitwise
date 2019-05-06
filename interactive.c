@@ -351,7 +351,7 @@ void process_fields(int ch)
 		form_driver(form, REQ_NEXT_FIELD);
 		/* Go to the end of the present buffer */
 		/* Leaves nicely at the last character */
-		form_driver(form, REQ_END_LINE);
+		form_driver(form, REQ_END_FIELD);
 		set_active_field(false);
 		wrefresh(fields_win);
 		break;
@@ -360,7 +360,7 @@ void process_fields(int ch)
 		LOG("Key left\n");
 		/* Go to previous field */
 		form_driver(form, REQ_PREV_FIELD);
-		form_driver(form, REQ_END_LINE);
+		form_driver(form, REQ_END_FIELD);
 		set_active_field(false);
 		wrefresh(fields_win);
 		break;
@@ -377,9 +377,8 @@ void process_fields(int ch)
 	case KEY_BACKSPACE:
 	case 127:
 		LOG("Backspace\n");
-		LOG("Userptr field %d\n", *((int *)current_field(form)->usrptr));
 		form_driver(form, REQ_DEL_CHAR);
-		form_driver(form, REQ_PREV_CHAR);
+		form_driver(form, REQ_DEL_PREV);
 		form_driver(form, REQ_VALIDATION);
 		update_fields(field_index(current_field(form)));
 		update_binary();
