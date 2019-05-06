@@ -13,12 +13,12 @@ Terminal based bitwise calculator in curses
 
 
 ## Usage
-_bitwise_ can be used both interactivly and in command line mode.
+_bitwise_ can be used both Interactively and in command line mode.
 
 ### Command line mode
-In command line mode, passing a number in any base (Decimal, Hexedical & Octal) will output the number in all bases including binary representation.
+In command line mode, passing a number in any base (Decimal, Hexadecimal & Octal) will output the number in all bases including binary representation.
 
-_bitwise_ detects the base by the preface of the input (0x/0X for hexedecimal, leading 0 for octal, and the rest is decimal).
+_bitwise_ detects the base by the preface of the input (0x/0X for hexadecimal, leading 0 for octal, and the rest is decimal).
 
 #### Example:
 
