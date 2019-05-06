@@ -30,7 +30,7 @@ Octal: 02214221421
 Size: 291.07MB
 Binary:
 0 0 0 1 0 0 1 0 | 0 0 1 1 0 0 0 1 | 0 0 1 0 0 0 1 1 | 0 0 0 1 0 0 0 1 
-    31 - 24                   23 - 16                  15 -  8                   7 -  0     
+    31 - 24           23 - 16           15 -  8            7 -  0     
 ```
 
 ### Interactive mode
@@ -56,7 +56,7 @@ Leave the program by pressing <kbd> q </kbd>.
 ## Snap
 If your distribution supports Snap just type:
 `
-sudo snap install bitwise --beta
+sudo snap install bitwise
 `
 
 ## Arch
