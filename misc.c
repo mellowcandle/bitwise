@@ -16,10 +16,12 @@ int g_width = 0;
 void init_terminal(void)
 {
 	initscr();
-	if(has_colors() == FALSE)
+	if(has_colors() == FALSE) {
 		g_has_color = 0;
-	else
+	} else {
 		start_color();
+		use_default_colors();
+	}
 	cbreak();
 	noecho();
 	keypad(stdscr, TRUE);
