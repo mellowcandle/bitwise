@@ -52,7 +52,7 @@ WINDOW *last_win;
 static FIELD *field[5];
 static FORM  *form;
 static uint64_t val;
-static int bit_pos;
+int bit_pos;
 static int binary_field_size;
 
 static int base[3] = {
@@ -62,7 +62,6 @@ static int base[3] = {
 };
 
 static int update_fields(int index);
-static void position_binary_curser(int previous_pos, int next_pos);
 
 #define BINARY_WIN_LEN 17
 #define BYTE_BINARY_WIN_LEN (BINARY_WIN_LEN + 2)
@@ -341,31 +340,6 @@ void process_binary(int ch)
 	}
 }
 
-void process_cmd(int ch)
-{
-	/* If TAB || ESC || BACKSPACE (to -1) */
-	if (ch == '\t' || ch == 27 ||
-	    (ch == 127 && !rl_point)) {
-		active_win = last_win;
-		if (active_win == fields_win) {
-			set_active_field(false);
-			wrefresh(fields_win);
-
-		} else if (active_win == binary_win) {
-			position_binary_curser(0, bit_pos);
-		}
-
-		keypad(stdscr, FALSE);
-		curs_set(0);
-		werase(cmd_win);
-		wrefresh(cmd_win);
-		return;
-	}
-
-	g_input = ch;
-	g_input_avail = true;
-	rl_callback_read_char();
-}
 
 void process_fields(int ch)
 {

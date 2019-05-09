@@ -28,6 +28,8 @@ int sprintf_size(uint64_t val, char *buf);
 void readline_redisplay(void);
 void die(const char *fmt, ...);
 int start_interactive(uint64_t start);
+void set_active_field(bool none);
+void position_binary_curser(int previous_pos, int next_pos);
 
 #define TRACE
 #ifdef TRACE
@@ -38,7 +40,12 @@ extern FILE *fd;
 #endif
 
 extern WINDOW *fields_win;
+extern WINDOW *binary_win;
 extern WINDOW *cmd_win;
+extern WINDOW *active_win;
+extern WINDOW *last_win;
+
+extern int bit_pos;
 extern int g_has_color;
 extern int g_width;
 extern bool g_input_avail;
