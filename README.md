@@ -7,10 +7,9 @@ Terminal based bitwise calculator in curses
        src="https://img.shields.io/coverity/scan/18170.svg"/>
 </a>
 
-## 
+##
 
-![alt text](https://github.com/mellowcandle/bitwise/raw/master/resources/bitwise.gif "Bitwise demo")
-
+![Demo](https://github.com/mellowcandle/bitwise/raw/master/resources/bitwise.gif "Bitwise demo")
 
 ## Usage
 _bitwise_ can be used both Interactively and in command line mode.
@@ -53,21 +52,25 @@ Leave the program by pressing <kbd> q </kbd>.
 
 ## Installation
 
-## Snap
+### Snap
 If your distribution supports Snap just type:
 `
 sudo snap install bitwise
 `
 
-## Arch
+### Arch
 Your can use the AUR repository: https://aur.archlinux.org/packages/bitwise/
 
-## Building from source
+### Building from source
 *Make sure you have ncurses package installed*
-1. Download latest release.
-2. unpack release
-3. ./configure
-4. make
-5. sudo make install
 
+- Download [the latest release](https://github.com/mellowcandle/bitwise/releases/latest)
 
+```sh
+tar xfz RELEASE-FILE.TAR.GZ
+cd RELEASE-DIR
+
+./configure
+make
+sudo make install
+```
