@@ -12,7 +12,9 @@ static uint64_t parse_input(char *input)
 {
 	int base;
 
-	if (input[0] == '0')
+	if (tolower(input[0]) == 'b')
+		base = 2;
+	else if (input[0] == '0')
 		if (input[1] == 'x' || input[1] == 'X')
 			base = 16;
 		else
@@ -72,7 +74,7 @@ static void print_version(void)
 static void print_help(FILE *out)
 {
 	fprintf(out, "Usage: bitwise [OPTION...] [input]\n\n");
-	fprintf(out, "[input] can be decimal, hexdecimal or octal number, depending on the prefix (0x | 0)\n\n");
+	fprintf(out, "[input] can be decimal, hexdecimal, octal or binary number, depending on the prefix (0x | 0 | b)\n\n");
 	fprintf(out, "  -i, --interactive\t Load interactive mode (default if no input)\n");
 	fprintf(out, "  -w, --width[b|w|l|d]\t Set bit width (default: l)\n");
 	fprintf(out, "  -h, --help\t\t Display this help and exit\n");

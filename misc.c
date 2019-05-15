@@ -72,6 +72,34 @@ int validate_input(int ch, int base)
 	return 1;
 }
 
+int binary_scanf(const char *buf, uint64_t *val)
+{
+	uint64_t value = 0;
+
+	/* Skip the leading b */
+	buf++;
+
+	while (*buf) {
+		switch (*buf) {
+
+		case '0':
+			value <<= 1;
+			break;
+		case '1':
+			value <<= 1;
+			value++;
+			break;
+		default:
+			return -1;
+		}
+		buf++;
+	}
+
+	*val = value;
+
+	return 1;
+}
+
 uint64_t base_scanf(const char *buf, int base)
 {
 	uint64_t value = 0;
@@ -86,6 +114,9 @@ uint64_t base_scanf(const char *buf, int base)
 		break;
 	case 8:
 		ret = sscanf(buf, "%lo", &value);
+		break;
+	case 2:
+		ret = binary_scanf(buf, &value);
 		break;
 	default:
 		fprintf(stderr, "Unknown base\n");
