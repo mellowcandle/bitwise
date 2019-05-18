@@ -39,16 +39,23 @@ It also allows changing individual bits in the binary.
 
 #### Navigation in interactive mode
 To move around use the arrow keys, or use _vi_ key bindings : <kbd> h </kbd> <kbd> j </kbd> <kbd> k </kbd> <kbd> l </kbd>.
+Leave the program by pressing <kbd> q </kbd>.
 
+##### Binary specific movement
 You can toggle a bit bit using the <kbd> space </kbd> key.
+You can jump a byte forward using <kbd> w </kbd> and backwards one byte using <kbd> b </kbd>. 
+
+#### Bitwise operation in interactive mode
+
+##### Setting the bit width:
 
 Reducing or extending the bit width interactively is also very easy, just use:
-
 <kbd> ! </kbd> for 8bit, <kbd> @ </kbd>  for 16Bit, <kbd> $ </kbd> for 32Bit and <kbd> * </kbd> for 64Bit.
-
 When changing the bit width, the number is *masked* with the new width, so you might lost precision, use with care.
 
-Leave the program by pressing <kbd> q </kbd>.
+##### NOT:
+
+Press <kbd> ~ </kbd> to perform the NOT operator.
 
 ## Installation
 
