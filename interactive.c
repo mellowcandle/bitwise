@@ -46,8 +46,7 @@ WINDOW *fields_win;
 WINDOW *binary_win;
 WINDOW *cmd_win;
 
-WINDOW *active_win;
-WINDOW *last_win;
+int active_win, last_win;
 
 static FIELD *field[5];
 static FORM  *form;
@@ -69,10 +68,12 @@ static int update_fields(int index);
 #define LONG_BINARY_WIN_LEN (BINARY_WIN_LEN * 4) + 5
 #define DBL_BINARY_WIN_LEN  (BINARY_WIN_LEN * 8) + 9
 
+
+
 char binary_field[DBL_BINARY_WIN_LEN];
 int dec_pos, hex_pos, oct_pos;
 bool g_leave_req;
-static void set_fields_width(int width)
+void set_fields_width(int width)
 {
 	int min_field_distance;
 	g_width = width;
@@ -294,7 +295,7 @@ void process_binary(int ch)
 	case 'k':
 	case '\t':
 		LOG("Key up\n");
-		active_win = fields_win;
+		active_win = FIELDS_WIN;
 		set_active_field(false);
 		position_binary_curser(bit_pos, -1);
 		form_driver(form, REQ_END_LINE);
@@ -371,7 +372,7 @@ void process_fields(int ch)
 	case 'j':
 	case '\t':
 		LOG("Key down\n");
-		active_win = binary_win;
+		active_win = BINARY_WIN;
 		set_active_field(true);
 		form_driver(form, REQ_VALIDATION);
 		wrefresh(fields_win);
@@ -512,16 +513,16 @@ int start_interactive(uint64_t start)
 	set_fields_width(g_width);
 
 	paint_screen();
-	last_win = active_win = fields_win;
+	last_win = active_win = FIELDS_WIN;
 
 	while(true) {
 		if (g_leave_req)
 			break;
 
-		ch = wgetch(active_win);
-		LOG("active_win = %d ch= %d\n",(uint64_t)active_win, ch);
+		ch = wgetch(get_win(active_win));
+		LOG("%d window ch= %d\n",active_win, ch);
 
-		if (active_win == cmd_win) {
+		if (active_win == COMMAND_WIN) {
 			process_cmd(ch);
 			refresh();
 			continue;
@@ -566,13 +567,12 @@ int start_interactive(uint64_t start)
 			break;
 		case ':':
 			last_win = active_win;
-			active_win = cmd_win;
-			if(last_win == fields_win) {
+			active_win = COMMAND_WIN;
+			if (last_win == FIELDS_WIN) {
 				set_active_field(true);
 				form_driver(form, REQ_VALIDATION);
 				wrefresh(fields_win);
-
-			} else if (last_win == binary_win) {
+			} else if (last_win == BINARY_WIN) {
 				position_binary_curser(bit_pos, -1);
 			}
 
@@ -581,9 +581,9 @@ int start_interactive(uint64_t start)
 			readline_redisplay();
 			break;
 		default:
-			if (active_win == binary_win)
+			if (active_win == BINARY_WIN)
 				process_binary(ch);
-			else if (active_win == fields_win)
+			else if (active_win == FIELDS_WIN)
 				process_fields(ch);
 		}
 
