@@ -540,6 +540,11 @@ int start_interactive(uint64_t start)
 			set_fields_width(64);
 			paint_screen();
 			break;
+		case '~':
+			unpaint_screen();
+			val = ~val & MASK(g_width);
+			paint_screen();
+			break;
 		default:
 			if (view == BINARY_VIEW)
 				process_binary(ch);
