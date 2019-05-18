@@ -2,6 +2,7 @@
  * Ramon Fried <ramon.fried@gmail.com>
  */
 
+#include <ctype.h>
 #include <stdlib.h>
 #include <stdint.h>
 #include <getopt.h>
