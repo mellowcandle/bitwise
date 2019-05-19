@@ -1,4 +1,4 @@
-# bitwise (v0.13)
+# Bitwise
 Terminal based bitwise calculator in curses
 
 [![Build Status](https://travis-ci.org/mellowcandle/bitwise.svg?branch=master)](https://travis-ci.org/mellowcandle/bitwise)[![codecov](https://codecov.io/gh/mellowcandle/bitwise/branch/master/graph/badge.svg)](https://codecov.io/gh/mellowcandle/bitwise)

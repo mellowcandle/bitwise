@@ -1,0 +1,6 @@
+Bitwise v0.14
+==========================================
+* Added NOT (~) command to interactive mode
+* Support binary input in command line mode
+* Updated documentation
+
