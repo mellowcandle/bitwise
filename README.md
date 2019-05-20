@@ -1,11 +1,21 @@
 # Bitwise
-Terminal based bitwise calculator in curses
-
+## Terminal based bitwise calculator in curses
 [![Build Status](https://travis-ci.org/mellowcandle/bitwise.svg?branch=master)](https://travis-ci.org/mellowcandle/bitwise)[![codecov](https://codecov.io/gh/mellowcandle/bitwise/branch/master/graph/badge.svg)](https://codecov.io/gh/mellowcandle/bitwise)
 [![Snap Status](https://build.snapcraft.io/badge/mellowcandle/bitwise.svg)](https://build.snapcraft.io/user/mellowcandle/bitwise)<a href="https://scan.coverity.com/projects/mellowcandle-bitwise">
   <img alt="Coverity Scan Build Status"
        src="https://img.shields.io/coverity/scan/18170.svg"/>
 </a>
+
+_Bitwise_ is multi base interactive calculator supporting dynamic base convertion and bit manipulation.
+It's a handy tool for low level hackers, kernel developers and device drivers developers.
+
+Some of the features include:
+* Interactive ncurses interface
+* Command line interface that supports base conversion.
+* Individual bit manipulator.
+* Bitwise operations such as NOT, OR, AND, XOR, and shifts.
+
+
 
 ##
 
