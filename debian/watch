@@ -1,0 +1,5 @@
+version=4
+
+opts="filenamemangle=s%(?:.*?)?v?(\d[\d.]*)\.tar\.gz%bitwise-$1.tar.gz%" \
+   https://github.com/mellowcandle/bitwise/releases \
+   (?:.*?/)?v?(\d[\d.]*)\.tar\.gz debian uupdate
