@@ -69,21 +69,23 @@ Press <kbd> ~ </kbd> to perform the NOT operator.
 
 ## Installation
 
-## Ubuntu
+### Linux
+#### Ubuntu
 ```
 sudo add-apt-repository ppa:ramon-fried/bitwise
 sudo apt-get update
 sudo apt-get install bitwise
 ```
-
-### Snap
+#### Snap
 If your distribution supports Snap just type:
 `
 sudo snap install bitwise
 `
-
-### Arch
+#### Arch
 Your can use the AUR repository: https://aur.archlinux.org/packages/bitwise/
+
+### Windows
+No, wait. really ???
 
 ### Building from source
 *Make sure you have ncurses package installed*
