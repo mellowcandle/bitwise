@@ -70,11 +70,11 @@ Press <kbd> ~ </kbd> to perform the NOT operator.
 ## Installation
 
 ## Ubuntu
-`
+```
 sudo add-apt-repository ppa:ramon-fried/bitwise
 sudo apt-get update
 sudo apt-get install bitwise
-`
+```
 
 ### Snap
 If your distribution supports Snap just type:
