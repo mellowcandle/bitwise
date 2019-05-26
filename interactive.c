@@ -8,7 +8,6 @@
 #include <stdint.h>
 #include <string.h>
 #include <assert.h>
-#include <locale.h>
 #include <fcntl.h>
 #include <sys/stat.h>
 #include "bitwise.h"
@@ -501,11 +500,6 @@ int start_interactive(uint64_t start)
 
 	val = start;
 
-	setlocale(LC_ALL, "");
-
-#ifdef TRACE
-	fd = fopen("log.txt", "w");
-#endif
 	init_terminal();
 	init_readline();
 	refresh();
@@ -591,9 +585,6 @@ int start_interactive(uint64_t start)
 	}
 
 	unpaint_screen();
-#ifdef TRACE
-	fclose(fd);
-#endif
 	/* OK. this is really weird, it seems that by calling
 	 * deinit_readline() before exiting is breaking bash
 	 * afterwards and must be fixed by typing reset in the

@@ -19,7 +19,7 @@ static struct cmd cmds[] = {
 	{"width", 1, 1, cmd_set_width},
 };
 
-int get_cmd(const char *cmd_name)
+static int get_cmd(const char *cmd_name)
 {
 	int i = 0;
 
@@ -38,6 +38,7 @@ static int parse_cmd(char *cmdline)
 	int cmd_entry;
 	int i = 0;
 	int rc;
+	uint64_t a;
 
 	LOG("got command: %s\n", cmdline);
 
@@ -52,11 +53,14 @@ static int parse_cmd(char *cmdline)
 
 	LOG("Finished tokenizing %d tokens\n", i);
 
+	calc(i, tokens);
 	cmd_entry = get_cmd(tokens[0]);
-	if (cmd_entry >= 0)
+	if (cmd_entry >= 0) {
 		if ((i - 1 >= cmds[cmd_entry].min_args) &&
 		    (i - 1 <= cmds[cmd_entry].max_args))
 			rc = cmds[cmd_entry].func(&tokens[1], i-1);
+	} else if (!parse_input(tokens[0], &a))
+		LOG("It's a number\n");
 
 	if (rc) {
 		LOG("Unsupported parameter\n");

@@ -6,25 +6,9 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <getopt.h>
+#include <locale.h>
 #include "bitwise.h"
 #include "config.h"
-
-static uint64_t parse_input(char *input)
-{
-	int base;
-
-	if (tolower(input[0]) == 'b')
-		base = 2;
-	else if (input[0] == '0')
-		if (input[1] == 'x' || input[1] == 'X')
-			base = 16;
-		else
-			base = 8;
-	else
-		base = 10;
-
-	return base_scanf(input, base);
-}
 
 int print_conversions(uint64_t val)
 {
@@ -90,6 +74,13 @@ int main(int argc, char *argv[])
 	char width;
 	int interactive = 0;
 	uint64_t val = 0;
+	int rc;
+
+#ifdef TRACE
+	fd = fopen("log.txt", "w");
+#endif
+
+	setlocale(LC_ALL, "");
 
 	while (1) {
 		static struct option long_options[] = {
@@ -130,7 +121,12 @@ int main(int argc, char *argv[])
 		}
 	}
 	if (optind < argc) {
-		val = parse_input(argv[optind]);
+		rc = parse_input(argv[optind], &val);
+		if (rc) {
+			fprintf(stderr, "Couldn't parse input number: %s\n", argv[optind]);
+			print_help(stderr);
+			exit(EXIT_FAILURE);
+		}
 		if (!g_width) {
 			set_width_by_val(val);
 		}
@@ -141,5 +137,10 @@ int main(int argc, char *argv[])
 
 	if (!g_width)
 		g_width = 32;
-	return start_interactive(val);
+	start_interactive(val);
+
+#ifdef TRACE
+	fclose(fd);
+#endif
+	return 0;
 }
