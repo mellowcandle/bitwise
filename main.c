@@ -45,15 +45,15 @@ int print_conversions(uint64_t val)
 	for (i = g_width; i > 0; i--) {
 		if ((i % 8 == 0) && (i != g_width)) {
 			binary[pos] = '|';
-			binary[pos+1] = ' ';
+			binary[pos + 1] = ' ';
 			pos += 2;
 		}
-		if (val & BIT(i-1))
+		if (val & BIT(i - 1))
 			binary[pos] = '1';
 		else
 			binary[pos] = '0';
-		binary[pos+1] = ' ';
-		pos+=2;
+		binary[pos + 1] = ' ';
+		pos += 2;
 	}
 
 	binary[pos] = '\0';
@@ -75,8 +75,10 @@ static void print_version(void)
 static void print_help(FILE *out)
 {
 	fprintf(out, "Usage: bitwise [OPTION...] [input]\n\n");
-	fprintf(out, "[input] can be decimal, hexdecimal, octal or binary number, depending on the prefix (0x | 0 | b)\n\n");
-	fprintf(out, "  -i, --interactive\t Load interactive mode (default if no input)\n");
+	fprintf(out,
+	        "[input] can be decimal, hexdecimal, octal or binary number, depending on the prefix (0x | 0 | b)\n\n");
+	fprintf(out,
+	        "  -i, --interactive\t Load interactive mode (default if no input)\n");
 	fprintf(out, "  -w, --width[b|w|l|d]\t Set bit width (default: l)\n");
 	fprintf(out, "  -h, --help\t\t Display this help and exit\n");
 	fprintf(out, "  -v, --version\t\t Output version information and exit\n");
@@ -92,12 +94,12 @@ int main(int argc, char *argv[])
 
 	while (1) {
 		static struct option long_options[] = {
-	          {"no-color", no_argument, &g_has_color, 0},
-	          {"version", no_argument, 0, 'v'},
-	          {"help", no_argument, 0, 'h'},
-	          {"interactive", no_argument, 0, 'i'},
-		  {"width", required_argument, 0, 'w'},
-	          {0, 0, 0, 0}
+			{"no-color", no_argument, &g_has_color, 0},
+			{"version", no_argument, 0, 'v'},
+			{"help", no_argument, 0, 'h'},
+			{"interactive", no_argument, 0, 'i'},
+			{"width", required_argument, 0, 'w'},
+			{0, 0, 0, 0}
 		};
 
 		int option_index = 0;
@@ -130,9 +132,8 @@ int main(int argc, char *argv[])
 	}
 	if (optind < argc) {
 		val = parse_input(argv[optind]);
-		if (!g_width) {
+		if (!g_width)
 			set_width_by_val(val);
-		}
 		val &= MASK(g_width);
 		if (!interactive)
 			return print_conversions(val);

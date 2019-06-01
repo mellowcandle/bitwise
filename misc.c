@@ -16,9 +16,10 @@ int g_width = 0;
 void init_terminal(void)
 {
 	initscr();
-	if(has_colors() == FALSE) {
+	if (has_colors() == FALSE)
 		g_has_color = 0;
-	} else {
+
+	else {
 		start_color();
 		use_default_colors();
 	}
@@ -57,16 +58,16 @@ int validate_input(int ch, int base)
 		break;
 	case 16:
 		if ((ch >= '0' && ch <= '9') ||
-		     (ch >= 'A' && ch <= 'F') ||
-		     (ch >= 'a' && ch <= 'f'))
-			 return 0;
-		 break;
+		    (ch >= 'A' && ch <= 'F') ||
+		    (ch >= 'a' && ch <= 'f'))
+			return 0;
+		break;
 	case 10:
-		 if (isdigit(ch))
-			 return 0;
-		 break;
+		if (isdigit(ch))
+			return 0;
+		break;
 	default:
-		 break;
+		break;
 	}
 
 	return 1;
@@ -123,9 +124,8 @@ uint64_t base_scanf(const char *buf, int base)
 		break;
 	}
 
-	if (ret == EOF || !ret) {
+	if (ret == EOF || !ret)
 		die("Couldn't parse parameter\n");
-	}
 
 	return value;
 }

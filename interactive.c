@@ -123,11 +123,11 @@ static void update_bit(int pos, int op)
 {
 	LOG("update bit: %u %u\n", pos, op);
 	if (op == SET_BIT)
-		val |= BIT(g_width - 1 -pos);
+		val |= BIT(g_width - 1 - pos);
 	else if (op == CLEAR_BIT)
 		val &= ~(BIT(g_width - 1 - pos));
 	else
-		val ^= BIT(g_width - 1 -pos);
+		val ^= BIT(g_width - 1 - pos);
 
 	update_binary();
 }
@@ -140,15 +140,15 @@ static void update_binary()
 	for (i = g_width; i > 0; i--) {
 		if ((i % 8 == 0) && (i != g_width)) {
 			binary_field[pos] = '|';
-			binary_field[pos+1] = ' ';
+			binary_field[pos + 1] = ' ';
 			pos += 2;
 		}
-		if (val & BIT(i-1))
+		if (val & BIT(i - 1))
 			binary_field[pos] = '1';
 		else
 			binary_field[pos] = '0';
-		binary_field[pos+1] = ' ';
-		pos+=2;
+		binary_field[pos + 1] = ' ';
+		pos += 2;
 	}
 
 	binary_field[pos] = '\0';
@@ -159,8 +159,8 @@ static void update_binary()
 		wattron(binary_win, COLOR_PAIR(2));
 	for (i = 0; i < g_width / 8; i++, pos += 18)
 		mvwprintw(binary_win, 2, pos, "%2d - %2d",
-			  (g_width - 1) - (i * 8),
-			  (g_width - 8) - (i * 8));
+		          (g_width - 1) - (i * 8),
+		          (g_width - 8) - (i * 8));
 	if (g_has_color)
 		wattroff(binary_win, COLOR_PAIR(2));
 	wrefresh(binary_win);
@@ -186,7 +186,7 @@ static int update_fields(int index)
 		val = tmp_val;
 	}
 	LOG("Val = %lu\n", val);
-	for (int i=0; i < 3; i++) {
+	for (int i = 0; i < 3; i++) {
 		if (i == index)
 			continue;
 		base = field_userptr(field[i]);
@@ -212,10 +212,10 @@ void set_active_field(bool none)
 	if (!none) {
 		set_field_fore(current_field(form), COLOR_PAIR(1));
 		set_field_back(current_field(form),
-			       A_UNDERLINE | COLOR_PAIR(1));
+		               A_UNDERLINE | COLOR_PAIR(1));
 	}
 
-	for (int i=0; i < 3; i++) {
+	for (int i = 0; i < 3; i++) {
 		if ((field[i] == current_field(form)) && (!none))
 			continue;
 		set_field_fore(field[i], COLOR_PAIR(0));
@@ -234,7 +234,7 @@ void position_binary_curser(int previous_pos, int next_pos)
 	if (next_pos != -1) {
 		pos = 2 + (2 * next_pos) + (2 * (next_pos / 8));
 		mvwchgat(binary_win, 1, pos, 1, A_UNDERLINE,
-			 COLOR_PAIR(0), NULL);
+		         COLOR_PAIR(0), NULL);
 		mvprintw(LINES - 2, 0, "bit %u  \n", g_width - 1 - next_pos);
 	}
 	wrefresh(binary_win);
@@ -245,11 +245,11 @@ void process_binary(int ch)
 {
 	int tmp;
 
-	switch(ch) {
+	switch (ch) {
 	case 'w':
 	case 'W':
 		LOG("word right\n");
-		tmp = (bit_pos + 8) & ~(8-1);
+		tmp = (bit_pos + 8) & ~(8 - 1);
 		if (tmp >= g_width - 1) {
 			beep();
 			break;
@@ -261,7 +261,7 @@ void process_binary(int ch)
 	case 'b':
 	case 'B':
 		LOG("word left\n");
-		tmp = (bit_pos - 8) & ~(8-1);
+		tmp = (bit_pos - 8) & ~(8 - 1);
 		if (tmp <  0) {
 			beep();
 			break;
@@ -307,16 +307,15 @@ void process_binary(int ch)
 			bit_pos--;
 			update_bit(bit_pos, CLEAR_BIT);
 			update_fields(-1);
-		}
-		else
+		} else
 			beep();
 		break;
 	default:
 		if (ch == '1') {
 			update_bit(bit_pos, SET_BIT);
 			position_binary_curser(bit_pos,
-					       (bit_pos + 1) == (g_width) ?
-					       (bit_pos) : (bit_pos + 1));
+			                       (bit_pos + 1) == (g_width) ?
+			                       (bit_pos) : (bit_pos + 1));
 			update_fields(-1);
 			if (bit_pos != g_width - 1)
 				bit_pos++;
@@ -324,8 +323,8 @@ void process_binary(int ch)
 		} else if (ch == '0') {
 			update_bit(bit_pos, CLEAR_BIT);
 			position_binary_curser(bit_pos,
-					       (bit_pos + 1) == (g_width) ?
-					       (bit_pos) : (bit_pos + 1));
+			                       (bit_pos + 1) == (g_width) ?
+			                       (bit_pos) : (bit_pos + 1));
 			update_fields(-1);
 			if (bit_pos != g_width - 1)
 				bit_pos++;
@@ -344,7 +343,7 @@ void process_fields(int ch)
 	FIELD *tmp_field;
 	int *cur_base;
 
-	switch(ch) {
+	switch (ch) {
 	case KEY_RIGHT:
 	case 'l':
 		LOG("Key right\n");
@@ -413,15 +412,15 @@ void paint_screen(void)
 
 	/* Initialize the fields */
 	field[0] = new_field(1, max_dec_digits, 1,
-			     dec_pos, 0, 0);
+	                     dec_pos, 0, 0);
 
 	field[1] = new_field(1, max_hex_digits, 1,
-			     hex_pos, 0, 0);
+	                     hex_pos, 0, 0);
 	field[2] = new_field(1, max_oct_digits, 1,
-			     oct_pos, 0, 0);
+	                     oct_pos, 0, 0);
 	field[3] = NULL;
 
-	for (int i=0; i < 3; i++) {
+	for (int i = 0; i < 3; i++) {
 		set_field_back(field[i], A_UNDERLINE);
 		field_opts_off(field[i], O_AUTOSKIP);
 		set_field_userptr(field[i], &base[i]);
@@ -438,7 +437,7 @@ void paint_screen(void)
 
 	scale_form(form, &rows, &cols);
 
-	fields_win = newwin(rows + 3, cols + 6, 2, 0 );
+	fields_win = newwin(rows + 3, cols + 6, 2, 0);
 	keypad(fields_win, TRUE);
 
 	binary_win = newwin(4, binary_field_size, 8, 0);
@@ -458,7 +457,7 @@ void paint_screen(void)
 	mvprintw(0, (COLS - strlen(title)) / 2, "%s", title);
 	box(fields_win, 0, 0);
 	mvwprintw(fields_win, 0, (cols + 6 - strlen(width_str)) / 2, "%s",
-		  width_str);
+	          width_str);
 	mvwprintw(fields_win, 1, dec_pos + 2, "Decimal:");
 	mvwprintw(fields_win, 1, hex_pos + 2, "Hexdecimal:");
 	mvwprintw(fields_win, 1, oct_pos + 2, "Octal:");
@@ -479,7 +478,7 @@ void unpaint_screen(void)
 
 	unpost_form(form);
 	free_form(form);
-	for (i=0; i < 3; i++)
+	for (i = 0; i < 3; i++)
 		free_field(field[i]);
 	delwin(fields_win);
 	delwin(binary_win);
@@ -504,7 +503,7 @@ int start_interactive(uint64_t start)
 	set_fields_width(g_width);
 
 	paint_screen();
-	while(true) {
+	while (true) {
 		ch = wgetch(fields_win);
 		LOG("ch= %d\n", ch);
 
