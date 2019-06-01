@@ -24,9 +24,8 @@ static int get_cmd(const char *cmd_name)
 	int i = 0;
 
 	for (i = 0; i < ARRAY_SIZE(cmds); i++) {
-		if (!strcmp(cmds[i].name, cmd_name)) {
+		if (!strcmp(cmds[i].name, cmd_name))
 			return i;
-		}
 	}
 
 	return -1;
@@ -49,7 +48,7 @@ static int parse_cmd(char *cmdline)
 		i++;
 		tokens[i] = strtok(NULL, " ");
 		LOG("%s\n", tokens[i]);
-	} while(tokens[i] != NULL && (i) < MAX_TOKENS);
+	} while (tokens[i] != NULL && (i) < MAX_TOKENS);
 
 	LOG("Finished tokenizing %d tokens\n", i);
 
@@ -57,7 +56,7 @@ static int parse_cmd(char *cmdline)
 	if (cmd_entry >= 0) {
 		if ((i - 1 >= cmds[cmd_entry].min_args) &&
 		    (i - 1 <= cmds[cmd_entry].max_args))
-			rc = cmds[cmd_entry].func(&tokens[1], i-1);
+			rc = cmds[cmd_entry].func(&tokens[1], i - 1);
 	} else if (!parse_input(tokens[0], &a))
 		LOG("It's a number\n");
 
@@ -95,10 +94,10 @@ static void got_command(char *line)
 	}
 
 	if (strcmp("q", line) == 0)
-	    g_leave_req = true;
+		g_leave_req = true;
 
-        if (*line)
-            add_history(line);
+	if (*line)
+		add_history(line);
 
 	rc = parse_cmd(line);
 	free(line);
@@ -108,9 +107,8 @@ static void got_command(char *line)
 		set_active_field(false);
 		wrefresh(fields_win);
 
-	} else if (active_win == BINARY_WIN) {
+	} else if (active_win == BINARY_WIN)
 		position_binary_curser(0, bit_pos);
-	}
 
 	if (!rc) {
 		keypad(stdscr, FALSE);
@@ -174,9 +172,8 @@ void process_cmd(int ch)
 			set_active_field(false);
 			wrefresh(fields_win);
 
-		} else if (active_win == BINARY_WIN) {
+		} else if (active_win == BINARY_WIN)
 			position_binary_curser(0, bit_pos);
-		}
 
 		keypad(stdscr, FALSE);
 		curs_set(0);
@@ -201,7 +198,8 @@ static int cmd_set_width(char **argv, int argc)
 		set_fields_width(16);
 	else if (!strcmp("8", argv[0]))
 		set_fields_width(8);
-	else return -1;
+	else
+		return -1;
 
 	unpaint_screen();
 	paint_screen();

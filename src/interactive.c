@@ -8,7 +8,6 @@
 #include <stdint.h>
 #include <string.h>
 #include <assert.h>
-#include <locale.h>
 #include <fcntl.h>
 #include <sys/stat.h>
 #include "bitwise.h"
@@ -29,9 +28,6 @@
 #define MAX_HEX_DIGITS_8 2
 #define MAX_OCT_DIGITS_8 4
 
-#define FIELDS_VIEW 0
-#define BINARY_VIEW 1
-
 #define CLEAR_BIT 0
 #define SET_BIT 1
 #define TOGGLE_BIT 2
@@ -47,12 +43,14 @@ static char title[] = "Bitwise";
 static char *width_str;
 WINDOW *fields_win;
 WINDOW *binary_win;
+WINDOW *cmd_win;
+
+int active_win, last_win;
 
 static FIELD *field[5];
 static FORM  *form;
 static uint64_t val;
-static int bit_pos;
-static int view = FIELDS_VIEW;
+int bit_pos;
 static int binary_field_size;
 
 static int base[3] = {
@@ -62,7 +60,6 @@ static int base[3] = {
 };
 
 static int update_fields(int index);
-static void position_binary_curser(int previous_pos, int next_pos);
 
 #define BINARY_WIN_LEN 17
 #define BYTE_BINARY_WIN_LEN (BINARY_WIN_LEN + 2)
@@ -72,7 +69,8 @@ static void position_binary_curser(int previous_pos, int next_pos);
 
 char binary_field[DBL_BINARY_WIN_LEN];
 int dec_pos, hex_pos, oct_pos;
-static void set_fields_width(int width)
+bool g_leave_req;
+void set_fields_width(int width)
 {
 	int min_field_distance;
 	g_width = width;
@@ -293,7 +291,7 @@ void process_binary(int ch)
 	case 'k':
 	case '\t':
 		LOG("Key up\n");
-		view = FIELDS_VIEW;
+		active_win = FIELDS_WIN;
 		set_active_field(false);
 		position_binary_curser(bit_pos, -1);
 		form_driver(form, REQ_END_LINE);
@@ -368,7 +366,7 @@ void process_fields(int ch)
 	case 'j':
 	case '\t':
 		LOG("Key down\n");
-		view = BINARY_VIEW;
+		active_win = BINARY_WIN;
 		set_active_field(true);
 		form_driver(form, REQ_VALIDATION);
 		wrefresh(fields_win);
@@ -441,7 +439,10 @@ void paint_screen(void)
 	keypad(fields_win, TRUE);
 
 	binary_win = newwin(4, binary_field_size, 8, 0);
+	keypad(binary_win, TRUE);
 	box(binary_win, 0, 0);
+
+	cmd_win = newwin(1, COLS, LINES - 1, 0);
 
 	rc = set_form_win(form, fields_win);
 	if (rc != E_OK)
@@ -463,6 +464,7 @@ void paint_screen(void)
 	mvwprintw(fields_win, 1, oct_pos + 2, "Octal:");
 
 	wrefresh(fields_win);
+	wrefresh(cmd_win);
 	update_binary();
 	update_fields(-1);
 	refresh();
@@ -482,6 +484,7 @@ void unpaint_screen(void)
 		free_field(field[i]);
 	delwin(fields_win);
 	delwin(binary_win);
+	delwin(cmd_win);
 	clear();
 	refresh();
 }
@@ -492,32 +495,39 @@ int start_interactive(uint64_t start)
 
 	val = start;
 
-	setlocale(LC_ALL, "");
-
-#ifdef TRACE
-	fd = fopen("log.txt", "w");
-#endif
 	init_terminal();
+	init_readline();
 	refresh();
 
 	set_fields_width(g_width);
 
 	paint_screen();
+	last_win = active_win = FIELDS_WIN;
+
 	while (true) {
-		ch = wgetch(fields_win);
-		LOG("ch= %d\n", ch);
+		if (g_leave_req)
+			break;
+
+		ch = wgetch(get_win(active_win));
+		LOG("%d window ch= %d\n", active_win, ch);
+
+		if (active_win == COMMAND_WIN) {
+			process_cmd(ch);
+			refresh();
+			continue;
+		}
 
 		switch (ch) {
 
 		case 'q':
 		case 'Q':
-			goto exit;
-			break;
+			g_leave_req = true;
+			continue;
 		case KEY_RESIZE:
 			LOG("Terminal resize\n");
 			unpaint_screen();
 			paint_screen();
-			continue;
+			rl_resize_terminal();
 			break;
 		case '!':
 			unpaint_screen();
@@ -544,20 +554,40 @@ int start_interactive(uint64_t start)
 			val = ~val & MASK(g_width);
 			paint_screen();
 			break;
+		case ':':
+			last_win = active_win;
+			active_win = COMMAND_WIN;
+			if (last_win == FIELDS_WIN) {
+				set_active_field(true);
+				form_driver(form, REQ_VALIDATION);
+				wrefresh(fields_win);
+			} else if (last_win == BINARY_WIN)
+				position_binary_curser(bit_pos, -1);
+
+			keypad(stdscr, FALSE);
+			intrflush(NULL, FALSE);
+			readline_redisplay();
+			break;
 		default:
-			if (view == BINARY_VIEW)
+			if (active_win == BINARY_WIN)
 				process_binary(ch);
-			else
+			else if (active_win == FIELDS_WIN)
 				process_fields(ch);
 		}
 
 		refresh();
 	}
-exit:
+
 	unpaint_screen();
-#ifdef TRACE
-	fclose(fd);
-#endif
+	/* OK. this is really weird, it seems that by calling
+	 * deinit_readline() before exiting is breaking bash
+	 * afterwards and must be fixed by typing reset in the
+	 * terminal.
+	 * I couldn't figure this one out, let's just leave it like
+	 * this, hopefully it won't affect other env */
+
+	/* deinit_readline(); */
+
 	deinit_terminal();
 
 	return 0;

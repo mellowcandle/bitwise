@@ -16,9 +16,10 @@ AC_PROG_INSTALL
 # Checks for libraries.
 AC_CHECK_LIB([form], [form_driver])
 AC_CHECK_LIB([ncurses], [newwin])
+AC_CHECK_LIB([readline], [rl_bind_key])
 
 # Checks for header files.
-AC_CHECK_HEADERS([fcntl.h stdint.h stdlib.h string.h curses.h form.h])
+AC_CHECK_HEADERS([fcntl.h stdint.h stdlib.h string.h curses.h form.h readline/history.h readline/readline.h])
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_CHECK_HEADER_STDBOOL
