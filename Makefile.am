@@ -1,5 +1,5 @@
 bin_PROGRAMS=bitwise
-bitwise_SOURCES=main.c misc.c interactive.c bitwise.h
+bitwise_SOURCES= src/main.c src/misc.c src/interactive.c inc/bitwise.h
 
 dist_man_MANS=bitwise.1
 

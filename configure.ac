@@ -3,10 +3,10 @@
 
 AC_PREREQ([2.69])
 AC_INIT([bitwise], [v0.14], [rfried.dev@gmail.com])
-AC_CONFIG_SRCDIR([misc.c])
-AC_CONFIG_HEADERS([config.h])
+AC_CONFIG_SRCDIR([src/misc.c])
+AC_CONFIG_HEADERS([inc/config.h])
 
-AM_INIT_AUTOMAKE([-Wall -Werror foreign])
+AM_INIT_AUTOMAKE([-Wall -Werror foreign subdir-objects])
 
 # Checks for programs.
 AC_PROG_CC
@@ -14,9 +14,7 @@ AC_PROG_CC_STDC
 AC_PROG_INSTALL
 
 # Checks for libraries.
-# FIXME: Replace `main' with a function in `-lform':
 AC_CHECK_LIB([form], [form_driver])
-# FIXME: Replace `main' with a function in `-lncurses':
 AC_CHECK_LIB([ncurses], [newwin])
 
 # Checks for header files.
