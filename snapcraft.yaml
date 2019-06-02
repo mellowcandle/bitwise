@@ -13,5 +13,7 @@ parts:
         bitwise:
                 plugin: autotools
                 source: https://github.com/mellowcandle/bitwise/releases/download/v0.14/bitwise-v0.14.tar.gz
-                build-packages: [libncurses5-dev libreadline-dev]
+                build-packages:
+                        - libncurses5-dev
+                        - libreadline-dev
 
