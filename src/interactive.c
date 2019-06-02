@@ -112,6 +112,11 @@ void set_fields_width(int width)
 		break;
 	}
 
+	/* Reserve space for the cursor at the end */
+	max_dec_digits += 1;
+	max_hex_digits += 1;
+	max_oct_digits += 1;
+
 	dec_pos = 0;
 	hex_pos = dec_pos + max_dec_digits + min_field_distance - 2;
 	oct_pos = hex_pos + max_hex_digits + min_field_distance + 1;
@@ -197,7 +202,6 @@ static int update_fields(int index)
 	}
 	form_driver(form, REQ_VALIDATION);
 	wrefresh(fields_win);
-	refresh();
 
 	return 0;
 }
@@ -236,7 +240,6 @@ void position_binary_curser(int previous_pos, int next_pos)
 		mvprintw(LINES - 2, 0, "bit %u  \n", g_width - 1 - next_pos);
 	}
 	wrefresh(binary_win);
-	refresh();
 }
 
 void process_binary(int ch)
@@ -296,6 +299,7 @@ void process_binary(int ch)
 		position_binary_curser(bit_pos, -1);
 		form_driver(form, REQ_END_LINE);
 		form_driver(form, REQ_VALIDATION);
+		curs_set(1);
 		wrefresh(fields_win);
 		break;
 	case KEY_BACKSPACE:
@@ -367,10 +371,11 @@ void process_fields(int ch)
 	case '\t':
 		LOG("Key down\n");
 		active_win = BINARY_WIN;
+		curs_set(0);
 		set_active_field(true);
 		form_driver(form, REQ_VALIDATION);
-		wrefresh(fields_win);
 		position_binary_curser(0, bit_pos);
+		wrefresh(fields_win);
 		break;
 	case KEY_BACKSPACE:
 	case 127:
@@ -378,8 +383,8 @@ void process_fields(int ch)
 		form_driver(form, REQ_DEL_CHAR);
 		form_driver(form, REQ_DEL_PREV);
 		form_driver(form, REQ_VALIDATION);
-		update_fields(field_index(current_field(form)));
 		update_binary();
+		update_fields(field_index(current_field(form)));
 		break;
 	default:
 		LOG("default char\n");
@@ -392,13 +397,13 @@ void process_fields(int ch)
 
 		form_driver(form, ch);
 		form_driver(form, REQ_VALIDATION);
+		update_binary();
 		if (update_fields(field_index(tmp_field))) {
 			form_driver(form, REQ_DEL_CHAR);
 			form_driver(form, REQ_PREV_CHAR);
 			form_driver(form, REQ_VALIDATION);
 		}
 
-		update_binary();
 		break;
 	}
 }
@@ -442,7 +447,6 @@ void paint_screen(void)
 	keypad(binary_win, TRUE);
 	box(binary_win, 0, 0);
 
-	cmd_win = newwin(1, COLS, LINES - 1, 0);
 
 	rc = set_form_win(form, fields_win);
 	if (rc != E_OK)
@@ -463,10 +467,13 @@ void paint_screen(void)
 	mvwprintw(fields_win, 1, hex_pos + 2, "Hexdecimal:");
 	mvwprintw(fields_win, 1, oct_pos + 2, "Octal:");
 
+	cmd_win = newwin(1, COLS, LINES - 1, 0);
+
 	wrefresh(fields_win);
-	wrefresh(cmd_win);
 	update_binary();
 	update_fields(-1);
+
+	wrefresh(cmd_win);
 	refresh();
 
 	rc = post_form(form);
@@ -513,7 +520,6 @@ int start_interactive(uint64_t start)
 
 		if (active_win == COMMAND_WIN) {
 			process_cmd(ch);
-			refresh();
 			continue;
 		}
 
@@ -564,6 +570,7 @@ int start_interactive(uint64_t start)
 			} else if (last_win == BINARY_WIN)
 				position_binary_curser(bit_pos, -1);
 
+			curs_set(1);
 			keypad(stdscr, FALSE);
 			intrflush(NULL, FALSE);
 			readline_redisplay();
@@ -574,8 +581,6 @@ int start_interactive(uint64_t start)
 			else if (active_win == FIELDS_WIN)
 				process_fields(ch);
 		}
-
-		refresh();
 	}
 
 	unpaint_screen();

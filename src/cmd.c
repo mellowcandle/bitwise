@@ -65,7 +65,6 @@ static int parse_cmd(char *cmdline)
 		werase(cmd_win);
 		mvwprintw(cmd_win, 0, 0, "%s: Unsupported parameter", tokens[0]);
 		wrefresh(cmd_win);
-		refresh();
 		return -1;
 	}
 
@@ -104,18 +103,22 @@ static void got_command(char *line)
 
 	active_win = last_win;
 	if (active_win == FIELDS_WIN) {
+		curs_set(1);
 		set_active_field(false);
 		wrefresh(fields_win);
 
-	} else if (active_win == BINARY_WIN)
+	} else if (active_win == BINARY_WIN) {
 		position_binary_curser(0, bit_pos);
+		curs_set(0);
+		wrefresh(binary_win);
+	}
 
 	if (!rc) {
 		keypad(stdscr, FALSE);
-		curs_set(0);
 		werase(cmd_win);
 		wrefresh(cmd_win);
 	}
+
 	return;
 }
 
@@ -124,15 +127,10 @@ void readline_redisplay(void)
 	if (active_win != COMMAND_WIN)
 		return;
 
-	size_t prompt_width = strlen(rl_display_prompt);
-	size_t cursor_col = prompt_width + strlen(rl_line_buffer);
-	LOG("Placing curser at %d\n", cursor_col);
 	werase(cmd_win);
 	mvwprintw(cmd_win, 0, 0, "%s%s", rl_display_prompt, rl_line_buffer);
-	wmove(cmd_win, 0, cursor_col);
-	curs_set(2);
+	wmove(cmd_win, 0, rl_point + 1);
 	wrefresh(cmd_win);
-	refresh();
 }
 
 
@@ -140,13 +138,15 @@ void init_readline(void)
 {
 	rl_catch_signals = 0;
 	rl_catch_sigwinch = 0;
+	rl_deprep_term_function = NULL;
+	rl_prep_term_function = NULL;
 	rl_change_environment = 0;
 	rl_getc_function = readline_getc;
 	rl_input_available_hook = readline_input_avail;
 	rl_redisplay_function = readline_redisplay;
+	rl_bind_key('\t', rl_insert);
 	rl_callback_handler_install(":", got_command);
 
-	rl_bind_key('\t', rl_insert);
 }
 
 void deinit_readline(void)
@@ -169,14 +169,15 @@ void process_cmd(int ch)
 		LOG("Detected exit cmd\n");
 		active_win = last_win;
 		if (active_win == FIELDS_WIN) {
+			curs_set(1);
 			set_active_field(false);
 			wrefresh(fields_win);
-
-		} else if (active_win == BINARY_WIN)
+		} else if (active_win == BINARY_WIN) {
+			curs_set(0);
 			position_binary_curser(0, bit_pos);
-
+			wrefresh(binary_win);
+		}
 		keypad(stdscr, FALSE);
-		curs_set(0);
 		werase(cmd_win);
 		wrefresh(cmd_win);
 		return;

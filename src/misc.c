@@ -28,8 +28,10 @@ void init_terminal(void)
 	}
 	cbreak();
 	noecho();
+	nonl();
+	intrflush(NULL, FALSE);
 	keypad(stdscr, TRUE);
-	curs_set(0);
+	curs_set(2);
 }
 
 void deinit_terminal(void)
