@@ -12,6 +12,7 @@ AM_INIT_AUTOMAKE([-Wall -Werror foreign subdir-objects])
 AC_PROG_CC
 AC_PROG_CC_STDC
 AC_PROG_INSTALL
+AC_PROG_CC_C99
 
 # Checks for libraries.
 AC_CHECK_LIB([form], [form_driver])

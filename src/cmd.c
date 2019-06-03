@@ -3,6 +3,7 @@
  */
 #include <string.h>
 #include "bitwise.h"
+#include "shunting-yard.h"
 
 #define MAX_TOKENS 4
 
@@ -31,41 +32,89 @@ static int get_cmd(const char *cmd_name)
 	return -1;
 }
 
+void show_error(Status status)
+{
+	char *message = NULL;
+
+	switch (status) {
+	case ERROR_SYNTAX:
+		message = "Syntax error";
+		break;
+	case ERROR_OPEN_PARENTHESIS:
+		message = "Missing parenthesis";
+		break;
+	case ERROR_CLOSE_PARENTHESIS:
+		message = "Extra parenthesis";
+		break;
+	case ERROR_UNRECOGNIZED:
+		message = "Unknown character";
+		break;
+	case ERROR_NO_INPUT:
+		message = "Empty expression";
+		break;
+	case ERROR_UNDEFINED_FUNCTION:
+		message = "Unknown function";
+		break;
+	case ERROR_FUNCTION_ARGUMENTS:
+		message = "Missing function arguments";
+		break;
+	case ERROR_UNDEFINED_CONSTANT:
+		message = "Unknown constant";
+		break;
+	default:
+		message = "Unknown error";
+	}
+
+	werase(cmd_win);
+	mvwprintw(cmd_win, 0, 0, "%s", message);
+	wrefresh(cmd_win);
+}
+
 static int parse_cmd(char *cmdline)
 {
 	static char *tokens[MAX_TOKENS];
 	int cmd_entry;
 	int i = 0;
 	int rc;
-	uint64_t a;
+	uint64_t result;
 
 	LOG("got command: %s\n", cmdline);
 
-	tokens[i] = strtok(cmdline, " ");
-	LOG("%s\n", tokens[i]);
-
-	do {
-		i++;
-		tokens[i] = strtok(NULL, " ");
-		LOG("%s\n", tokens[i]);
-	} while (tokens[i] != NULL && (i) < MAX_TOKENS);
-
-	LOG("Finished tokenizing %d tokens\n", i);
-
-	cmd_entry = get_cmd(tokens[0]);
+	/* First let's see if this is a command */
+	cmd_entry = get_cmd(cmdline);
 	if (cmd_entry >= 0) {
+		/* It looks like a command, let's tokenize this */
+
+		tokens[i] = strtok(cmdline, " ");
+		LOG("%s\n", tokens[i]);
+		do {
+			i++;
+			tokens[i] = strtok(NULL, " ");
+			LOG("%s\n", tokens[i]);
+		} while (tokens[i] != NULL && (i) < MAX_TOKENS);
+
+		LOG("Finished tokenizing %d tokens\n", i);
+
 		if ((i - 1 >= cmds[cmd_entry].min_args) &&
 		    (i - 1 <= cmds[cmd_entry].max_args))
 			rc = cmds[cmd_entry].func(&tokens[1], i - 1);
-	} else if (!parse_input(tokens[0], &a))
-		LOG("It's a number\n");
-
-	if (rc) {
-		LOG("Unsupported parameter\n");
-		werase(cmd_win);
-		mvwprintw(cmd_win, 0, 0, "%s: Unsupported parameter", tokens[0]);
-		wrefresh(cmd_win);
-		return -1;
+		else {
+			werase(cmd_win);
+			mvwprintw(cmd_win, 0, 0, "%s: Invalid parameter(s)", tokens[0]);
+			wrefresh(cmd_win);
+			LOG("Invalid parameters\n");
+			return -1;
+		}
+	} else {
+		Status status = shunting_yard(cmdline, &result);
+		if (status != OK) {
+			show_error(status);
+			return -1;
+		} else {
+			g_val = result;
+			update_binary();
+			update_fields(-1);
+		}
 	}
 
 	return 0;

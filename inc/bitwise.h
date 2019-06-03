@@ -40,6 +40,8 @@ void set_fields_width(int width);
 void position_binary_curser(int previous_pos, int next_pos);
 void paint_screen(void);
 void unpaint_screen(void);
+void update_binary();
+int update_fields(int index);
 
 /* Command */
 void process_cmd(int ch);
@@ -70,6 +72,7 @@ extern int g_width;
 extern bool g_input_avail;
 extern int g_input;
 extern bool g_leave_req;
+extern uint64_t g_val;
 
 static inline WINDOW *get_win(int win)
 {

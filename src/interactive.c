@@ -38,7 +38,6 @@ FILE *fd;
 
 int max_dec_digits, max_hex_digits, max_oct_digits;
 int min_frame_size;
-static void update_binary();
 static char title[] = "Bitwise";
 static char *width_str;
 WINDOW *fields_win;
@@ -49,7 +48,7 @@ int active_win, last_win;
 
 static FIELD *field[5];
 static FORM  *form;
-static uint64_t val;
+uint64_t g_val;
 int bit_pos;
 static int binary_field_size;
 
@@ -59,7 +58,6 @@ static int base[3] = {
 	8,
 };
 
-static int update_fields(int index);
 
 #define BINARY_WIN_LEN 17
 #define BYTE_BINARY_WIN_LEN (BINARY_WIN_LEN + 2)
@@ -84,7 +82,7 @@ void set_fields_width(int width)
 		width_str = " 64Bit ";
 		break;
 	case 32:
-		val &= 0xFFFFFFFF;
+		g_val &= 0xFFFFFFFF;
 		binary_field_size = LONG_BINARY_WIN_LEN;
 		max_dec_digits = MAX_DEC_DIGITS_32;
 		max_hex_digits = MAX_HEX_DIGITS_32;
@@ -93,7 +91,7 @@ void set_fields_width(int width)
 		width_str = " 32Bit ";
 		break;
 	case 16:
-		val &= 0xFFFF;
+		g_val &= 0xFFFF;
 		binary_field_size = WORD_BINARY_WIN_LEN;
 		max_dec_digits = MAX_DEC_DIGITS_16;
 		max_hex_digits = MAX_HEX_DIGITS_16;
@@ -102,7 +100,7 @@ void set_fields_width(int width)
 		width_str = " 16Bit ";
 		break;
 	case 8:
-		val &= 0xFF;
+		g_val &= 0xFF;
 		binary_field_size = BYTE_BINARY_WIN_LEN;
 		max_dec_digits = MAX_DEC_DIGITS_8;
 		max_hex_digits = MAX_HEX_DIGITS_8;
@@ -126,16 +124,16 @@ static void update_bit(int pos, int op)
 {
 	LOG("update bit: %u %u\n", pos, op);
 	if (op == SET_BIT)
-		val |= BIT(g_width - 1 - pos);
+		g_val |= BIT(g_width - 1 - pos);
 	else if (op == CLEAR_BIT)
-		val &= ~(BIT(g_width - 1 - pos));
+		g_val &= ~(BIT(g_width - 1 - pos));
 	else
-		val ^= BIT(g_width - 1 - pos);
+		g_val ^= BIT(g_width - 1 - pos);
 
 	update_binary();
 }
 
-static void update_binary()
+void update_binary()
 {
 	int i;
 	int pos = 0;
@@ -146,7 +144,7 @@ static void update_binary()
 			binary_field[pos + 1] = ' ';
 			pos += 2;
 		}
-		if (val & BIT(i - 1))
+		if (g_val & BIT(i - 1))
 			binary_field[pos] = '1';
 		else
 			binary_field[pos] = '0';
@@ -169,7 +167,7 @@ static void update_binary()
 	wrefresh(binary_win);
 }
 
-static int update_fields(int index)
+int update_fields(int index)
 {
 	FIELD *tmp_field = current_field(form);
 	int *cur_base = field_userptr(tmp_field);
@@ -186,15 +184,15 @@ static int update_fields(int index)
 			beep();
 			return 1;
 		}
-		val = tmp_val;
+		g_val = tmp_val;
 	}
-	LOG("Val = %lu\n", val);
+	LOG("Val = %lu\n", g_val);
 	for (int i = 0; i < 3; i++) {
 		if (i == index)
 			continue;
 		base = field_userptr(field[i]);
-		if (val)
-			lltostr(val, number, *base);
+		if (g_val)
+			lltostr(g_val, number, *base);
 		else
 			number[0] = '\0';
 		LOG("updating field %d\n", i);
@@ -500,7 +498,7 @@ int start_interactive(uint64_t start)
 {
 	int ch;
 
-	val = start;
+	g_val = start;
 
 	init_terminal();
 	init_readline();
@@ -557,7 +555,7 @@ int start_interactive(uint64_t start)
 			break;
 		case '~':
 			unpaint_screen();
-			val = ~val & MASK(g_width);
+			g_val = ~g_val & MASK(g_width);
 			paint_screen();
 			break;
 		case ':':

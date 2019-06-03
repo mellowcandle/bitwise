@@ -9,6 +9,7 @@
 #include <locale.h>
 #include "bitwise.h"
 #include "config.h"
+#include "shunting-yard.h"
 
 int print_conversions(uint64_t val)
 {
@@ -122,9 +123,9 @@ int main(int argc, char *argv[])
 		}
 	}
 	if (optind < argc) {
-		rc = parse_input(argv[optind], &val);
+		rc = shunting_yard(argv[optind], &val);
 		if (rc) {
-			fprintf(stderr, "Couldn't parse input number: %s\n", argv[optind]);
+			fprintf(stderr, "Couldn't parse expression: %s\n", argv[optind]);
 			print_help(stderr);
 			exit(EXIT_FAILURE);
 		}
