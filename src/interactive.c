@@ -235,7 +235,7 @@ void position_binary_curser(int previous_pos, int next_pos)
 		pos = 2 + (2 * next_pos) + (2 * (next_pos / 8));
 		mvwchgat(binary_win, 1, pos, 1, A_UNDERLINE,
 		         COLOR_PAIR(0), NULL);
-		mvprintw(LINES - 2, 0, "bit %u  \n", g_width - 1 - next_pos);
+		mvwprintw(binary_win, 3, 1, "bit %u", g_width - 1 - next_pos);
 	}
 	wrefresh(binary_win);
 }
@@ -441,7 +441,7 @@ void paint_screen(void)
 	fields_win = newwin(rows + 3, cols + 6, 2, 0);
 	keypad(fields_win, TRUE);
 
-	binary_win = newwin(4, binary_field_size, 8, 0);
+	binary_win = newwin(5, binary_field_size, 8, 0);
 	keypad(binary_win, TRUE);
 	box(binary_win, 0, 0);
 
