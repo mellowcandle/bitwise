@@ -1,3 +1,9 @@
+Bitwise v0.20
+==========================================
+* Added calculator mode
+* Added support for commandline interface
+in interactive mode.
+
 Bitwise v0.14
 ==========================================
 * Added NOT (~) command to interactive mode
