@@ -11,7 +11,7 @@ It's a handy tool for low level hackers, kernel developers and device drivers de
 
 Some of the features include:
 * Interactive ncurses interface
-* Command line interface that supports base conversion.
+* Command line calculator supporting all bitwise operations.
 * Individual bit manipulator.
 * Bitwise operations such as NOT, OR, AND, XOR, and shifts.
 
@@ -24,12 +24,15 @@ Some of the features include:
 ## Usage
 _bitwise_ can be used both Interactively and in command line mode.
 
-### Command line mode
-In command line mode, passing a number in any base (Decimal, Hexadecimal, Octal & Binary) will output the number in all bases including binary representation.
+### Command line calculator mode
+In command line mode, bitwise will calculate the given expression and will output the result in all bases including binary representation.
 
 _bitwise_ detects the base by the preface of the input (_0x/0X_ for hexadecimal, leading _0_ for octal, _b_ for binary, and the rest is decimal).
 
-#### Example:
+### Examples:
+
+
+#### Simple base conversion
 
 ```
 $ ./bitwise 0x12312311
@@ -40,6 +43,19 @@ Size: 291.07MB
 Binary:
 0 0 0 1 0 0 1 0 | 0 0 1 1 0 0 0 1 | 0 0 1 0 0 0 1 1 | 0 0 0 1 0 0 0 1 
     31 - 24           23 - 16           15 -  8            7 -  0     
+```
+
+#### Calculator with predence
+
+```
+$ ./bitwise "0x30 * 0x20 + 30 / 2"
+Decimal: 1551
+Hexdecimal: 0x60F
+Octal: 03017
+Size: 1.51KB
+Binary:
+0 0 0 0 0 1 1 0 | 0 0 0 0 1 1 1 1 
+    15 -  8            7 -  0 
 ```
 
 ### Interactive mode
