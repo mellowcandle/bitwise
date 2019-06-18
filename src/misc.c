@@ -3,6 +3,8 @@
  */
 
 #include <ctype.h>
+#include <inttypes.h>
+
 #include "bitwise.h"
 
 #define KB (1ULL << 10)
@@ -114,13 +116,13 @@ int base_scanf(const char *buf, int base, uint64_t *value)
 
 	switch (base) {
 	case 10:
-		ret = sscanf(buf, "%lu", value);
+		ret = sscanf(buf, PRIu64, value);
 		break;
 	case 16:
-		ret = sscanf(buf, "%lx", value);
+		ret = sscanf(buf, PRIx64, value);
 		break;
 	case 8:
-		ret = sscanf(buf, "%lo", value);
+		ret = sscanf(buf, PRIo64, value);
 		break;
 	case 2:
 		ret = binary_scanf(buf, value);
@@ -160,13 +162,13 @@ void lltostr(uint64_t val, char *buf, int base)
 {
 	switch (base) {
 	case 10:
-		sprintf(buf, "%lu", val);
+		sprintf(buf, PRIu64, val);
 		return;
 	case 16:
-		sprintf(buf, "%lx", val);
+		sprintf(buf, PRIx64, val);
 		return;
 	case 8:
-		sprintf(buf, "%lo", val);
+		sprintf(buf, PRIo64, val);
 		return;
 	case 2:
 		sprintf(buf, "Not implemeted");
