@@ -2,13 +2,13 @@ Source: bitwise
 Section: science
 Priority: optional
 Maintainer: Ramon Fried <rfried.dev@gmail.com>
-Build-Depends: debhelper (>= 9), autotools-dev, libncurses5-dev, libreadline-dev
+Build-Depends: debhelper (>= 9), autotools-dev, libncurses5-dev, libreadline5-dev, libcunit1-dev
 Standards-Version: 3.9.8
 Homepage: https://github.com/mellowcandle/bitwise
 
 Package: bitwise
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, libncurses5, libreadline
+Depends: ${shlibs:Depends}, ${misc:Depends}, libncurses5, libreadline5
 Description: Interactive bitwise operation in ncurses
  Bitwise is multi base interactive calculator supporting dynamic base
  conversion and bit manipulation. It's a handy tool for low level hackers,
@@ -17,6 +17,7 @@ Description: Interactive bitwise operation in ncurses
  Some of the features include:
  .
  Interactive ncurses interface
- Command line interface that supports base conversion.
+ Command line calculator.
  Individual bit manipulator.
  Bitwise operations such as NOT, OR, AND, XOR, and shifts.
+
