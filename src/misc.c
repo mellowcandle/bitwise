@@ -141,7 +141,7 @@ int base_scanf(const char *buf, int base, uint64_t *value)
 	return 0;
 }
 
-int parse_input(char *input, uint64_t *val)
+int parse_input(const char *input, uint64_t *val)
 {
 	int base;
 	uint64_t tmp_val;

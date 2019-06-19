@@ -26,7 +26,7 @@ void lltostr(uint64_t val, char *buf, int base);
 int set_width(char width);
 void set_width_by_val(uint64_t val);
 void die(const char *fmt, ...);
-int parse_input(char *input, uint64_t *val);
+int parse_input(const char *input, uint64_t *val);
 int validate_input(int ch, int base);
 
 void init_terminal(void);
@@ -52,7 +52,6 @@ void readline_redisplay(void);
 /* calc */
 int calc(int argc, char *argv[]);
 
-#define TRACE
 #ifdef TRACE
 #define LOG(...) fprintf(fd, __VA_ARGS__);fflush(fd)
 extern FILE *fd;
