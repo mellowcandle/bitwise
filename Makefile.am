@@ -12,6 +12,7 @@ AM_CFLAGS = $(MAYBE_COVERAGE)
 check_PROGRAMS = tests/test-shunting-yard
 tests_test_shunting_yard_SOURCES = src/shunting-yard.c inc/shunting-yard.h \
                                    src/stack.c inc/stack.h \
+								   src/misc.c \
                                    tests/test-shunting-yard.c
 tests_test_shunting_yard_LDADD = -lcunit
 
