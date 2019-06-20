@@ -119,7 +119,6 @@ int base_scanf(const char *buf, int base, uint64_t *value)
 		ret = sscanf(buf, "%" PRIu64, value);
 		break;
 	case 16:
-		LOG("Hexa\n");
 		ret = sscanf(buf, "%" PRIX64, value);
 		break;
 	case 8:
@@ -163,13 +162,13 @@ void lltostr(uint64_t val, char *buf, int base)
 {
 	switch (base) {
 	case 10:
-		sprintf(buf, PRIu64, val);
+		sprintf(buf, "%" PRIu64, val);
 		return;
 	case 16:
-		sprintf(buf, PRIx64, val);
+		sprintf(buf, "%" PRIx64, val);
 		return;
 	case 8:
-		sprintf(buf, PRIo64, val);
+		sprintf(buf, "%" PRIo64, val);
 		return;
 	case 2:
 		sprintf(buf, "Not implemeted");

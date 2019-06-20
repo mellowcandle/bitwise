@@ -145,7 +145,6 @@ Token *tokenize(const char *expression)
 		else if (*c == ')')
 			token.type = TOKEN_CLOSE_PARENTHESIS;
 		else if (!strncmp("<<", c, 2) || !strncmp(">>", c, 2)) {
-			fprintf(stderr, "Found shift\n");
 			token.type = TOKEN_OPERATOR;
 			token.value = strndup(c, 2);
 		} else if (strchr("~!^*/%+-", *c)) {
@@ -154,7 +153,6 @@ Token *tokenize(const char *expression)
 		} else if (!strncmp("bit", c, 3) || !strncmp("BIT", c, 3)) {
 			token.value = strndup(c, 3);
 			token.type = TOKEN_IDENTIFIER;
-			printf("Found bit\n");
 		} else if (sscanf(c, "%m[xX0-9a-fA-F.]", &token.value)) {
 			token.type = TOKEN_NUMBER;
 		} else if (sscanf(c, "%m[A-Za-z]", &token.value))
@@ -413,6 +411,6 @@ const Operator *get_operator(char *symbol, OperatorArity arity)
 			return &OPERATORS[i];
 	}
 
-	fprintf(stderr, "couldn't find %s operator\n", symbol);
+	LOG("couldn't find %s operator\n", symbol);
 	return NULL;
 }
