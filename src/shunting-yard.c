@@ -147,7 +147,7 @@ Token *tokenize(const char *expression)
 		else if (!strncmp("<<", c, 2) || !strncmp(">>", c, 2)) {
 			token.type = TOKEN_OPERATOR;
 			token.value = strndup(c, 2);
-		} else if (strchr("~!^*/%+-", *c)) {
+		} else if (strchr("~!^*/%+-|&", *c)) {
 			token.type = TOKEN_OPERATOR;
 			token.value = strndup(c, 1);
 		} else if (!strncmp("bit", c, 3) || !strncmp("BIT", c, 3)) {
