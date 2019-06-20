@@ -35,7 +35,7 @@ _bitwise_ detects the base by the preface of the input (_0x/0X_ for hexadecimal,
 #### Simple base conversion
 
 ```
-$ ./bitwise 0x12312311
+$ bitwise 0x12312311
 Decimal: 305210129
 Hexdecimal: 0x12312311
 Octal: 02214221421
@@ -48,7 +48,7 @@ Binary:
 #### Calculator with predence
 
 ```
-$ ./bitwise "0x30 * 0x20 + 30 / 2"
+$ bitwise "0x30 * 0x20 + 30 / 2"
 Decimal: 1551
 Hexdecimal: 0x60F
 Octal: 03017
