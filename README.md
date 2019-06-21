@@ -15,7 +15,8 @@ Some of the features include:
 * Individual bit manipulator.
 * Bitwise operations such as NOT, OR, AND, XOR, and shifts.
 
-
+## IRC support
+#bitwise @ irc.oftc.net
 
 ##
 
