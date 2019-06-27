@@ -57,8 +57,6 @@ void init_colors(void)
 	}
 }
 
-
-
 void init_terminal(void)
 {
 	initscr();
