@@ -14,41 +14,48 @@
 int print_conversions(uint64_t val)
 {
 	char buf_size[16];
-	char binary[180];
+	char binary[512];
 	int pos = 0;
 	int i, j;
 
 	buf_size[0] = '\0';
 	sprintf_size(val, buf_size);
 
-	printf("Decimal: %lu\n", val);
-	printf("Hexdecimal: 0x%lX\n", val);
-	printf("Octal: 0%lo\n", val);
+	printf("%sDecimal: %s%lu\n", color_green, color_blue, val);
+	printf("%sHexdecimal: %s0x%lX\n", color_green, color_blue, val);
+	printf("%sOctal: %s0%lo\n", color_green, color_blue, val);
 	if (buf_size[0])
-		printf("Size: %s\n", buf_size);
-	printf("Binary:\n");
+		printf("%sSize: %s%s\n", color_green, color_blue, buf_size);
+	printf("%sBinary:\n%s", color_green, color_reset);
 	for (i = g_width; i > 0; i--) {
 		if ((i % 8 == 0) && (i != g_width)) {
+			pos += sprintf(&binary[pos], "%s", color_white);
 			binary[pos] = '|';
 			binary[pos + 1] = ' ';
 			pos += 2;
 		}
-		if (val & BIT(i - 1))
+		if (val & BIT(i - 1)) {
+			pos += sprintf(&binary[pos], "%s", color_blue);
 			binary[pos] = '1';
-		else
+		}
+		else {
+			pos += sprintf(&binary[pos], "%s", color_magenta);
 			binary[pos] = '0';
+		}
 		binary[pos + 1] = ' ';
 		pos += 2;
 	}
 
 	binary[pos] = '\0';
 	printf("%s\n    ", binary);
+	fputs(color_cyan, stdout);
 	for (i = 0; i < g_width / 8; i++) {
 		printf("%2d - %2d", g_width - 1 - (i * 8), (g_width - 8) - (i * 8));
 		for (j = 0; j < 11; j++)
 			putchar(' ');
 	}
 	printf("\n");
+	puts(color_reset);
 	return 0;
 }
 
@@ -122,6 +129,9 @@ int main(int argc, char *argv[])
 			exit(EXIT_FAILURE);
 		}
 	}
+
+	init_colors();
+
 	if (optind < argc) {
 		rc = shunting_yard(argv[optind], &val);
 		if (rc) {

@@ -18,15 +18,56 @@ int g_width = 0;
 bool g_input_avail;
 int g_input;
 
+#define RED   "\x1B[31m"
+#define GREEN   "\x1B[32m"
+#define YEL   "\x1B[33m"
+#define BLUE   "\x1B[34m"
+#define MAGENTA   "\x1B[35m"
+#define CYAN   "\x1B[36m"
+#define WHITE   "\x1B[37m"
+#define RESET "\x1B[0m"
+#define NOTHING ""
+
+char *color_green = NOTHING;
+char *color_red = NOTHING;
+char *color_blue = NOTHING;
+char *color_magenta = NOTHING;
+char *color_cyan = NOTHING;
+char *color_white = NOTHING;
+char *color_reset = NOTHING;
+
+void init_colors(void)
+{
+	if (g_has_color) {
+		color_green = GREEN;
+		color_red = RED;
+		color_blue = BLUE;
+		color_magenta = MAGENTA;
+		color_cyan = CYAN;
+		color_white = WHITE;
+		color_reset = RESET;
+	} else {
+		color_green = NOTHING;
+		color_red = NOTHING;
+		color_blue = NOTHING;
+		color_magenta = NOTHING;
+		color_cyan = NOTHING;
+		color_white = NOTHING;
+		color_reset = NOTHING;
+	}
+}
+
+
+
 void init_terminal(void)
 {
 	initscr();
 	if (has_colors() == FALSE)
 		g_has_color = 0;
-
 	else {
 		start_color();
 		use_default_colors();
+		init_colors();
 	}
 	cbreak();
 	noecho();
@@ -181,17 +222,17 @@ int sprintf_size(uint64_t val, char *buf)
 	double f_val = val;
 
 	if (val >= PB)
-		ret = sprintf(buf, "%.2lfPB", f_val / PB);
+		ret = sprintf(buf, "%.2lfPb", f_val / PB);
 	else if (val >= TB)
-		ret = sprintf(buf, "%.2lfTB", f_val / TB);
+		ret = sprintf(buf, "%.2lfTb", f_val / TB);
 	else if (val >= GB)
-		ret = sprintf(buf, "%.2lfGB", f_val / GB);
+		ret = sprintf(buf, "%.2lfGb", f_val / GB);
 	else if (val >= MB)
-		ret = sprintf(buf, "%.2lfMB", f_val / MB);
+		ret = sprintf(buf, "%.2lfMb", f_val / MB);
 	else if (val >= KB)
-		ret = sprintf(buf, "%.2lfKB", f_val / KB);
+		ret = sprintf(buf, "%.2lfKb", f_val / KB);
 	else
-		ret = sprintf(buf, "%luB", val);
+		ret = sprintf(buf, "%lu bytes", val);
 
 	return ret;
 }

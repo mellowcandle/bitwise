@@ -59,6 +59,17 @@ extern FILE *fd;
 #define LOG(...)
 #endif
 
+/* Colors */
+void init_colors(void);
+
+extern char *color_green;
+extern char *color_red;
+extern char *color_blue;
+extern char *color_magenta;
+extern char *color_cyan;
+extern char *color_white;
+extern char *color_reset;
+
 extern WINDOW *fields_win;
 extern WINDOW *binary_win;
 extern WINDOW *cmd_win;
