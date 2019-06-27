@@ -157,13 +157,13 @@ void update_binary()
 
 	pos = 6;
 	if (g_has_color)
-		wattron(binary_win, COLOR_PAIR(2));
+		wattron(binary_win, COLOR_PAIR(3));
 	for (i = 0; i < g_width / 8; i++, pos += 18)
 		mvwprintw(binary_win, 2, pos, "%2d - %2d",
 		          (g_width - 1) - (i * 8),
 		          (g_width - 8) - (i * 8));
 	if (g_has_color)
-		wattroff(binary_win, COLOR_PAIR(2));
+		wattroff(binary_win, COLOR_PAIR(3));
 	wrefresh(binary_win);
 }
 
@@ -235,7 +235,7 @@ void position_binary_curser(int previous_pos, int next_pos)
 		pos = 2 + (2 * next_pos) + (2 * (next_pos / 8));
 		mvwchgat(binary_win, 1, pos, 1, A_UNDERLINE,
 		         COLOR_PAIR(0), NULL);
-		mvwprintw(binary_win, 3, 1, "bit %u", g_width - 1 - next_pos);
+		mvwprintw(binary_win, 3, 1, "bit %.2u", g_width - 1 - next_pos);
 	}
 	wrefresh(binary_win);
 }
@@ -430,6 +430,8 @@ void paint_screen(void)
 	if (g_has_color) {
 		init_pair(1, COLOR_BLUE, COLOR_BLACK);
 		init_pair(2, COLOR_GREEN, COLOR_BLACK);
+		init_pair(3, COLOR_CYAN, COLOR_BLACK);
+		init_pair(4, COLOR_MAGENTA, COLOR_BLACK);
 	}
 
 	form = new_form(field);
@@ -461,9 +463,13 @@ void paint_screen(void)
 	box(fields_win, 0, 0);
 	mvwprintw(fields_win, 0, (cols + 6 - strlen(width_str)) / 2, "%s",
 	          width_str);
+	if (g_has_color)
+		wattron(fields_win, COLOR_PAIR(2));
 	mvwprintw(fields_win, 1, dec_pos + 2, "Decimal:");
 	mvwprintw(fields_win, 1, hex_pos + 2, "Hexdecimal:");
 	mvwprintw(fields_win, 1, oct_pos + 2, "Octal:");
+	if (g_has_color)
+		wattroff(binary_win, COLOR_PAIR(2));
 
 	cmd_win = newwin(1, COLS, LINES - 1, 0);
 
