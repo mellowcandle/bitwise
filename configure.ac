@@ -39,4 +39,18 @@ AC_ARG_ENABLE([gcov],
 	[enable_gcov=no])
 AM_CONDITIONAL([COND_GCOV],[test '!' "$enable_gcov" = no])
 
+AC_ARG_ENABLE([trace],
+	[AS_HELP_STRING([--enable-trace],
+		[Build with trace support])],
+	[],
+	[enable_trace=no])
+AM_CONDITIONAL([COND_TRACE],[test '!' "$enable_trace" = no])
+
+AC_ARG_ENABLE([debug],
+	[AS_HELP_STRING([--enable-debug],
+		[Build with debug symbols])],
+	[],
+	[enable_debug=no])
+AM_CONDITIONAL([COND_DEBUG],[test '!' "$enable_debug" = no])
+
 AC_OUTPUT

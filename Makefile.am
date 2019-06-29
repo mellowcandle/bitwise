@@ -7,7 +7,15 @@ if COND_GCOV
 MAYBE_COVERAGE=--coverage --no-inline
 endif
 
-AM_CFLAGS = $(MAYBE_COVERAGE)
+if COND_TRACE
+MAYBE_TRACE=-DTRACE
+endif
+
+if COND_DEBUG
+MAYBE_DEBUG=-g -O0
+endif
+
+AM_CFLAGS = $(MAYBE_COVERAGE) $(MAYBE_DEBUG) $(MAYBE_TRACE)
 
 check_PROGRAMS = tests/test-shunting-yard
 tests_test_shunting_yard_SOURCES = src/shunting-yard.c inc/shunting-yard.h \
