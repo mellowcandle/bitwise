@@ -25,7 +25,8 @@ static int get_cmd(const char *cmd_name)
 	int i = 0;
 
 	for (i = 0; i < ARRAY_SIZE(cmds); i++) {
-		if (!strcmp(cmds[i].name, cmd_name))
+		LOG("comparing %s to command %s\n", cmd_name, cmds[i].name);
+		if (!strncmp(cmds[i].name, cmd_name, strlen(cmds[i].name)))
 			return i;
 	}
 
