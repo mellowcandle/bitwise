@@ -69,6 +69,19 @@ int max_display_history;
 #define LONG_BINARY_WIN_LEN (BINARY_WIN_LEN * 4) + 5
 #define DBL_BINARY_WIN_LEN  (BINARY_WIN_LEN * 8) + 9
 
+void flush_history(void)
+{
+	int i;
+
+	history_pos = 0;
+
+	for (i = 0; i < MAX_HISTORY_LEN; i++)
+		if (history[i].line) {
+			free(history[i].line);
+			history[i].line = NULL;
+		}
+}
+
 void update_history_win(void)
 {
 	int max_display = LINES - 17;
@@ -643,6 +656,7 @@ int start_interactive(uint64_t start)
 
 	/* deinit_readline(); */
 
+	flush_history();
 	deinit_terminal();
 
 	return 0;

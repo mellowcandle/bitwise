@@ -103,6 +103,7 @@ struct history_entry {
 extern struct history_entry history[];
 extern unsigned int history_pos;
 
+void flush_history(void);
 void update_history_win(void);
 
 static inline void append_to_history(const char *str, history_type type) {
