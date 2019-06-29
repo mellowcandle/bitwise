@@ -68,6 +68,7 @@ void show_error(Status status)
 
 	werase(cmd_win);
 	mvwprintw(cmd_win, 0, 0, "%s", message);
+	append_to_history(message, TYPE_OUTPUT_ERROR);
 	wrefresh(cmd_win);
 }
 
@@ -85,6 +86,7 @@ static int parse_cmd(char *cmdline)
 	cmd_entry = get_cmd(cmdline);
 	if (cmd_entry >= 0) {
 		/* It looks like a command, let's tokenize this */
+		append_to_history(cmdline, TYPE_INPUT_COMMAND);
 
 		tokens[i] = strtok(cmdline, " ");
 		LOG("%s\n", tokens[i]);
@@ -107,14 +109,19 @@ static int parse_cmd(char *cmdline)
 			return -1;
 		}
 	} else {
+		append_to_history(cmdline, TYPE_INPUT_EXPRESSION);
 		Status status = shunting_yard(cmdline, &result);
 		if (status != OK) {
 			show_error(status);
 			return -1;
 		} else {
+			char result_string[32];
+
 			g_val = result;
+			sprintf(result_string, "= 0x%lx", result);
 			update_binary();
 			update_fields(-1);
+			append_to_history(result_string, TYPE_OUTPUT_RESULT);
 		}
 	}
 

@@ -43,6 +43,7 @@ static char *width_str;
 WINDOW *fields_win;
 WINDOW *binary_win;
 WINDOW *cmd_win;
+WINDOW *history_win;
 
 int active_win, last_win;
 
@@ -58,12 +59,52 @@ static int base[3] = {
 	8,
 };
 
+struct history_entry history[MAX_HISTORY_LEN] = { { 0, NULL } };
+unsigned int history_pos = 0;
+int max_display_history;
 
 #define BINARY_WIN_LEN 17
 #define BYTE_BINARY_WIN_LEN (BINARY_WIN_LEN + 2)
 #define WORD_BINARY_WIN_LEN (BINARY_WIN_LEN * 2) + 3
 #define LONG_BINARY_WIN_LEN (BINARY_WIN_LEN * 4) + 5
 #define DBL_BINARY_WIN_LEN  (BINARY_WIN_LEN * 8) + 9
+
+void update_history_win(void)
+{
+	int max_display = LINES - 17;
+	int i, j;
+
+	if (history_pos < max_display)
+		max_display = history_pos;
+
+	werase(history_win);
+	box(history_win, 0, 0);
+
+	for (i = max_display, j = 1; i > 0; i--, j++) {
+		if (g_has_color)
+			switch (history[history_pos -i].type) {
+			case  TYPE_INPUT_COMMAND:
+				wattron(history_win, COLOR_PAIR(2));
+				break;
+			case  TYPE_INPUT_EXPRESSION:
+				wattron(history_win, COLOR_PAIR(1));
+				break;
+			case TYPE_OUTPUT_RESULT:
+				wattron(history_win, COLOR_PAIR(3));
+				break;
+			case TYPE_OUTPUT_ERROR:
+				wattron(history_win, COLOR_PAIR(5));
+				break;
+			}
+
+		mvwprintw(history_win, j, 2, history[history_pos - i].line);
+
+	}
+
+	if (g_has_color)
+		wattroff(history_win, COLOR_PAIR(1));
+	wrefresh(history_win);
+}
 
 char binary_field[DBL_BINARY_WIN_LEN];
 int dec_pos, hex_pos, oct_pos;
@@ -432,6 +473,7 @@ void paint_screen(void)
 		init_pair(2, COLOR_GREEN, COLOR_BLACK);
 		init_pair(3, COLOR_CYAN, COLOR_BLACK);
 		init_pair(4, COLOR_MAGENTA, COLOR_BLACK);
+		init_pair(5, COLOR_RED, COLOR_BLACK);
 	}
 
 	form = new_form(field);
@@ -447,6 +489,8 @@ void paint_screen(void)
 	keypad(binary_win, TRUE);
 	box(binary_win, 0, 0);
 
+	history_win = newwin(LINES - 15, COLS, 13, 0);
+	box(history_win, 0, 0);
 
 	rc = set_form_win(form, fields_win);
 	if (rc != E_OK)
@@ -475,6 +519,7 @@ void paint_screen(void)
 
 	wrefresh(fields_win);
 	update_binary();
+	update_history_win();
 	update_fields(-1);
 
 	wrefresh(cmd_win);
@@ -495,6 +540,7 @@ void unpaint_screen(void)
 		free_field(field[i]);
 	delwin(fields_win);
 	delwin(binary_win);
+	delwin(history_win);
 	delwin(cmd_win);
 	clear();
 	refresh();

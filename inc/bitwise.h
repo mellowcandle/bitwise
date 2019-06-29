@@ -10,8 +10,11 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <form.h>
+#include <string.h>
 #include <readline/history.h>
 #include <readline/readline.h>
+
+#define MAX_HISTORY_LEN 100
 
 #define FIELDS_WIN  0
 #define BINARY_WIN  1
@@ -83,6 +86,40 @@ extern bool g_input_avail;
 extern int g_input;
 extern bool g_leave_req;
 extern uint64_t g_val;
+
+/* History */
+typedef enum history_type {
+	TYPE_INPUT_COMMAND = 0,
+	TYPE_INPUT_EXPRESSION,
+	TYPE_OUTPUT_RESULT,
+	TYPE_OUTPUT_ERROR,
+} history_type;
+
+struct history_entry {
+	history_type type;
+	char *line;
+};
+
+extern struct history_entry history[];
+extern unsigned int history_pos;
+
+void update_history_win(void);
+
+static inline void append_to_history(const char *str, history_type type) {
+	char *new_line;
+
+	new_line = strdup(str);
+	if (!new_line) {
+		LOG("No memory to allocate string\n");
+		return;
+	}
+
+	history[history_pos % MAX_HISTORY_LEN].line = new_line;
+	history[history_pos % MAX_HISTORY_LEN].type = type;
+	history_pos++;
+
+	update_history_win();
+}
 
 static inline WINDOW *get_win(int win)
 {
