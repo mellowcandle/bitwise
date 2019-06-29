@@ -7,6 +7,7 @@
 
 #define MAX_TOKENS 4
 
+static int cmd_clear(char **argv, int argc);
 static int cmd_set_width(char **argv, int argc);
 
 struct cmd {
@@ -17,6 +18,7 @@ struct cmd {
 };
 
 static struct cmd cmds[] = {
+	{"clear", 0, 0, cmd_clear},
 	{"width", 1, 1, cmd_set_width},
 };
 
@@ -243,6 +245,13 @@ void process_cmd(int ch)
 	g_input = ch;
 	g_input_avail = true;
 	rl_callback_read_char();
+}
+
+static int cmd_clear(char **argv, int argc)
+{
+	flush_history();
+	update_history_win();
+	return 0;
 }
 
 static int cmd_set_width(char **argv, int argc)
