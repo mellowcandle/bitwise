@@ -93,7 +93,7 @@ static uint64_t pop_num(Stack **operands);
 static Status push_number(const char *value, Stack **operands);
 
 // Converts a constant identifier into its value and pushes it to the stack.
-//static Status push_constant(const char *value, Stack **operands);
+static Status push_constant(const char *value, Stack **operands);
 
 // Applies an operator to the top one or two operands, depending on if the
 // operator is unary or binary.
@@ -155,7 +155,7 @@ Token *tokenize(const char *expression)
 			token.type = TOKEN_IDENTIFIER;
 		} else if (sscanf(c, "%m[xX0-9a-fA-F.]", &token.value)) {
 			token.type = TOKEN_NUMBER;
-		} else if (sscanf(c, "%m[A-Za-z]", &token.value))
+		} else if (sscanf(c, "%m[A-Za-z$]", &token.value))
 			token.type = TOKEN_IDENTIFIER;
 
 		if (!isspace(*c)) {
@@ -225,7 +225,9 @@ Status parse(const Token *tokens, Stack **operands, Stack **operators,
 
 		case TOKEN_IDENTIFIER:
 			// The identifier could be either a constant or function.
-			if (next->type == TOKEN_OPEN_PARENTHESIS) {
+			status = push_constant(token->value, operands);
+			if ((status == ERROR_UNDEFINED_CONSTANT) &&
+			     (next->type == TOKEN_OPEN_PARENTHESIS)) {
 				stack_push(functions, token->value);
 				status = STATUS_OK;
 			} else if (next->type == TOKEN_OPEN_PARENTHESIS ||
@@ -301,6 +303,19 @@ Status push_number(const char *value, Stack **operands)
 
 	if (parse_input(value, &x))
 		return ERROR_SYNTAX;
+
+	push_num(x, operands);
+	return STATUS_OK;
+}
+
+Status push_constant(const char *value, Stack **operands)
+{
+	uint64_t x;
+
+	if (strncmp(value, "$", 1) == 0)
+		x = g_val;
+	else
+		return ERROR_UNDEFINED_CONSTANT;
 
 	push_num(x, operands);
 	return STATUS_OK;
