@@ -215,13 +215,35 @@ void deinit_readline(void)
 
 void process_cmd(int ch)
 {
+	int new_char;
+
 	LOG("Process cmd %u\n", ch);
 
-	/*
-	 * TODO:
-	 * I would love also to catch the ESC key (27), but these come
-	 * also when keypad is used, there can be a way to handle this by
-	 * using ESCDELAY stuff, but I will get to that later */
+	if (ch == 27) {
+		nodelay(get_win(active_win), true);
+		new_char = wgetch(get_win(active_win));
+		nodelay(get_win(active_win), false);
+
+		if (new_char == ERR) {
+			LOG("IT's a real escape\n");
+			active_win = last_win;
+			if (active_win == FIELDS_WIN) {
+				curs_set(1);
+				set_active_field(false);
+				wrefresh(fields_win);
+			} else if (active_win == BINARY_WIN) {
+				curs_set(0);
+				position_binary_curser(0, bit_pos);
+				wrefresh(binary_win);
+			}
+			keypad(stdscr, FALSE);
+			werase(cmd_win);
+			wrefresh(cmd_win);
+			return;
+		} else
+			ungetch(new_char);
+
+	}
 
 	/* If TAB || BACKSPACE (to -1) */
 	if (ch == '\t' || (ch == 127 && !rl_point)) {
