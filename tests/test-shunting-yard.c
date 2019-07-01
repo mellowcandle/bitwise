@@ -18,6 +18,7 @@
         CU_ASSERT(shunting_yard(expression, &result) == expected)
 
 static uint64_t result = 0;
+uint64_t g_val = 0x512;
 
 static void test_addition()
 {
@@ -78,6 +79,7 @@ static void test_functions()
 
 static void test_constants()
 {
+	ASSERT_RESULT("$+0x30", 0x542);
 }
 
 static void test_precedence()
