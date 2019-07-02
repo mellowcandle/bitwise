@@ -81,6 +81,20 @@ void flush_history(void)
 			history[i].line = NULL;
 		}
 }
+WINDOW * process_mouse(MEVENT *event)
+{
+	WINDOW *mouse_window = NULL;
+
+	if (wmouse_trafo(binary_win, &event->y, &event->x, FALSE) == TRUE) {
+		mouse_window = binary_win;
+		LOG("Click is inside binary win: x=%u y=%u\n", event->x, event->y);
+	} else if (wmouse_trafo(fields_win, &event->y, &event->x, FALSE) == TRUE) {
+		mouse_window = fields_win;
+		LOG("Click is inside fields win: x=%u y=%u\n", event->x, event->y);
+	}
+
+	return mouse_window;
+}
 
 void update_history_win(void)
 {
@@ -562,11 +576,14 @@ void unpaint_screen(void)
 int start_interactive(uint64_t start)
 {
 	int ch;
+	MEVENT event;
 
 	g_val = start;
 
 	init_terminal();
 	init_readline();
+	mousemask(BUTTON1_PRESSED, NULL);
+
 	refresh();
 
 	set_fields_width(g_width);
@@ -579,6 +596,13 @@ int start_interactive(uint64_t start)
 			break;
 
 		ch = wgetch(get_win(active_win));
+		if (ch == KEY_MOUSE) {
+			if(getmouse(&event) == OK) {
+				LOG("Mouse pressed: x=%u y=%u\n",
+				    event.x + 1, event.y + 1);
+				process_mouse(&event);
+			}
+		}
 		LOG("%d window ch= %d\n", active_win, ch);
 
 		if (active_win == COMMAND_WIN) {
