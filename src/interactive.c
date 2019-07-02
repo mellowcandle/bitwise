@@ -12,6 +12,7 @@
 #include <fcntl.h>
 #include <limits.h>
 #include <sys/stat.h>
+#include <math.h>
 #include "bitwise.h"
 
 #define MAX_DEC_DIGITS_64 20
@@ -178,13 +179,14 @@ void set_fields_width(int width)
 
 static void update_bit(int pos, int op)
 {
-	LOG("update bit: %u %u\n", pos, op);
 	if (op == SET_BIT)
 		g_val |= BIT(g_width - 1 - pos);
 	else if (op == CLEAR_BIT)
 		g_val &= ~(BIT(g_width - 1 - pos));
 	else
 		g_val ^= BIT(g_width - 1 - pos);
+	LOG("g_width: %d\ng_val: %llu\n", g_width, g_val);
+
 
 	update_binary();
 }
@@ -222,6 +224,39 @@ void update_binary()
 		wattroff(binary_win, COLOR_PAIR(3));
 	wrefresh(binary_win);
 }
+
+
+void mouse_to_bit(int xPos){
+	int binaryDigitWinSize = 18;
+	//Indicates that user is clicking a separating bar
+	if(xPos % binaryDigitWinSize == 0){
+		return;
+	}
+	int field = floor(xPos / binaryDigitWinSize);
+	// How many bits from the previous separating line was the click
+	int bitFromLine = floor((xPos%binaryDigitWinSize)/2) - 1;
+	// If they are on the first bit
+	if (bitFromLine < 0) {
+		bitFromLine = 0;
+	}
+	int relativeBit = (8 * (field)) + bitFromLine;
+	update_bit(relativeBit, TOGGLE_BIT);
+	update_fields(-1);
+}
+
+WINDOW * process_mouse(MEVENT *event)
+{
+	WINDOW *mouse_window = NULL;
+	if (wmouse_trafo(binary_win, &event->y, &event->x, FALSE) == TRUE) {
+		mouse_window = binary_win;
+		mouse_to_bit(event->x);
+	} else if (wmouse_trafo(fields_win, &event->y, &event->x, FALSE) == TRUE) {
+		mouse_window = fields_win;
+	}
+
+	return mouse_window;
+}
+
 
 int update_fields(int index)
 {
@@ -580,11 +615,14 @@ int start_interactive(uint64_t start)
 {
 	int ch;
 	uint64_t tmp_val;
+	MEVENT event;
 
 	g_val = start;
 
 	init_terminal();
 	init_readline();
+	mousemask(BUTTON1_CLICKED, NULL);
+
 	refresh();
 
 	set_fields_width(g_width);
@@ -605,6 +643,13 @@ int start_interactive(uint64_t start)
 		}
 
 		switch (ch) {
+		case KEY_MOUSE:
+			if(getmouse(&event) == OK){
+				process_mouse(&event);
+			}
+			break;
+
+				
 		case KEY_F(1):
 			unpaint_screen();
 			show_help();
