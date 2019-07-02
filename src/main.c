@@ -26,9 +26,17 @@ int print_conversions(uint64_t val)
 	printf("%sOctal: %s0%lo\n", color_green, color_blue, val);
 	if (buf_size[0])
 		printf("%sSize: %s%s\n", color_green, color_blue, buf_size);
-	if (val < 128 && isgraph(val))
-		printf("%sASCII: %s%c\n",color_green, color_blue, toascii(val));
-	printf("%sBinary:\n%s", color_green, color_reset);
+
+	printf("%sASCII: %s", color_green, color_blue);
+	for (i = sizeof(uint64_t) - 1; i >= 0; i--) {
+		char c = ((char *)&val)[i];
+		if (isgraph(c))
+			printf("%s%c", color_blue, c);
+		else
+			printf("%s.", color_white);
+	}
+
+	printf("\n%sBinary:\n%s", color_green, color_reset);
 	for (i = g_width; i > 0; i--) {
 		if ((i % 8 == 0) && (i != g_width)) {
 			pos += sprintf(&binary[pos], "%s", color_white);
