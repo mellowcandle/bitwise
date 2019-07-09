@@ -48,7 +48,7 @@ WINDOW *history_win;
 int active_win, last_win;
 
 static FIELD *field[5];
-static FORM  *form;
+FORM  *form;
 uint64_t g_val;
 int bit_pos;
 static int binary_field_size;

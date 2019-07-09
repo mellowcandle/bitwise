@@ -120,7 +120,7 @@ static int parse_cmd(char *cmdline)
 			char result_string[32];
 
 			g_val = result;
-			sprintf(result_string, "= 0x%lx", result);
+			sprintf(result_string, "0x%lx", result);
 			update_binary();
 			update_fields(-1);
 			append_to_history(result_string, TYPE_OUTPUT_RESULT);
@@ -160,18 +160,6 @@ static void got_command(char *line)
 	rc = parse_cmd(line);
 	free(line);
 
-	active_win = last_win;
-	if (active_win == FIELDS_WIN) {
-		curs_set(1);
-		set_active_field(false);
-		wrefresh(fields_win);
-
-	} else if (active_win == BINARY_WIN) {
-		position_binary_curser(0, bit_pos);
-		curs_set(0);
-		wrefresh(binary_win);
-	}
-
 	if (!rc) {
 		keypad(stdscr, FALSE);
 		werase(cmd_win);
@@ -203,7 +191,7 @@ void init_readline(void)
 	rl_getc_function = readline_getc;
 	rl_input_available_hook = readline_input_avail;
 	rl_redisplay_function = readline_redisplay;
-	rl_bind_key('\t', rl_insert);
+	//rl_bind_key('\t', rl_insert);
 	rl_callback_handler_install(":", got_command);
 
 }
@@ -228,8 +216,10 @@ void process_cmd(int ch)
 			LOG("IT's a real escape\n");
 			active_win = last_win;
 			if (active_win == FIELDS_WIN) {
-				curs_set(1);
 				set_active_field(false);
+				form_driver(form, REQ_END_LINE);
+				form_driver(form, REQ_VALIDATION);
+				curs_set(1);
 				wrefresh(fields_win);
 			} else if (active_win == BINARY_WIN) {
 				curs_set(0);
@@ -242,16 +232,17 @@ void process_cmd(int ch)
 			return;
 		} else
 			ungetch(new_char);
-
 	}
 
 	/* If TAB || BACKSPACE (to -1) */
-	if (ch == '\t' || (ch == 127 && !rl_point)) {
+	if (ch == 127 && !rl_point) {
 		LOG("Detected exit cmd\n");
 		active_win = last_win;
 		if (active_win == FIELDS_WIN) {
-			curs_set(1);
 			set_active_field(false);
+			form_driver(form, REQ_END_LINE);
+			form_driver(form, REQ_VALIDATION);
+			curs_set(1);
 			wrefresh(fields_win);
 		} else if (active_win == BINARY_WIN) {
 			curs_set(0);

@@ -36,6 +36,8 @@ void init_terminal(void);
 void deinit_terminal(void);
 
 /* Interactive */
+extern FORM *form;
+
 int sprintf_size(uint64_t val, char *buf, bool si);
 int start_interactive(uint64_t start);
 void set_active_field(bool none);
