@@ -36,7 +36,7 @@ void init_terminal(void);
 void deinit_terminal(void);
 
 /* Interactive */
-int sprintf_size(uint64_t val, char *buf);
+int sprintf_size(uint64_t val, char *buf, bool si);
 int start_interactive(uint64_t start);
 void set_active_field(bool none);
 void set_fields_width(int width);

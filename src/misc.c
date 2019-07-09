@@ -7,11 +7,19 @@
 
 #include "bitwise.h"
 
-#define KB (1ULL << 10)
-#define MB (1ULL << 20)
-#define GB (1ULL << 30)
-#define TB (1ULL << 40)
-#define PB (1ULL << 50)
+/* IEC Standard */
+#define KiB (1ULL << 10)
+#define MiB (1ULL << 20)
+#define GiB (1ULL << 30)
+#define TiB (1ULL << 40)
+#define PiB (1ULL << 50)
+
+/* SI Standard */
+#define kB (1000ULL)
+#define MB (1000 * kB)
+#define GB (1000 * MB)
+#define TB (1000 * GB)
+#define PB (1000 * TB)
 
 int g_has_color = 1;
 int g_width = 0;
@@ -214,23 +222,38 @@ void lltostr(uint64_t val, char *buf, int base)
 	}
 }
 
-int sprintf_size(uint64_t val, char *buf)
+int sprintf_size(uint64_t val, char *buf, bool si)
 {
 	int ret;
 	double f_val = val;
 
-	if (val >= PB)
-		ret = sprintf(buf, "%.2lfPb", f_val / PB);
-	else if (val >= TB)
-		ret = sprintf(buf, "%.2lfTb", f_val / TB);
-	else if (val >= GB)
-		ret = sprintf(buf, "%.2lfGb", f_val / GB);
-	else if (val >= MB)
-		ret = sprintf(buf, "%.2lfMb", f_val / MB);
-	else if (val >= KB)
-		ret = sprintf(buf, "%.2lfKb", f_val / KB);
-	else
-		ret = sprintf(buf, "%lu bytes", val);
+	if (si) {
+		if (val >= PB)
+			ret = sprintf(buf, "%.2lf PB", f_val / PB);
+		else if (val >= TB)
+			ret = sprintf(buf, "%.2lf TB", f_val / TB);
+		else if (val >= GB)
+			ret = sprintf(buf, "%.2lf GB", f_val / GB);
+		else if (val >= MB)
+			ret = sprintf(buf, "%.2lf MB", f_val / MB);
+		else if (val >= kB)
+			ret = sprintf(buf, "%.2lf Kb", f_val / kB);
+		else
+			ret = sprintf(buf, "%lu bytes", val);
+	} else {
+		if (val >= PiB)
+			ret = sprintf(buf, "%.2lf PiB", f_val / PiB);
+		else if (val >= TiB)
+			ret = sprintf(buf, "%.2lf TiB", f_val / TiB);
+		else if (val >= GiB)
+			ret = sprintf(buf, "%.2lf GiB", f_val / GiB);
+		else if (val >= MiB)
+			ret = sprintf(buf, "%.2lf MiB", f_val / MiB);
+		else if (val >= KiB)
+			ret = sprintf(buf, "%.2lf KiB", f_val / KiB);
+		else
+			ret = sprintf(buf, "%lu bytes", val);
+	}
 
 	return ret;
 }

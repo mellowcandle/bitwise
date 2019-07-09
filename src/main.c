@@ -11,7 +11,7 @@
 #include "config.h"
 #include "shunting-yard.h"
 
-int print_conversions(uint64_t val)
+int print_conversions(uint64_t val, bool si)
 {
 	char buf_size[16];
 	char binary[512];
@@ -19,7 +19,7 @@ int print_conversions(uint64_t val)
 	int i, j;
 
 	buf_size[0] = '\0';
-	sprintf_size(val, buf_size);
+	sprintf_size(val, buf_size, si);
 
 	printf("%sDecimal: %s%lu\n", color_green, color_blue, val);
 	printf("%sHexdecimal: %s0x%lX\n", color_green, color_blue, val);
@@ -84,6 +84,7 @@ static void print_help(FILE *out)
 	fprintf(out, "  -w, --width[b|w|l|d]\t Set bit width (default: l)\n");
 	fprintf(out, "  -h, --help\t\t Display this help and exit\n");
 	fprintf(out, "  -v, --version\t\t Output version information and exit\n");
+	fprintf(out, "  -s, --si\t\t Print size acoording to SI standard. (default: IEC standard)\n");
 	fprintf(out, "      --no-color\t Start without color support\n\n");
 }
 
@@ -94,6 +95,7 @@ int main(int argc, char *argv[])
 	int interactive = 0;
 	uint64_t val = 0;
 	int rc;
+	bool si = false;
 
 #ifdef TRACE
 	fd = fopen("log.txt", "w");
@@ -107,13 +109,14 @@ int main(int argc, char *argv[])
 			{"version", no_argument, 0, 'v'},
 			{"help", no_argument, 0, 'h'},
 			{"interactive", no_argument, 0, 'i'},
+			{"si", no_argument, 0, 's'},
 			{"width", required_argument, 0, 'w'},
 			{0, 0, 0, 0}
 		};
 
 		int option_index = 0;
 
-		c = getopt_long(argc, argv, "vhiw:", long_options, &option_index);
+		c = getopt_long(argc, argv, "vhisw:", long_options, &option_index);
 		if (c == -1)
 			break;
 		switch (c) {
@@ -127,6 +130,9 @@ int main(int argc, char *argv[])
 			exit(EXIT_SUCCESS);
 		case 'i':
 			interactive = 1;
+			break;
+		case 's':
+			si = true;
 			break;
 		case 'w':
 			width = *optarg;
@@ -153,7 +159,7 @@ int main(int argc, char *argv[])
 			set_width_by_val(val);
 		val &= MASK(g_width);
 		if (!interactive)
-			return print_conversions(val);
+			return print_conversions(val, si);
 	}
 
 	if (!g_width)
