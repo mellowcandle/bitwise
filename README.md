@@ -35,29 +35,12 @@ _bitwise_ detects the base by the preface of the input (_0x/0X_ for hexadecimal,
 
 #### Simple base conversion
 
-```
-$ bitwise 0x12312311
-Decimal: 305210129
-Hexdecimal: 0x12312311
-Octal: 02214221421
-Size: 291.07MB
-Binary:
-0 0 0 1 0 0 1 0 | 0 0 1 1 0 0 0 1 | 0 0 1 0 0 0 1 1 | 0 0 0 1 0 0 0 1 
-    31 - 24           23 - 16           15 -  8            7 -  0     
-```
+![conversion](https://github.com/mellowcandle/bitwise/raw/master/resources/cmdline.png "Bitwise conversion")
+
 
 #### Calculator with predence
 
-```
-$ bitwise "0x30 * 0x20 + 30 / 2"
-Decimal: 1551
-Hexdecimal: 0x60F
-Octal: 03017
-Size: 1.51KB
-Binary:
-0 0 0 0 0 1 1 0 | 0 0 0 0 1 1 1 1 
-    15 -  8            7 -  0 
-```
+![calculator](https://github.com/mellowcandle/bitwise/raw/master/resources/conversion.png "Bitwise calculator")
 
 ### Interactive mode
 _bitwise_ starts in interactive mode if no command line parameters are passed or if the _-i | --interactive_ flag is passed.
