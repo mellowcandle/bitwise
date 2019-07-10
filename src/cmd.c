@@ -74,6 +74,17 @@ void show_error(Status status)
 	wrefresh(cmd_win);
 }
 
+static int is_whitespace(const char *string)
+{
+	int i;
+
+	for (i = 0; i < strlen(string); i++)
+		if (!isspace(string[i]))
+			return false;
+
+	return true;
+}
+
 static int parse_cmd(char *cmdline)
 {
 	static char *tokens[MAX_TOKENS];
@@ -81,6 +92,9 @@ static int parse_cmd(char *cmdline)
 	int i = 0;
 	int rc;
 	uint64_t result;
+
+	if (is_whitespace(cmdline))
+		return 0;
 
 	LOG("got command: %s\n", cmdline);
 
