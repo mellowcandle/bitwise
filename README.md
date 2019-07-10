@@ -38,7 +38,7 @@ _bitwise_ detects the base by the preface of the input (_0x/0X_ for hexadecimal,
 ![conversion](https://github.com/mellowcandle/bitwise/raw/master/resources/cmdline.png "Bitwise conversion")
 
 
-#### Calculator with predence
+#### C style syntax Calculator
 
 ![calculator](https://github.com/mellowcandle/bitwise/raw/master/resources/conversion.png "Bitwise calculator")
 
