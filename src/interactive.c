@@ -449,13 +449,13 @@ void process_fields(int ch)
 
 		form_driver(form, ch);
 		form_driver(form, REQ_VALIDATION);
-		update_binary();
 		if (update_fields(field_index(tmp_field))) {
 			form_driver(form, REQ_DEL_CHAR);
 			form_driver(form, REQ_PREV_CHAR);
 			form_driver(form, REQ_VALIDATION);
 		}
-
+		update_binary();
+		wrefresh(fields_win);
 		break;
 	}
 }
