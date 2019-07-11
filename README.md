@@ -67,6 +67,22 @@ When changing the bit width, the number is *masked* with the new width, so you m
 
 Press <kbd> ~ </kbd> to perform the NOT operator.
 
+#### expression calculator in interactive mode
+
+You can enter expression calculator mode by typing <kbd> : </kbd> (Just like in vim).
+To exit the mode, just press <kbd> ESC </kbd>.
+
+In this mode, you can type any expression you like to be evaluated.
+The result will be printed in the history window and also printed in the binary and various bases on top.
+
+###### operators and functions
+* All C operators are supported, additionaly, you can use the "$" symbol to refer to the last result.
+* refer to a specific bit by using the function _BIT(x)_.
+
+###### commands
+* _clear_ - to clear the history window.
+* _q_ - to exit
+
 ## Installation
 
 ### Linux
