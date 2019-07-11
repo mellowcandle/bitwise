@@ -113,6 +113,7 @@ No, wait. really ???
 tar xfz RELEASE-FILE.TAR.GZ
 cd RELEASE-DIR
 
+./bootstrap.sh
 ./configure
 make
 sudo make install
