@@ -20,7 +20,7 @@ Some of the features include:
 
 ##
 
-![Demo](https://github.com/mellowcandle/bitwise/raw/master/resources/bitwise.gif "Bitwise demo")
+![Demo](https://github.com/mellowcandle/bitwise/raw/master/resources/bitwise.gif "Bitwise demo2")
 
 ## Usage
 _bitwise_ can be used both Interactively and in command line mode.
@@ -70,6 +70,7 @@ Press <kbd> ~ </kbd> to perform the NOT operator.
 #### expression calculator in interactive mode
 
 You can enter expression calculator mode by typing <kbd> : </kbd> (Just like in vim).
+
 To exit the mode, just press <kbd> ESC </kbd>.
 
 In this mode, you can type any expression you like to be evaluated.
