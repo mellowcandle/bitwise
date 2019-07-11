@@ -72,7 +72,6 @@ void init_terminal(void)
 		g_has_color = 0;
 	else {
 		start_color();
-		use_default_colors();
 		init_colors();
 	}
 	cbreak();
