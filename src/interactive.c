@@ -436,6 +436,7 @@ void process_fields(int ch)
 		form_driver(form, REQ_DEL_PREV);
 		form_driver(form, REQ_VALIDATION);
 		update_fields(field_index(current_field(form)));
+		set_active_field(false);
 		update_binary();
 		wrefresh(fields_win);
 		break;
