@@ -435,8 +435,9 @@ void process_fields(int ch)
 		form_driver(form, REQ_DEL_CHAR);
 		form_driver(form, REQ_DEL_PREV);
 		form_driver(form, REQ_VALIDATION);
-		update_binary();
 		update_fields(field_index(current_field(form)));
+		update_binary();
+		wrefresh(fields_win);
 		break;
 	default:
 		LOG("default char\n");
