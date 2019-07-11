@@ -150,13 +150,31 @@ int main(int argc, char *argv[])
 
 	init_colors();
 
-	if (optind < argc) {
-		rc = shunting_yard(argv[optind], &val);
+	if (optind < argc) { // non-interactive mode
+		uint32_t expr_len = argc - optind; // account for ' ' between args
+		for (int i = optind; i < argc; i++)
+			expr_len += strlen(argv[i]);
+
+		char *expression = malloc((sizeof 'a') * expr_len);
+		if (expression == NULL) {
+			fprintf(stderr, "Error parsing arguments");
+			exit(EXIT_FAILURE);
+		}
+
+		uint32_t expr_pos = 0;
+		for (int i = optind; i < argc; i++) {
+			strncpy(&expression[expr_pos], argv[i], expr_len - expr_pos);
+			expr_pos += strlen(argv[i]);
+			expression[expr_pos++] = ' ';
+		}
+
+		rc = shunting_yard(expression, &val);
 		if (rc) {
-			fprintf(stderr, "Couldn't parse expression: %s\n", argv[optind]);
+			fprintf(stderr, "Couldn't parse expression: %s\n", expression);
 			print_help(stderr);
 			exit(EXIT_FAILURE);
 		}
+		free(expression);
 		if (!g_width)
 			set_width_by_val(val);
 		val &= MASK(g_width);
