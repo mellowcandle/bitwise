@@ -2,9 +2,14 @@ language: c
 
 compiler: gcc
 
+os:
+  - linux
+  - osx
+ 
+
 before_install:
-        - sudo apt-get -qq update
-        - sudo apt-get install libcunit1-dev
+  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then sudo apt-get -qq update ; fi
+  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then sudo apt-get install libcunit1-dev ; fi
 
 script:
 - "./bootstrap.sh"
