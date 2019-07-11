@@ -2,6 +2,7 @@
  * Ramon Fried <ramon.fried@gmail.com>
  */
 #include <string.h>
+#include <ctype.h>
 #include "bitwise.h"
 #include "shunting-yard.h"
 
