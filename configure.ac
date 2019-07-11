@@ -6,6 +6,11 @@ AC_INIT([bitwise], [v0.30], [rfried.dev@gmail.com])
 AC_CONFIG_SRCDIR([src/misc.c])
 AC_CONFIG_HEADERS([inc/config.h])
 
+dnl  Document where we keep our .m4 file.
+AC_CONFIG_MACRO_DIR([m4])
+dnl  Make sure aclocal actually found it!
+m4_pattern_forbid([^AX_])
+
 AM_INIT_AUTOMAKE([-Wall -Werror foreign subdir-objects])
 
 # Checks for programs.
@@ -14,13 +19,14 @@ AC_PROG_CC_STDC
 AC_PROG_INSTALL
 AC_PROG_CC_C99
 
+AX_LIB_READLINE(6.3)
+
 # Checks for libraries.
 AC_CHECK_LIB([form], [form_driver])
 AC_CHECK_LIB([ncurses], [newwin])
-AC_CHECK_LIB([readline], [rl_bind_key])
 
 # Checks for header files.
-AC_CHECK_HEADERS([fcntl.h stdint.h stdlib.h string.h curses.h form.h readline/history.h readline/readline.h])
+AC_CHECK_HEADERS([fcntl.h stdint.h stdlib.h string.h curses.h form.h])
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_CHECK_HEADER_STDBOOL

@@ -10,11 +10,13 @@ os:
 before_install:
   - if [ "$TRAVIS_OS_NAME" = "linux" ]; then sudo apt-get -qq update ; fi
   - if [ "$TRAVIS_OS_NAME" = "linux" ]; then sudo apt-get install libcunit1-dev ; fi
+  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install readline; fi
 
 script:
-- "./bootstrap.sh"
-- "./configure --enable-gcov"
-- "make check"
+  - "./bootstrap.sh"
+  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then ./configure --enable-gcov; fi
+  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then ./configure; fi
+  - "make check"
 
 after_success:
         - bash <(curl -s https://codecov.io/bash)
