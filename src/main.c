@@ -3,6 +3,7 @@
  */
 
 #include <ctype.h>
+#include <inttypes.h>
 #include <stdlib.h>
 #include <stdint.h>
 #include <getopt.h>
@@ -21,9 +22,9 @@ int print_conversions(uint64_t val, bool si)
 	buf_size[0] = '\0';
 	sprintf_size(val, buf_size, si);
 
-	printf("%sDecimal: %s%lu\n", color_green, color_blue, val);
-	printf("%sHexdecimal: %s0x%lX\n", color_green, color_blue, val);
-	printf("%sOctal: %s0%lo\n", color_green, color_blue, val);
+	printf("%sDecimal: %s%" PRIu64 "\n", color_green, color_blue, val);
+	printf("%sHexdecimal: %s0x%" PRIx64 "\n", color_green, color_blue, val);
+	printf("%sOctal: %s0%" PRIo64 "\n", color_green, color_blue, val);
 	if (buf_size[0])
 		printf("%sSize: %s%s\n", color_green, color_blue, buf_size);
 
