@@ -99,7 +99,7 @@ If your distribution supports Snap just type:
 sudo snap install bitwise
 `
 #### Arch
-Your can use the AUR repository: https://aur.archlinux.org/packages/bitwise/
+You can use the AUR repository: https://aur.archlinux.org/packages/bitwise/
 
 ### Windows
 No, wait. really ???
