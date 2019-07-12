@@ -107,7 +107,7 @@ NCurses doesn't support windows. You can use the windows subsystem for linux as 
 
 ### Building from source
 
-#### Prerequisites 
+#### Prerequisites
 * libreadline
 * libncurses (with forms)
 * libcunit (only needed for testing)
@@ -135,6 +135,6 @@ Running unit tests by typing
 
 ### Contribution
 * Fork the repo
-* Run ```./bootstrap```
+* Run ```./bootstrap.sh```
 * Follow the building from source section.
 * commit and send pull request
