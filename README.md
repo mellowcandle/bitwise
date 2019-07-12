@@ -133,3 +133,8 @@ sudo make install
 Running unit tests by typing
 ``` make check ```
 
+### Contribution
+* Fork the repo
+* Run ```./bootstrap```
+* Follow the building from source section.
+* commit and send pull request
