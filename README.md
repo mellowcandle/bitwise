@@ -4,7 +4,7 @@
 [![Snap Status](https://build.snapcraft.io/badge/mellowcandle/bitwise.svg)](https://build.snapcraft.io/user/mellowcandle/bitwise)<a href="https://scan.coverity.com/projects/mellowcandle-bitwise">
   <img alt="Coverity Scan Build Status"
        src="https://img.shields.io/coverity/scan/18170.svg"/>
-</a>
+</a>[![GitSpo Mentions](https://gitspo.com/badges/mentions/mellowcandle/bitwise?style=flat-square)](https://gitspo.com/mentions/mellowcandle/bitwise)
 
 _Bitwise_ is multi base interactive calculator supporting dynamic base convertion and bit manipulation.
 It's a handy tool for low level hackers, kernel developers and device drivers developers.
