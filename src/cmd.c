@@ -2,6 +2,7 @@
  * Ramon Fried <ramon.fried@gmail.com>
  */
 #include <string.h>
+#include <inttypes.h>
 #include <ctype.h>
 #include "bitwise.h"
 #include "shunting-yard.h"
@@ -135,7 +136,7 @@ static int parse_cmd(char *cmdline)
 			char result_string[32];
 
 			g_val = result;
-			sprintf(result_string, "0x%lx", result);
+			sprintf(result_string, "0x%" PRIx64, result);
 			update_binary();
 			update_fields(-1);
 			append_to_history(result_string, TYPE_OUTPUT_RESULT);
