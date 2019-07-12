@@ -82,6 +82,7 @@ The result will be printed in the history window and also printed in the binary 
 
 ###### commands
 * _clear_ - to clear the history window.
+* _width_ [8 | 16 | 32 | 64] - set the required width mask
 * _q_ - to exit
 
 ## Installation
@@ -105,19 +106,30 @@ You can use the AUR repository: https://aur.archlinux.org/packages/bitwise/
 NCurses doesn't support windows. You can use the windows subsystem for linux as a workaround.
 
 ### Building from source
-*Make sure you have ncurses package installed*
+
+#### Prerequisites 
+* libreadline
+* libncurses (with forms)
+* libcunit (only needed for testing)
+
+On Ubuntu/Debian system you can just paste:
+```
+sudo apt-get install build-essential
+sudo apt-get install libncurses5-dev
+sudo apt-get install libreadline-dev
+sudo apt-get install libcunit1-dev
+```
 
 - Download [the latest release](https://github.com/mellowcandle/bitwise/releases/latest)
 
 ```sh
 tar xfz RELEASE-FILE.TAR.GZ
 cd RELEASE-DIR
-
-sudo apt-get install build-essential
-sudo apt-get install libncurses5-dev libncursesw5-dev
-sudo apt-get install libreadline-dev
-
 ./configure
 make
 sudo make install
 ```
+
+Running unit tests by typing
+``` make check ```
+
