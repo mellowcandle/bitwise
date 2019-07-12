@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.69])
-AC_INIT([bitwise], [v0.30], [rfried.dev@gmail.com])
+AC_INIT([bitwise], [v0.31], [rfried.dev@gmail.com])
 AC_CONFIG_SRCDIR([src/misc.c])
 AC_CONFIG_HEADERS([inc/config.h])
 
