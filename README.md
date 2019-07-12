@@ -102,7 +102,7 @@ sudo snap install bitwise
 You can use the AUR repository: https://aur.archlinux.org/packages/bitwise/
 
 ### Windows
-No, wait. really ???
+NCurses doesn't support windows. You can use the windows subsystem for linux as a workaround.
 
 ### Building from source
 *Make sure you have ncurses package installed*
@@ -112,6 +112,10 @@ No, wait. really ???
 ```sh
 tar xfz RELEASE-FILE.TAR.GZ
 cd RELEASE-DIR
+
+sudo apt-get install build-essential
+sudo apt-get install libncurses5-dev libncursesw5-dev
+sudo apt-get install libreadline-dev
 
 ./configure
 make
