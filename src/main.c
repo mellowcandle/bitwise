@@ -57,13 +57,14 @@ int print_conversions(uint64_t val, bool si)
 		pos += 2;
 	}
 
-	binary[pos] = '\0';
+	binary[pos-1] = '\0';
 	printf("%s\n    ", binary);
 	fputs(color_cyan, stdout);
 	for (i = 0; i < g_width / 8; i++) {
 		printf("%2d - %2d", g_width - 1 - (i * 8), (g_width - 8) - (i * 8));
-		for (j = 0; j < 11; j++)
-			putchar(' ');
+		if (i != (g_width / 8) - 1)
+			for (j = 0; j < 11; j++)
+				putchar(' ');
 	}
 	printf("\n");
 	puts(color_reset);
