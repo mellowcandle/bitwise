@@ -17,8 +17,10 @@ before_install:
 script:
   - "./bootstrap.sh"
   - if [ "$TRAVIS_OS_NAME" = "linux" ]; then ./configure --enable-gcov; fi
+  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then make check; fi
+
   - if [ "$TRAVIS_OS_NAME" = "osx" ]; then ./configure; fi
-  - "make check"
+  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then make; fi
 
 after_success:
         - bash <(curl -s https://codecov.io/bash)
