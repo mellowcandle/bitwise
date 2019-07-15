@@ -5,12 +5,14 @@ compiler: gcc
 os:
   - linux
   - osx
- 
+
 
 before_install:
   - if [ "$TRAVIS_OS_NAME" = "linux" ]; then sudo apt-get -qq update ; fi
   - if [ "$TRAVIS_OS_NAME" = "linux" ]; then sudo apt-get install libcunit1-dev ; fi
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install readline; fi
+  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then export LDFLAGS="-L/usr/local/opt/readline/lib"; fi
+  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then export CPPFLAGS="-I/usr/local/opt/readline/include"; fi
 
 script:
   - "./bootstrap.sh"
