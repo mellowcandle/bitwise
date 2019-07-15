@@ -32,7 +32,6 @@ _bitwise_ detects the base by the preface of the input (_0x/0X_ for hexadecimal,
 
 ### Examples:
 
-
 #### Simple base conversion
 
 ![conversion](https://github.com/mellowcandle/bitwise/raw/master/resources/cmdline.png "Bitwise conversion")
