@@ -6,7 +6,6 @@ os:
   - linux
   - osx
 
-
 before_install:
   - if [ "$TRAVIS_OS_NAME" = "linux" ]; then sudo apt-get -qq update ; fi
   - if [ "$TRAVIS_OS_NAME" = "linux" ]; then sudo apt-get install libcunit1-dev ; fi
@@ -24,5 +23,8 @@ script:
   - if [ "$TRAVIS_OS_NAME" = "osx" ]; then make check; fi
 
 after_success:
-        - bash <(curl -s https://codecov.io/bash)
+  - bash <(curl -s https://codecov.io/bash)
+
+after_failure:
+  - if [ -f ./test-suite.log ]; then cat ./test-suite.log; fi
 
