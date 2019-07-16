@@ -133,13 +133,17 @@ Status shunting_yard(const char *expression, uint64_t *result)
 	return status;
 }
 
+#define MAX_TOKEN_SIZE 64
+
 Token *tokenize(const char *expression)
 {
 	int length = 0;
 	Token *tokens = malloc(sizeof * tokens);
 	const char *c = expression;
 	while (*c) {
+		char cur_token[MAX_TOKEN_SIZE];
 		Token token = {TOKEN_UNKNOWN, NULL};
+
 		if (*c == '(')
 			token.type = TOKEN_OPEN_PARENTHESIS;
 		else if (*c == ')')
@@ -153,18 +157,23 @@ Token *tokenize(const char *expression)
 		} else if (!strncmp("bit", c, 3) || !strncmp("BIT", c, 3)) {
 			token.value = strndup(c, 3);
 			token.type = TOKEN_IDENTIFIER;
-		} else if (sscanf(c, "%m[xX0-9a-fA-F.]", &token.value)) {
+		} else if (sscanf(c, "%[xX0-9a-fA-F.]", cur_token)) {
 			token.type = TOKEN_NUMBER;
-		} else if (sscanf(c, "%m[A-Za-z$]", &token.value))
+			token.value = strdup(cur_token);
+		} else if (sscanf(c, "%[A-Za-z$]", cur_token)) {
 			token.type = TOKEN_IDENTIFIER;
+			token.value = strdup(cur_token);
+		}
 
 		if (!isspace(*c)) {
-			tokens = realloc(tokens, sizeof * tokens * (++length + 1));
+			tokens = realloc(tokens, sizeof * tokens *
+					 (++length + 1));
 			tokens[length - 1] = token;
 		}
 		c += token.value ? strlen(token.value) : 1;
 	}
 	tokens[length] = NO_TOKEN;
+
 	return tokens;
 }
 
