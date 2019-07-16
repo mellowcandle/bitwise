@@ -240,7 +240,7 @@ int update_fields(int index)
 		}
 		g_val = tmp_val;
 	}
-	LOG("Val = %lu\n", g_val);
+	LOG("Val = %" PRIu64 "\n", g_val);
 	for (int i = 0; i < 3; i++) {
 		if (i == index)
 			continue;
