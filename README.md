@@ -84,6 +84,10 @@ The result will be printed in the history window and also printed in the binary 
 * _width_ [8 | 16 | 32 | 64] - set the required width mask
 * _q_ - to exit
 
+## Integration with other software
+### Vim
+* [vim-bitwise](https://github.com/mellowcandle/vim-bitwise "vim bitwise")
+
 ## Installation
 
 ### Linux
