@@ -217,6 +217,7 @@ void lltostr(uint64_t val, char *buf, int base)
 		sprintf(buf, "%" PRIo64, val);
 		return;
 	case 2:
+	default:
 		sprintf(buf, "Not implemeted");
 	}
 }
