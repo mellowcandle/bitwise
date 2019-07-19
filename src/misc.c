@@ -238,7 +238,7 @@ int sprintf_size(uint64_t val, char *buf, bool si)
 		else if (val >= kB)
 			ret = sprintf(buf, "%.2lf Kb", f_val / kB);
 		else
-			ret = sprintf(buf, "%" PRIu64 " bytes", val);
+			ret = sprintf(buf, "%" PRIu64, val);
 	} else {
 		if (val >= PiB)
 			ret = sprintf(buf, "%.2lf PiB", f_val / PiB);
@@ -251,7 +251,7 @@ int sprintf_size(uint64_t val, char *buf, bool si)
 		else if (val >= KiB)
 			ret = sprintf(buf, "%.2lf KiB", f_val / KiB);
 		else
-			ret = sprintf(buf, "%" PRIu64 "bytes", val);
+			ret = sprintf(buf, "%" PRIu64, val);
 	}
 
 	return ret;
