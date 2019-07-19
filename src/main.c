@@ -26,7 +26,7 @@ int print_conversions(uint64_t val, bool si)
 	printf("%sHexdecimal: %s0x%" PRIx64 "\n", color_green, color_blue, val);
 	printf("%sOctal: %s0%" PRIo64 "\n", color_green, color_blue, val);
 	if (buf_size[0])
-		printf("%sSize: %s%s\n", color_green, color_blue, buf_size);
+		printf("%sHuman: %s%s\n", color_green, color_blue, buf_size);
 
 	printf("%sASCII: %s", color_green, color_blue);
 	for (i = sizeof(uint64_t) - 1; i >= 0; i--) {
