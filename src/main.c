@@ -12,6 +12,7 @@
 #include "config.h"
 #include "shunting-yard.h"
 
+
 int print_conversions(uint64_t val, bool si)
 {
 	char buf_size[16];
@@ -22,7 +23,29 @@ int print_conversions(uint64_t val, bool si)
 	buf_size[0] = '\0';
 	sprintf_size(val, buf_size, si);
 
-	printf("%sDecimal: %s%" PRIu64 "\n", color_green, color_blue, val);
+	printf("%sUnsigned decimal: %s%" PRIu64 "\n", color_green, color_blue, val);
+
+	switch (g_width) {
+	case 64:
+		printf("%sSigned decimal: %s%" PRId64 "\n", color_green,
+		       color_blue, (int64_t)val);
+		break;
+	case 32:
+		printf("%sSigned decimal: %s%" PRId32 "\n", color_green,
+		       color_blue, (int32_t)val);
+		break;
+	case 16:
+		printf("%sSigned decimal: %s%" PRId16 "\n", color_green,
+		       color_blue, (int16_t)val);
+		break;
+	case 8:
+		printf("%sSigned decimal: %s%" PRId8 "\n", color_green,
+		       color_blue, (int8_t)val);
+		break;
+	default:
+		break;
+	}
+
 	printf("%sHexdecimal: %s0x%" PRIx64 "\n", color_green, color_blue, val);
 	printf("%sOctal: %s0%" PRIo64 "\n", color_green, color_blue, val);
 	if (buf_size[0])
