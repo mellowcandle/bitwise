@@ -6,9 +6,11 @@
 #include <form.h>
 #include <ctype.h>
 #include <stdint.h>
+#include <inttypes.h>
 #include <string.h>
 #include <assert.h>
 #include <fcntl.h>
+#include <limits.h>
 #include <sys/stat.h>
 #include "bitwise.h"
 
@@ -234,9 +236,22 @@ int update_fields(int index)
 		assert(buffer);
 
 		tmp_val = strtoll(buffer, NULL, *cur_base);
-		if (tmp_val > MASK(g_width)) {
+		if (tmp_val == LLONG_MAX) {
+			/*
+			 * Make sure we don't get a number which is
+			 * too big to represent in 64bit */
 			beep();
 			return 1;
+		}
+		if (tmp_val > MASK(g_width)) {
+			FIELD *tmp_field = current_field(form);
+			unpaint_screen();
+			set_fields_width(g_width * 2);
+			paint_screen();
+			set_current_field(form, tmp_field);
+			set_active_field(false);
+			LOG("Overflow: tmp_val = %" PRIu64 "\n", tmp_val);
+			index = -1;
 		}
 		g_val = tmp_val;
 	}
@@ -253,6 +268,7 @@ int update_fields(int index)
 		set_field_buffer(field[i], 0, number);
 	}
 	form_driver(form, REQ_VALIDATION);
+	form_driver(form, REQ_END_FIELD);
 	wrefresh(fields_win);
 
 	return 0;
