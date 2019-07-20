@@ -15,6 +15,9 @@ if COND_DEBUG
 MAYBE_DEBUG=-g -O0
 endif
 
+bitwise_LDADD = @CURSES_LIBS@ @FORM_LIBS@
+bitwise_CPPFLAGS = @CURSES_CFLAGS@
+
 AM_CFLAGS = $(MAYBE_COVERAGE) $(MAYBE_DEBUG) $(MAYBE_TRACE)
 
 check_PROGRAMS = tests/test-shunting-yard

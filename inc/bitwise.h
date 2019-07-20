@@ -12,8 +12,8 @@
 #include <form.h>
 #include <string.h>
 #include "config.h"
-/* Readine checks */
 
+/* Readine checks */
 #ifdef HAVE_LIBREADLINE
 #  if defined(HAVE_READLINE_READLINE_H)
 #    include <readline/readline.h>
@@ -38,6 +38,31 @@ extern int read_history();
 #  endif /* defined(HAVE_READLINE_HISTORY_H) */
   /* no history */
 #endif /* HAVE_READLINE_HISTORY */
+
+/* Ncurses checks */
+#if defined HAVE_NCURSESW_CURSES_H
+#  include <ncursesw/curses.h>
+#elif defined HAVE_NCURSESW_H
+#  include <ncursesw.h>
+#elif defined HAVE_NCURSES_CURSES_H
+#  include <ncurses/curses.h>
+#elif defined HAVE_NCURSES_H
+#  include <ncurses.h>
+#elif defined HAVE_CURSES_H
+#  include <curses.h>
+#else
+#  error "SysV or X/Open-compatible Curses header file required"
+#endif
+
+#if defined HAVE_NCURSESW_FORM_H
+#  include <ncursesw/form.h>
+#elif defined HAVE_NCURSES_FORM_H
+#  include <ncurses/form.h>
+#elif defined HAVE_FORM_H
+#  include <form.h>
+#else
+#  error "SysV-compatible Curses Form header file required"
+#endif
 
 #define MAX_HISTORY_LEN 100
 
