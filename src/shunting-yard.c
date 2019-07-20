@@ -3,16 +3,15 @@
 // Use of this source code is governed by the BSD 2-Clause License that can be
 // found in the LICENSE file.
 
-#include "shunting-yard.h"
-#include "stack.h"
-#include "bitwise.h"
 #include <ctype.h>
-#include <math.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdint.h>
+#include "bitwise.h"
+#include "shunting-yard.h"
+#include "stack.h"
 
 typedef enum {
 	TOKEN_NONE,

@@ -19,14 +19,14 @@ AC_PROG_CC_STDC
 AC_PROG_INSTALL
 AC_PROG_CC_C99
 
-AX_LIB_READLINE(6.3)
+AX_LIB_READLINE
 
 # Checks for libraries.
 AC_CHECK_LIB([form], [form_driver])
 AC_CHECK_LIB([ncurses], [newwin])
 
 # Checks for header files.
-AC_CHECK_HEADERS([fcntl.h stdint.h stdlib.h string.h curses.h form.h])
+AC_CHECK_HEADERS([fcntl.h inttypes.h stdint.h stdlib.h string.h curses.h form.h])
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_CHECK_HEADER_STDBOOL

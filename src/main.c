@@ -9,7 +9,6 @@
 #include <getopt.h>
 #include <locale.h>
 #include "bitwise.h"
-#include "config.h"
 #include "shunting-yard.h"
 
 
