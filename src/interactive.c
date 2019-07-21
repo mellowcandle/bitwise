@@ -576,6 +576,7 @@ void unpaint_screen(void)
 int start_interactive(uint64_t start)
 {
 	int ch;
+	uint64_t tmp_val;
 
 	g_val = start;
 
@@ -636,6 +637,20 @@ int start_interactive(uint64_t start)
 			unpaint_screen();
 			g_val = ~g_val & MASK(g_width);
 			paint_screen();
+			break;
+		case '>':
+			unpaint_screen();
+			g_val = g_val >> 1;
+			paint_screen();
+			break;
+		case '<':
+			tmp_val = (g_val << 1);
+
+			if (tmp_val < MASK(g_width)) {
+				unpaint_screen();
+				g_val = tmp_val;
+				paint_screen();
+			}
 			break;
 		case ':':
 			last_win = active_win;
