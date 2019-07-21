@@ -50,7 +50,7 @@ extern int read_history();
 #define ARRAY_SIZE(x)	(sizeof(x) / sizeof((x)[0]))
 
 /* Misc */
-void lltostr(uint64_t val, char *buf, int base);
+int lltostr(uint64_t val, char *buf, int base);
 int set_width(char width);
 void set_width_by_val(uint64_t val);
 void die(const char *fmt, ...);

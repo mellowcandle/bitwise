@@ -14,7 +14,7 @@
 #include <sys/stat.h>
 #include "bitwise.h"
 
-#define MAX_DEC_DIGITS_64 19
+#define MAX_DEC_DIGITS_64 20
 #define MAX_HEX_DIGITS_64 16
 #define MAX_OCT_DIGITS_64 32
 
@@ -113,7 +113,6 @@ void update_history_win(void)
 			}
 
 		mvwprintw(history_win, j, 2, history[history_pos - i].line);
-
 	}
 
 	if (g_has_color)
@@ -235,7 +234,7 @@ int update_fields(int index)
 		buffer = field_buffer(tmp_field, 0);
 		assert(buffer);
 
-		tmp_val = strtoll(buffer, NULL, *cur_base);
+		tmp_val = strtoull(buffer, NULL, *cur_base);
 		if (tmp_val == LLONG_MAX) {
 			/*
 			 * Make sure we don't get a number which is
@@ -257,8 +256,6 @@ int update_fields(int index)
 	}
 	LOG("Val = %" PRIu64 "\n", g_val);
 	for (int i = 0; i < 3; i++) {
-		if (i == index)
-			continue;
 		base = field_userptr(field[i]);
 		if (g_val)
 			lltostr(g_val, number, *base);
@@ -464,7 +461,6 @@ void process_fields(int ch)
 
 		if (validate_input(ch, *cur_base))
 			break;
-
 		form_driver(form, ch);
 		form_driver(form, REQ_VALIDATION);
 		if (update_fields(field_index(tmp_field))) {

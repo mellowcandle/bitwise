@@ -203,22 +203,30 @@ int parse_input(const char *input, uint64_t *val)
 	return base_scanf(input, base, val);
 }
 
-void lltostr(uint64_t val, char *buf, int base)
+int lltostr(uint64_t val, char *buf, int base)
 {
+	int rc;
+
 	switch (base) {
 	case 10:
-		sprintf(buf, "%" PRIu64, val);
-		return;
+		rc = sprintf(buf, "%" PRIu64, val);
+		break;
 	case 16:
-		sprintf(buf, "%" PRIx64, val);
-		return;
+		rc = sprintf(buf, "%" PRIx64, val);
+		break;
 	case 8:
-		sprintf(buf, "%" PRIo64, val);
-		return;
+		rc = sprintf(buf, "%" PRIo64, val);
+		break;
 	case 2:
 	default:
 		sprintf(buf, "Not implemeted");
+		return -1;
 	}
+
+	if (rc < 0)
+		LOG("sprintf failed with error: %d\n", rc);
+
+	return rc;
 }
 
 int sprintf_size(uint64_t val, char *buf, bool si)
