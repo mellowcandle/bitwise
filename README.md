@@ -52,7 +52,7 @@ Leave the program by pressing <kbd> q </kbd>.
 
 ##### Binary specific movement
 You can toggle a bit bit using the <kbd> space </kbd> key.
-You can jump a byte forward using <kbd> w </kbd> and backwards one byte using <kbd> b </kbd>. 
+You can jump a byte forward using <kbd> w </kbd> and backwards one byte using <kbd> b </kbd>.
 
 #### Bitwise operation in interactive mode
 
@@ -65,6 +65,10 @@ When changing the bit width, the number is *masked* with the new width, so you m
 ##### NOT:
 
 Press <kbd> ~ </kbd> to perform the NOT operator.
+
+##### Shifts
+
+Press <kbd> < </kbd> and <kbd> > </kbd> to perform the left or right shift.
 
 #### expression calculator in interactive mode
 
