@@ -547,7 +547,6 @@ void paint_screen(void)
 	wrefresh(fields_win);
 	update_binary();
 	update_history_win();
-	update_fields(-1);
 
 	wrefresh(cmd_win);
 	refresh();
@@ -555,6 +554,8 @@ void paint_screen(void)
 	rc = post_form(form);
 	if (rc != E_OK)
 		die("post_form failed: %d\n", rc);
+
+	update_fields(-1);
 }
 
 void unpaint_screen(void)
