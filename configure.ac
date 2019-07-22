@@ -20,6 +20,9 @@ AC_PROG_INSTALL
 AC_PROG_CC_C99
 
 AX_LIB_READLINE
+if test "$ac_cv_have_readline" = no; then
+    AC_MSG_ERROR([requires readline library])
+fi
 
 # Checks for libraries.
 AC_CHECK_LIB([form], [form_driver])
