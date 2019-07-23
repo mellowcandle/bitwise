@@ -618,16 +618,22 @@ int start_interactive(uint64_t start)
 		case '!':
 			unpaint_screen();
 			set_fields_width(8);
+			if (bit_pos > 7)
+				bit_pos = 7;
 			paint_screen();
 			break;
 		case '@':
 			unpaint_screen();
 			set_fields_width(16);
+			if (bit_pos > 15)
+				bit_pos = 15;
 			paint_screen();
 			break;
 		case '$':
 			unpaint_screen();
 			set_fields_width(32);
+			if (bit_pos > 31)
+				bit_pos = 31;
 			paint_screen();
 			break;
 		case '*':
@@ -675,6 +681,12 @@ int start_interactive(uint64_t start)
 			else if (active_win == FIELDS_WIN)
 				process_fields(ch);
 		}
+
+		if (active_win == BINARY_WIN) {
+			LOG("Bit pos = %u\n", bit_pos);
+			position_binary_curser(0, bit_pos);
+		}
+
 	}
 
 	unpaint_screen();
