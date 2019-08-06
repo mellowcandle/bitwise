@@ -45,7 +45,7 @@ int print_conversions(uint64_t val, bool si)
 		break;
 	}
 
-	printf("%sHexdecimal: %s0x%" PRIx64 "\n", color_green, color_blue, val);
+	printf("%sHexadecimal: %s0x%" PRIx64 "\n", color_green, color_blue, val);
 	printf("%sOctal: %s0%" PRIo64 "\n", color_green, color_blue, val);
 	if (buf_size[0])
 		printf("%sHuman: %s%s\n", color_green, color_blue, buf_size);
@@ -108,7 +108,7 @@ static void print_help(FILE *out)
 	fprintf(out, "  -w, --width[b|w|l|d]\t Set bit width (default: l)\n");
 	fprintf(out, "  -h, --help\t\t Display this help and exit\n");
 	fprintf(out, "  -v, --version\t\t Output version information and exit\n");
-	fprintf(out, "  -s, --si\t\t Print size acoording to SI standard. (default: IEC standard)\n");
+	fprintf(out, "  -s, --si\t\t Print size according to SI standard. (default: IEC standard)\n");
 	fprintf(out, "      --no-color\t Start without color support\n\n");
 }
 
