@@ -189,6 +189,7 @@ int main(int argc, char *argv[])
 			expr_pos += strlen(argv[i]);
 			expression[expr_pos++] = ' ';
 		}
+		expression[expr_pos - 1] = '\0';
 
 		rc = shunting_yard(expression, &val);
 		if (rc) {
