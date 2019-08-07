@@ -177,7 +177,7 @@ int main(int argc, char *argv[])
 		for (int i = optind; i < argc; i++)
 			expr_len += strlen(argv[i]);
 
-		char *expression = malloc((sizeof 'a') * expr_len);
+		char *expression = malloc(sizeof(char) * expr_len);
 		if (expression == NULL) {
 			fprintf(stderr, "Error parsing arguments");
 			exit(EXIT_FAILURE);
