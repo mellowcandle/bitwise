@@ -177,7 +177,7 @@ int main(int argc, char *argv[])
 		for (int i = optind; i < argc; i++)
 			expr_len += strlen(argv[i]);
 
-		char *expression = malloc((sizeof 'a') * expr_len);
+		char *expression = malloc(sizeof(char) * expr_len);
 		if (expression == NULL) {
 			fprintf(stderr, "Error parsing arguments");
 			exit(EXIT_FAILURE);
@@ -189,6 +189,7 @@ int main(int argc, char *argv[])
 			expr_pos += strlen(argv[i]);
 			expression[expr_pos++] = ' ';
 		}
+		expression[expr_pos - 1] = '\0';
 
 		rc = shunting_yard(expression, &val);
 		if (rc) {
