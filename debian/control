@@ -2,8 +2,8 @@ Source: bitwise
 Section: science
 Priority: optional
 Maintainer: Ramon Fried <rfried.dev@gmail.com>
-Build-Depends: debhelper (>= 9), autotools-dev, libncurses5-dev, libreadline5-dev, libcunit1-dev
-Standards-Version: 3.9.8
+Build-Depends: debhelper (>= 12~), libncurses5-dev, libreadline-dev, libcunit1-dev
+Standards-Version: 4.4.0
 Homepage: https://github.com/mellowcandle/bitwise
 
 Package: bitwise
@@ -20,4 +20,3 @@ Description: Interactive bitwise operation in ncurses
  Command line calculator.
  Individual bit manipulator.
  Bitwise operations such as NOT, OR, AND, XOR, and shifts.
-
