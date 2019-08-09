@@ -116,6 +116,11 @@ You can use the AUR repository: https://aur.archlinux.org/packages/bitwise/
 sudo port install bitwise
 ```
 
+#### Homebrew
+```
+brew install bitwise
+```
+
 ### Windows
 NCurses doesn't support windows. You can use the windows subsystem for linux as a workaround.
 
