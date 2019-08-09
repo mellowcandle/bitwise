@@ -10,6 +10,7 @@
 #define MAX_TOKENS 4
 
 static int cmd_clear(char **argv, int argc);
+static int cmd_help(char **argv, int argc);
 static int cmd_set_width(char **argv, int argc);
 static int cmd_set_output(char **argv, int argc);
 
@@ -22,6 +23,7 @@ struct cmd {
 
 static struct cmd cmds[] = {
 	{"clear", 0, 0, cmd_clear},
+	{"help", 0, 0, cmd_help},
 	{"width", 1, 1, cmd_set_width},
 	{"output", 1, 1, cmd_set_output},
 };
@@ -354,3 +356,13 @@ static int cmd_set_output(char **argv, int argc)
 
 	return 0;
 }
+
+static int cmd_help(char **argv, int argc)
+{
+	unpaint_screen();
+	show_help();
+	paint_screen();
+
+	return 0;
+}
+

@@ -91,6 +91,9 @@ void readline_redisplay(void);
 /* calc */
 int calc(int argc, char *argv[]);
 
+/* Help */
+void show_help(void);
+
 #ifdef TRACE
 #define LOG(...) do { \
 		fprintf(fd, __VA_ARGS__); \
