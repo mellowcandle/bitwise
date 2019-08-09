@@ -11,6 +11,7 @@
 
 static int cmd_clear(char **argv, int argc);
 static int cmd_set_width(char **argv, int argc);
+static int cmd_set_output(char **argv, int argc);
 
 struct cmd {
 	const char *name;
@@ -22,6 +23,7 @@ struct cmd {
 static struct cmd cmds[] = {
 	{"clear", 0, 0, cmd_clear},
 	{"width", 1, 1, cmd_set_width},
+	{"output", 1, 1, cmd_set_output},
 };
 
 static int get_cmd(const char *cmd_name)
@@ -141,13 +143,35 @@ static int parse_cmd(char *cmdline)
 			show_error(status);
 			return -1;
 		} else {
-			char result_string[32];
-
+			char result_string[256];
 			g_val = result;
-			sprintf(result_string, "0x%" PRIx64, result);
-			update_binary();
-			update_fields(-1);
-			append_to_history(result_string, TYPE_OUTPUT_RESULT);
+
+			if (g_output == CMD_OUTPUT_ALL) {
+				sprintf_type(result, result_string,
+					     CMD_OUTPUT_DECIMAL);
+				append_to_history(result_string,
+						  TYPE_OUTPUT_RESULT);
+				sprintf_type(result, result_string,
+					     CMD_OUTPUT_HEXADECIMAL);
+				append_to_history(result_string,
+						  TYPE_OUTPUT_RESULT);
+				sprintf_type(result, result_string,
+					     CMD_OUTPUT_OCTAL);
+				append_to_history(result_string,
+						  TYPE_OUTPUT_RESULT);
+				sprintf_type(result, result_string,
+					     CMD_OUTPUT_BINARY);
+				append_to_history(result_string,
+						  TYPE_OUTPUT_RESULT);
+				update_binary();
+				update_fields(-1);
+			} else {
+				sprintf_type(result, result_string, g_output);
+				update_binary();
+				update_fields(-1);
+				append_to_history(result_string,
+						  TYPE_OUTPUT_RESULT);
+			}
 		}
 	}
 
@@ -286,6 +310,7 @@ void process_cmd(int ch)
 
 static int cmd_clear(char **argv, int argc)
 {
+	LOG("%s: argc %d\n", __func__, argc);
 	flush_history();
 	update_history_win();
 	return 0;
@@ -293,7 +318,7 @@ static int cmd_clear(char **argv, int argc)
 
 static int cmd_set_width(char **argv, int argc)
 {
-	LOG("cmd_set_width: argc %d\n", argc);
+	LOG("%s: argc %d\n", __func__, argc);
 	if (!strcmp("64", argv[0]))
 		set_fields_width(64);
 	else if (!strcmp("32", argv[0]))
@@ -311,3 +336,21 @@ static int cmd_set_width(char **argv, int argc)
 	return 0;
 }
 
+static int cmd_set_output(char **argv, int argc)
+{
+	LOG("%s: argc %d\n", __func__, argc);
+	if (!strcmp("hex", argv[0]))
+		g_output = CMD_OUTPUT_HEXADECIMAL;
+	else if (!strcmp("decimal", argv[0]))
+		g_output = CMD_OUTPUT_DECIMAL;
+	else if (!strcmp("octal", argv[0]))
+		g_output = CMD_OUTPUT_OCTAL;
+	else if (!strcmp("binary", argv[0]))
+		g_output = CMD_OUTPUT_BINARY;
+	else if (!strcmp("all", argv[0]))
+		g_output = CMD_OUTPUT_ALL;
+	else
+		return ERROR_WRONG_ARGUMENTS;
+
+	return 0;
+}

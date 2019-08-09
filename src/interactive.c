@@ -48,6 +48,7 @@ WINDOW *cmd_win;
 WINDOW *history_win;
 
 int active_win, last_win;
+int g_output = CMD_OUTPUT_HEXADECIMAL;
 
 static FIELD *field[5];
 FORM  *form;

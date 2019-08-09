@@ -49,6 +49,14 @@ extern int read_history();
 #define MASK(s) (~0ULL >> (64 - s))
 #define ARRAY_SIZE(x)	(sizeof(x) / sizeof((x)[0]))
 
+typedef enum output_type {
+	CMD_OUTPUT_DECIMAL,
+	CMD_OUTPUT_HEXADECIMAL,
+	CMD_OUTPUT_OCTAL,
+	CMD_OUTPUT_BINARY,
+	CMD_OUTPUT_ALL,
+} output_type;
+
 /* Misc */
 int lltostr(uint64_t val, char *buf, int base);
 int set_width(char width);
@@ -56,6 +64,7 @@ void set_width_by_val(uint64_t val);
 void die(const char *fmt, ...);
 int parse_input(const char *input, uint64_t *val);
 int validate_input(int ch, int base);
+int sprintf_type(uint64_t val, char *buf, output_type type);
 
 void init_terminal(void);
 void deinit_terminal(void);
@@ -112,6 +121,7 @@ extern int last_win;
 extern int bit_pos;
 extern int g_has_color;
 extern int g_width;
+extern int g_output;
 extern bool g_input_avail;
 extern int g_input;
 extern bool g_leave_req;

@@ -228,6 +228,48 @@ int lltostr(uint64_t val, char *buf, int base)
 	return rc;
 }
 
+int sprintf_type(uint64_t val, char *buf, output_type type)
+{
+	int i;
+	int pos = 0;
+
+	switch (type) {
+	case CMD_OUTPUT_DECIMAL:
+		sprintf(buf, "Decimal: %" PRIu64, val);
+		break;
+	case CMD_OUTPUT_HEXADECIMAL:
+		sprintf(buf, "Hexadecimal: 0x%" PRIx64, val);
+		break;
+	case CMD_OUTPUT_OCTAL:
+		sprintf(buf, "Octal: 0%" PRIo64, val);
+		break;
+	case CMD_OUTPUT_BINARY:
+		pos = sprintf(buf, "Binary: ");
+		for (i = g_width; i > 0; i--) {
+			if ((i % 8 == 0) && (i != g_width)) {
+				buf[pos] = '|';
+				buf[pos + 1] = ' ';
+				pos += 2;
+			}
+			if (val & BIT(i - 1)) {
+				buf[pos] = '1';
+			}
+			else {
+				buf[pos] = '0';
+			}
+			buf[pos + 1] = ' ';
+			pos += 2;
+		}
+		buf[pos-1] = '\0';
+		break;
+
+	default:
+		break;
+	}
+
+	return 0;
+}
+
 int sprintf_size(uint64_t val, char *buf, bool si)
 {
 	int ret;
@@ -277,7 +319,6 @@ void set_width_by_val(uint64_t val)
 	else
 		g_width = 32;
 }
-
 
 int set_width(char width)
 {
