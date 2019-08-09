@@ -83,7 +83,10 @@ void readline_redisplay(void);
 int calc(int argc, char *argv[]);
 
 #ifdef TRACE
-#define LOG(...) fprintf(fd, __VA_ARGS__);fflush(fd)
+#define LOG(...) do { \
+		fprintf(fd, __VA_ARGS__); \
+		fflush(fd);\
+		} while (0)
 extern FILE *fd;
 #else
 #define LOG(...)

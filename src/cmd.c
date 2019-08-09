@@ -26,7 +26,7 @@ static struct cmd cmds[] = {
 
 static int get_cmd(const char *cmd_name)
 {
-	int i = 0;
+	size_t i = 0;
 
 	for (i = 0; i < ARRAY_SIZE(cmds); i++) {
 		LOG("comparing %s to command %s\n", cmd_name, cmds[i].name);
@@ -66,6 +66,9 @@ void show_error(Status status)
 	case ERROR_UNDEFINED_CONSTANT:
 		message = "Unknown constant";
 		break;
+	case ERROR_WRONG_ARGUMENTS:
+		message = "Wrong arguments";
+		break;
 	default:
 		message = "Unknown error";
 	}
@@ -78,7 +81,7 @@ void show_error(Status status)
 
 static int is_whitespace(const char *string)
 {
-	int i;
+	size_t i;
 
 	for (i = 0; i < strlen(string); i++)
 		if (!isspace(string[i]))
@@ -92,7 +95,7 @@ static int parse_cmd(char *cmdline)
 	static char *tokens[MAX_TOKENS];
 	int cmd_entry;
 	int i = 0;
-	int rc;
+	int rc = 0;
 	uint64_t result;
 
 	if (is_whitespace(cmdline))
@@ -126,6 +129,11 @@ static int parse_cmd(char *cmdline)
 			LOG("Invalid parameters\n");
 			return -1;
 		}
+		if (rc) {
+			show_error(rc);
+			return -1;
+		}
+
 	} else {
 		append_to_history(cmdline, TYPE_INPUT_EXPRESSION);
 		Status status = shunting_yard(cmdline, &result);
@@ -295,7 +303,7 @@ static int cmd_set_width(char **argv, int argc)
 	else if (!strcmp("8", argv[0]))
 		set_fields_width(8);
 	else
-		return -1;
+		return ERROR_WRONG_ARGUMENTS;
 
 	unpaint_screen();
 	paint_screen();
