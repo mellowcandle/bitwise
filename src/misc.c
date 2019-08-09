@@ -188,7 +188,6 @@ int base_scanf(const char *buf, int base, uint64_t *value)
 int parse_input(const char *input, uint64_t *val)
 {
 	int base;
-	uint64_t tmp_val;
 
 	if (tolower(input[0]) == 'b')
 		base = 2;
@@ -282,8 +281,6 @@ void set_width_by_val(uint64_t val)
 
 int set_width(char width)
 {
-	int size;
-
 	if (tolower(width) == 'b')
 		g_width = 8;
 	else if (tolower(width) == 'w')

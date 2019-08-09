@@ -163,6 +163,7 @@ int main(int argc, char *argv[])
 			if (!set_width(width))
 				break;
 			fprintf(stderr, "Unsupported width size: accepted values are: [b|w|l|d]\n");
+			// fall through
 		case '?':
 		default:
 			print_help(stderr);

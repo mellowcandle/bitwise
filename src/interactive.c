@@ -86,7 +86,7 @@ void flush_history(void)
 
 void update_history_win(void)
 {
-	int max_display = LINES - 17;
+	unsigned int max_display = LINES - 17;
 	int i, j;
 
 	if (history_pos < max_display)
