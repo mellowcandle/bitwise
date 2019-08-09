@@ -89,7 +89,7 @@ int calc(int argc, char *argv[]);
 		} while (0)
 extern FILE *fd;
 #else
-#define LOG(...)
+#define LOG(...) do { } while (0)
 #endif
 
 /* Colors */
