@@ -15,9 +15,6 @@ Some of the features include:
 * Individual bit manipulator.
 * Bitwise operations such as NOT, OR, AND, XOR, and shifts.
 
-## IRC support
-#bitwise @ irc.oftc.net
-
 ##
 
 ![Demo](https://github.com/mellowcandle/bitwise/raw/master/resources/bitwise.gif "Bitwise demo2")
@@ -45,6 +42,7 @@ _bitwise_ detects the base by the preface of the input (_0x/0X_ for hexadecimal,
 _bitwise_ starts in interactive mode if no command line parameters are passed or if the _-i | --interactive_ flag is passed.
 In this mode, you can input a number and manipulate it and see the other bases change dynamically.
 It also allows changing individual bits in the binary.
+You can show the help screen by pressing <kbd> F1 </kbd>.
 
 #### Navigation in interactive mode
 To move around use the arrow keys, or use _vi_ key bindings : <kbd> h </kbd> <kbd> j </kbd> <kbd> k </kbd> <kbd> l </kbd>.
@@ -84,9 +82,11 @@ The result will be printed in the history window and also printed in the binary 
 * refer to a specific bit by using the function _BIT(x)_.
 
 ###### commands
-* _clear_ - to clear the history window.
-* _width_ [8 | 16 | 32 | 64] - set the required width mask
-* _q_ - to exit
+* _help_ - Show the help screen.
+* _clear_ - Clear the history window.
+* _width_ [8 | 16 | 32 | 64] - Set the required width mask
+* _output_ [decimal | hex | octal | binary | all] - Set the default output for results.
+* _q_ - Exit
 
 ## Integration with other software
 ### Vim
@@ -153,6 +153,7 @@ Running unit tests by typing
 ``` make check ```
 
 ### Contribution
+* Instal prerequisites 
 * Fork the repo
 * Run ```./bootstrap.sh```
 * Follow the building from source section.
