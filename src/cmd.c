@@ -360,7 +360,9 @@ static int cmd_set_output(char **argv, int argc)
 static int cmd_help(char **argv, int argc)
 {
 	unpaint_screen();
+	curs_set(0);
 	show_help();
+	curs_set(2);
 	paint_screen();
 
 	return 0;
