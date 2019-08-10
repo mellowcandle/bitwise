@@ -6,6 +6,9 @@
        src="https://img.shields.io/coverity/scan/18170.svg"/>
 </a>[![GitSpo Mentions](https://gitspo.com/badges/mentions/mellowcandle/bitwise?style=flat-square)](https://gitspo.com/mentions/mellowcandle/bitwise)
 
+<a href="https://repology.org/project/bitwise/versions">
+    <img src="https://repology.org/badge/vertical-allrepos/bitwise.svg" alt="Packaging status" align="right">
+</a>
 _Bitwise_ is multi base interactive calculator supporting dynamic base convertion and bit manipulation.
 It's a handy tool for low level hackers, kernel developers and device drivers developers.
 
