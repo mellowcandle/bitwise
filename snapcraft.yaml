@@ -1,5 +1,5 @@
 name: bitwise
-version: "v0.33"
+version: "v0.40"
 summary: Terminal based bitwise calculator in curses
 description: |
         Interactively manipulate bits.
@@ -12,7 +12,7 @@ apps:
 parts:
         bitwise:
                 plugin: autotools
-                source: https://github.com/mellowcandle/bitwise/releases/download/v0.33/bitwise-v0.33.tar.gz
+                source: https://github.com/mellowcandle/bitwise/releases/download/v0.40/bitwise-v0.40.tar.gz
                 build-packages:
                         - libncurses5-dev
                         - libreadline-dev
