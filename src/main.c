@@ -50,6 +50,9 @@ int print_conversions(uint64_t val, bool si)
 	if (buf_size[0])
 		printf("%sHuman: %s%s\n", color_green, color_blue, buf_size);
 
+	if (g_width < 64)
+		printf("%sRadix64: %s%s\n", color_green, color_blue, l64a(val));
+
 	printf("%sASCII: %s", color_green, color_blue);
 	for (i = sizeof(uint64_t) - 1; i >= 0; i--) {
 		char c = ((char *)&val)[i];
