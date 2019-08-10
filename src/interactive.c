@@ -605,7 +605,11 @@ int start_interactive(uint64_t start)
 		}
 
 		switch (ch) {
-
+		case KEY_F(1):
+			unpaint_screen();
+			show_help();
+			paint_screen();
+			break;
 		case 'q':
 		case 'Q':
 			g_leave_req = true;
