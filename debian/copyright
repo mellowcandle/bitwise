@@ -1,13 +1,27 @@
 Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: bitwise
+Upstream-Contact: Ramon Fried <rfried.dev@gmail.com>
 Source: https://github.com/mellowcandle/bitwise
 
-Files: *
-Copyright: 2019 <ramon.fried@gmail.com>
-License: GPL-3.0+
+Files: inc/shunting-yard.h src/stack.c src/shunting-yard.c
+Copyright: 2011 - 2012, 2014 Brian Marshall
+		   2019 Ramon Fried <rfried.dev@gmail.com>
+License: BSD-2-clause
+
+Files: m4/ax_require_defined.m4
+Copyright: 2014 Mike Frysinger vapier@gentoo.org
+License: GFDL
+
+Files: m4/ax_lib_readline.m4
+Copyright: 2008 Ville Laurikari <vl@iki.fi>
+License: GFDL
 
 Files: debian/*
-Copyright: 2019 Ramon Fried <ramon.fried@gmail.com>
+Copyright: 2019 Ramon Fried <rfried.dev@gmail.com>
+License: GPL-3.0+
+
+Files: *
+Copyright: 2019 <rfried.dev@gmail.com>
 License: GPL-3.0+
 
 License: GPL-3.0+
