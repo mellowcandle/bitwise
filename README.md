@@ -142,7 +142,14 @@ sudo apt-get install libncurses5-dev
 sudo apt-get install libreadline-dev
 sudo apt-get install libcunit1-dev
 ```
-
+On Mac systems:
+```
+brew install automake
+brew install autoconf
+brew install readline
+export LDFLAGS="-L/usr/local/opt/readline/lib"
+export CPPFLAGS="-I/usr/local/opt/readline/include"
+```
 - Download [the latest release](https://github.com/mellowcandle/bitwise/releases/latest)
 
 ```sh
