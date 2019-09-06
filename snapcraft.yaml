@@ -2,18 +2,18 @@ name: bitwise
 version: "v0.40"
 summary: Terminal based bitwise calculator in curses
 description: |
-        Interactively manipulate bits.
+  Interactively manipulate bits.
 
 confinement: strict
 
 apps:
-        bitwise:
-                command: bitwise
-parts:
-        bitwise:
-                plugin: autotools
-                source: https://github.com/mellowcandle/bitwise/releases/download/v0.40/bitwise-v0.40.tar.gz
-                build-packages:
-                        - libncurses5-dev
-                        - libreadline-dev
+  bitwise:
+    command: bitwise
 
+parts:
+  bitwise:
+    plugin: autotools
+    source: https://github.com/mellowcandle/bitwise/releases/download/v0.40/bitwise-v0.40.tar.gz
+    build-packages:
+      - libncurses5-dev
+      - libreadline-dev

@@ -29,12 +29,21 @@
 *.dylib
 
 # Executables
+bitwise
 *.exe
 *.out
 *.app
 *.i*86
 *.x86_64
 *.hex
+
+# Build output
+config.log
+inc/config.h
+inc/stamp-h1
+src/.deps/
+src/.dirstamp
+tests/.deps/
 
 # Debug files
 *.dSYM/
@@ -53,13 +62,18 @@ dkms.conf
 
 # Autotools stuff
 Makefile
-Makefile.in
+*.in
 aclocal.m4
 autom4te.cache/
 build-aux/
 config.status
 configure
 pre-inst-env
+install-sh
+missing
+test-driver
+compile
+depcomp
 
 # tracing stuff
 log.txt

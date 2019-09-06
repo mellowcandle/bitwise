@@ -27,4 +27,3 @@ after_success:
 
 after_failure:
   - if [ -f ./test-suite.log ]; then cat ./test-suite.log; fi
-
