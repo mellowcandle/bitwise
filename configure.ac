@@ -27,6 +27,7 @@ fi
 # Checks for libraries.
 AC_CHECK_LIB([form], [form_driver])
 AC_CHECK_LIB([ncurses], [newwin])
+AC_SEARCH_LIBS([sqrt], [m])
 
 # Checks for header files.
 AC_CHECK_HEADERS([fcntl.h inttypes.h stdint.h stdlib.h string.h curses.h form.h])
