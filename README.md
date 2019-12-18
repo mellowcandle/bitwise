@@ -4,13 +4,11 @@
 [![Snap Status](https://build.snapcraft.io/badge/mellowcandle/bitwise.svg)](https://build.snapcraft.io/user/mellowcandle/bitwise)<a href="https://scan.coverity.com/projects/mellowcandle-bitwise">
   <img alt="Coverity Scan Build Status"
        src="https://img.shields.io/coverity/scan/18170.svg"/>
-</a>[![GitSpo Mentions](https://gitspo.com/badges/mentions/mellowcandle/bitwise?style=flat-square)](https://gitspo.com/mentions/mellowcandle/bitwise)
-
 <a href="https://repology.org/project/bitwise/versions">
     <img src="https://repology.org/badge/vertical-allrepos/bitwise.svg" alt="Packaging status" align="right">
 </a>
 
-_Bitwise_ is multi base interactive calculator supporting dynamic base convertion and bit manipulation.
+_Bitwise_ is multi base interactive calculator supporting dynamic base conversion and bit manipulation.
 It's a handy tool for low level hackers, kernel developers and device drivers developers.
 
 Some of the features include:
@@ -82,8 +80,8 @@ In this mode, you can type any expression you like to be evaluated.
 The result will be printed in the history window and also printed in the binary and various bases on top.
 
 ###### operators and functions
-* All C operators are supported, additionaly, you can use the "$" symbol to refer to the last result.
-* refer to a specific bit by using the function _BIT(x)_.
+* All C operators are supported, additionally, you can use the "$" symbol to refer to the last result.
+* Refer to a specific bit by using the function _BIT(x)_.
 
 ###### commands
 * _help_ - Show the help screen.
@@ -126,7 +124,7 @@ brew install bitwise
 ```
 
 ### Windows
-NCurses doesn't support windows. You can use the windows subsystem for linux as a workaround.
+NCurses doesn't support windows. You can use the windows subsystem for Linux as a workaround.
 
 ### Building from source
 
