@@ -1,5 +1,5 @@
 name: bitwise
-version: "v0.40"
+version: "v0.41"
 summary: Terminal based bitwise calculator in curses
 description: |
   Interactively manipulate bits.
