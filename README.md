@@ -111,6 +111,12 @@ sudo snap install bitwise
 #### Arch
 You can use the AUR repository: https://aur.archlinux.org/packages/bitwise/
 
+#### Void
+_bitwise_ is in the default repository, so just type:
+`
+sudo xbps-install -S bitwise
+`
+
 ### macOS
 
 #### MacPorts
