@@ -5,6 +5,10 @@ compiler: gcc
 os:
   - linux
   - osx
+ 
+arch:
+  - AMD64
+  - ppc64le
 
 before_install:
   - if [ "$TRAVIS_OS_NAME" = "linux" ]; then sudo apt-get -qq update ; fi
