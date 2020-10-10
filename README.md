@@ -98,6 +98,11 @@ The result will be printed in the history window and also printed in the binary 
 
 ### Linux
 #### Ubuntu
+From 20.04 you can just type
+```
+sudo apt-get install bitwise
+```
+For earlier versions:
 ```
 sudo add-apt-repository ppa:ramon-fried/bitwise
 sudo apt-get update
