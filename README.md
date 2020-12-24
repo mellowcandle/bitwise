@@ -113,6 +113,11 @@ If your distribution supports Snap just type:
 `
 sudo snap install bitwise
 `
+#### OpenSuse
+`
+zypper install bitwise
+`
+
 #### Arch
 You can use the AUR repository: https://aur.archlinux.org/packages/bitwise/
 
@@ -121,6 +126,9 @@ _bitwise_ is in the default repository, so just type:
 `
 sudo xbps-install -S bitwise
 `
+
+#### Buildroot / Yocto
+Bitwise is available both in Buildroot and in Yocto, please refer to the documentation on how to add those to your target image.
 
 ### macOS
 
