@@ -131,6 +131,11 @@ int binary_scanf(const char *buf, uint64_t *val)
 {
 	uint64_t value = 0;
 
+	/* Skip the leading 0 */
+	if (buf[0] == '0') {
+		buf++;
+	}
+
 	/* Skip the leading b */
 	buf++;
 
@@ -192,7 +197,9 @@ int parse_input(const char *input, uint64_t *val)
 	if (tolower(input[0]) == 'b')
 		base = 2;
 	else if (input[0] == '0')
-		if (input[1] == 'x' || input[1] == 'X')
+		if (tolower(input[1] == 'b'))
+			base = 2;
+		else if (input[1] == 'x' || input[1] == 'X')
 			base = 16;
 		else
 			base = 8;
