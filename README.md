@@ -145,6 +145,11 @@ brew install bitwise
 ### Windows
 NCurses doesn't support windows. You can use the windows subsystem for Linux as a workaround.
 
+### Nix
+```
+nix-env -i bitwise
+```
+
 ### Building from source
 
 #### Prerequisites
