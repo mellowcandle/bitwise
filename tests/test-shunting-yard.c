@@ -29,7 +29,6 @@ static void test_addition()
 	ASSERT_RESULT("0x2 + 0b101", 7);
 	ASSERT_RESULT("0b101 + 0x2", 7);
 	ASSERT_RESULT("2  +  2", 4);
-	ASSERT_RESULT("2+2.", 4);
 	ASSERT_RESULT("3 + (5 + 1 + (2 + 2))", 13);
 	ASSERT_RESULT("1+2+4+8+16 + 11", 42);
 

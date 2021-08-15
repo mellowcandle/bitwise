@@ -29,6 +29,8 @@ In command line mode, bitwise will calculate the given expression and will outpu
 
 _bitwise_ detects the base by the preface of the input (_0x/0X_ for hexadecimal, leading _0_ for octal, _b_ for binary, and the rest is decimal).
 
+**NEW** Bitwise now support parsing IPv4 addresses, it will also output the possible IPv4 address in both Network and reveresed byte order.
+
 ### Examples:
 
 #### Simple base conversion

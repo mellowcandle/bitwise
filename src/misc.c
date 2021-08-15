@@ -190,10 +190,28 @@ int base_scanf(const char *buf, int base, uint64_t *value)
 	return 0;
 }
 
+int ip_scanf(const char *input, uint64_t *val)
+{
+	union {
+		uint8_t ip[4];
+		uint32_t ip32;
+	} ip;
+	if (sscanf(input, "%hhu.%hhu.%hhu.%hhu",
+		   &ip.ip[0], &ip.ip[1], &ip.ip[2], &ip.ip[3]) != 4) {
+		fprintf(stderr, "Failed parsing IPv4 address\n");
+		return 1;
+	}
+
+	*val = ip.ip32;
+	return 0;
+}
+
 int parse_input(const char *input, uint64_t *val)
 {
 	int base;
 
+	if (strchr(input, '.'))
+		return ip_scanf(input, val);
 	if (tolower(input[0]) == 'b')
 		base = 2;
 	else if (input[0] == '0')

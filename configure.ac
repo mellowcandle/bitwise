@@ -32,6 +32,9 @@ AC_SEARCH_LIBS([sqrt], [m])
 # Checks for header files.
 AC_CHECK_HEADERS([fcntl.h inttypes.h stdint.h stdlib.h string.h curses.h form.h])
 
+AC_CHECK_DECLS([bswap_32], [], [], [[#include <byteswap.h>]])
+AM_CONDITIONAL(HAVE_BYTESWAP_H, [test "x$ac_cv_have_decl_bswap_32" = "xyes"])
+
 # Checks for typedefs, structures, and compiler characteristics.
 AC_CHECK_HEADER_STDBOOL
 AC_TYPE_UINT64_T
