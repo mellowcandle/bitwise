@@ -114,7 +114,7 @@ void update_history_win(void)
 				break;
 			}
 
-		mvwprintw(history_win, j, 2, history[history_pos - i].line);
+		mvwprintw(history_win, j, 2, "%s", history[history_pos - i].line);
 	}
 
 	if (g_has_color)
