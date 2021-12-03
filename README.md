@@ -22,14 +22,14 @@ Some of the features include:
 ![Demo](https://github.com/mellowcandle/bitwise/raw/master/resources/bitwise.gif "Bitwise demo2")
 
 ## Usage
-_bitwise_ can be used both Interactively and in command line mode.
+_bitwise_ can be used both interactively and in command line mode.
 
 ### Command line calculator mode
 In command line mode, bitwise will calculate the given expression and will output the result in all bases including binary representation.
 
-_bitwise_ detects the base by the preface of the input (_0x/0X_ for hexadecimal, leading _0_ for octal, _b_ for binary, and the rest is decimal).
+_bitwise_ detects the base by the prefix of the input (_0x/0X_ for hexadecimal, leading _0_ for octal, _b_ for binary, and the rest is decimal).
 
-**NEW** Bitwise now support parsing IPv4 addresses, it will also output the possible IPv4 address in both Network and reveresed byte order.
+**NEW** Bitwise now support parsing IPv4 addresses, it will also output the possible IPv4 address in both Network and reversed byte order.
 
 ### Examples:
 
@@ -53,7 +53,7 @@ To move around use the arrow keys, or use _vi_ key bindings : <kbd> h </kbd> <kb
 Leave the program by pressing <kbd> q </kbd>.
 
 ##### Binary specific movement
-You can toggle a bit bit using the <kbd> space </kbd> key.
+You can toggle a bit using the <kbd> space </kbd> key.
 You can jump a byte forward using <kbd> w </kbd> and backwards one byte using <kbd> b </kbd>.
 
 #### Bitwise operation in interactive mode
@@ -62,7 +62,7 @@ You can jump a byte forward using <kbd> w </kbd> and backwards one byte using <k
 
 Reducing or extending the bit width interactively is also very easy, just use:
 <kbd> ! </kbd> for 8bit, <kbd> @ </kbd>  for 16Bit, <kbd> $ </kbd> for 32Bit and <kbd> * </kbd> for 64Bit.
-When changing the bit width, the number is *masked* with the new width, so you might lost precision, use with care.
+When changing the bit width, the number is *masked* with the new width, so you might lose precision, use with care.
 
 ##### NOT:
 
@@ -145,7 +145,7 @@ brew install bitwise
 ```
 
 ### Windows
-NCurses doesn't support windows. You can use the windows subsystem for Linux as a workaround.
+NCurses doesn't support Windows. You can use the Windows Subsystem for Linux as a workaround.
 
 ### Nix
 ```
@@ -188,7 +188,7 @@ Running unit tests by typing
 ``` make check ```
 
 ### Contribution
-* Instal prerequisites 
+* Install prerequisites
 * Fork the repo
 * Run ```./bootstrap.sh```
 * Follow the building from source section.
