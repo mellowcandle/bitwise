@@ -71,6 +71,15 @@ static void test_modulus()
 	ASSERT_RESULT("5 %5", 0);
 }
 
+static void test_negation()
+{
+	ASSERT_RESULT("-1", -1);
+	ASSERT_RESULT("(-1)", -1);
+	ASSERT_RESULT("(-1) + 1", 0);
+	ASSERT_RESULT("(-1) + (-1)", -2);
+	ASSERT_RESULT("-1 + -1", -2);
+	ASSERT_RESULT("-1 + --1", 0);
+}
 
 static void test_functions()
 {
