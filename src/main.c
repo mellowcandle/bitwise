@@ -66,7 +66,7 @@ int print_conversions(uint64_t val, bool si)
 	if (g_width < 64)
 		printf("%sRadix64: %s%s\n", color_green, color_blue, l64a(val));
 
-	if (val >= UINT_MAX) {
+	if (val > UINT_MAX) {
 		printf("%sIPv4: %s%s\n", color_green, color_blue, "Value too big to be a valid IPv4 address");
 	} else {
 		ip_addr.s_addr = val;
