@@ -129,6 +129,14 @@ _bitwise_ is in the default repository, so just type:
 sudo xbps-install -S bitwise
 `
 
+#### Fedora Linux
+
+bitwise is available in the [official repository](https://src.fedoraproject.org/rpms/bitwise)
+
+```
+sudo dnf install bitwise
+```
+
 #### Buildroot / Yocto
 Bitwise is available both in Buildroot and in Yocto, please refer to the documentation on how to add those to your target image.
 
