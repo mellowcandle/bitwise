@@ -409,7 +409,7 @@ Status apply_function(const char *function, Stack **operands)
 	uint64_t x = pop_num(operands);
 
 	if (strcasecmp(function, "bit") == 0)
-		x = 1 << x;
+		x = BIT(x);
 	else
 		return ERROR_UNDEFINED_FUNCTION;
 
