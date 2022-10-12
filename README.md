@@ -86,11 +86,11 @@ The result will be printed in the history window and also printed in the binary 
 * Refer to a specific bit by using the function _BIT(x)_.
 
 ###### commands
-* _help_ - Show the help screen.
-* _clear_ - Clear the history window.
-* _width_ [8 | 16 | 32 | 64] - Set the required width mask
-* _output_ [decimal | hex | octal | binary | all] - Set the default output for results.
-* _q_ - Exit
+* _h(elp)_ - Show the help screen.
+* _c(lear)_ - Clear the history window.
+* _w(idth)_ [8 | 16 | 32 | 64] - Set the required width mask
+* _o(utput)_ [dec(imal) | hex(adecimal) | oct(al) | bin(ary) | all] - Set the default output for results.
+* _q(uit)_ - Exit
 
 ## Integration with other software
 ### Vim
