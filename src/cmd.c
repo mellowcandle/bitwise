@@ -10,6 +10,7 @@
 #define MAX_TOKENS 4
 
 static int cmd_clear(char **argv, int argc);
+static int cmd_quit(char **argv, int argc);
 static int cmd_help(char **argv, int argc);
 static int cmd_set_width(char **argv, int argc);
 static int cmd_set_output(char **argv, int argc);
@@ -23,9 +24,15 @@ struct cmd {
 
 static struct cmd cmds[] = {
 	{"clear", 0, 0, cmd_clear},
+	{"c", 0, 0, cmd_clear},
 	{"help", 0, 0, cmd_help},
-	{"width", 1, 1, cmd_set_width},
-	{"output", 1, 1, cmd_set_output},
+	{"h", 0, 0, cmd_help},
+	{"quit", 0, 0, cmd_quit},
+	{"q", 0, 0, cmd_quit},
+	{"width ", 1, 1, cmd_set_width},
+	{"w ", 1, 1, cmd_set_width},
+	{"output ", 1, 1, cmd_set_output},
+	{"o ", 1, 1, cmd_set_output},
 };
 
 static int get_cmd(const char *cmd_name)
@@ -34,8 +41,19 @@ static int get_cmd(const char *cmd_name)
 
 	for (i = 0; i < ARRAY_SIZE(cmds); i++) {
 		LOG("comparing %s to command %s\n", cmd_name, cmds[i].name);
-		if (!strncmp(cmds[i].name, cmd_name, strlen(cmds[i].name)))
-			return i;
+		if (cmds[i].max_args == 0) {
+			/* These commands do not have arguments, compare exact */
+			if (!strcmp(cmds[i].name, cmd_name))
+				return i;
+		} else {
+			/*
+			 * Commands with arguments end with a trailing space,
+			 * compare just the beginning of the command including
+			 * the space
+			 */
+			if (!strncmp(cmds[i].name, cmd_name, strlen(cmds[i].name)))
+				return i;
+		}
 	}
 
 	return -1;
@@ -83,15 +101,27 @@ void show_error(Status status)
 	wrefresh(cmd_win);
 }
 
-static int is_whitespace(const char *string)
+/* Remove trailing and leading white spaces, and NULL if all-white */
+static char *trim_whitespace(char *str)
 {
+	char *str_end = &str[strlen(str) - 1];
 	size_t i;
 
-	for (i = 0; i < strlen(string); i++)
-		if (!isspace(string[i]))
-			return false;
+	/* Remove leding white characters */
+	while (isspace(str[0]))
+		str++;
 
-	return true;
+	/* There are only white characters */
+	if (str[0] == '\0')
+		return NULL;
+
+	/*  There is at least one non-white character, find the last one */
+	while (isspace(str_end[0]))
+		str_end--;
+
+	str_end[1] = '\0';
+
+	return str;
 }
 
 static int parse_cmd(char *cmdline)
@@ -102,7 +132,8 @@ static int parse_cmd(char *cmdline)
 	int rc = 0;
 	uint64_t result;
 
-	if (is_whitespace(cmdline))
+	cmdline = trim_whitespace(cmdline);
+	if (!cmdline)
 		return 0;
 
 	LOG("got command: %s\n", cmdline);
@@ -200,9 +231,6 @@ static void got_command(char *line)
 		g_leave_req = true;
 		return;
 	}
-
-	if (strcmp("q", line) == 0)
-		g_leave_req = true;
 
 	if (*line)
 		add_history(line);
@@ -318,6 +346,13 @@ static int cmd_clear(char **argv, int argc)
 	return 0;
 }
 
+static int cmd_quit(char **argv, int argc)
+{
+	LOG("%s: argc %d\n", __func__, argc);
+	g_leave_req = true;
+	return 0;
+}
+
 static int cmd_set_width(char **argv, int argc)
 {
 	LOG("%s: argc %d\n", __func__, argc);
@@ -341,13 +376,13 @@ static int cmd_set_width(char **argv, int argc)
 static int cmd_set_output(char **argv, int argc)
 {
 	LOG("%s: argc %d\n", __func__, argc);
-	if (!strcmp("hex", argv[0]))
+	if (!strcmp("hexadecimal", argv[0]) || !strcmp("hex", argv[0]))
 		g_output = CMD_OUTPUT_HEXADECIMAL;
-	else if (!strcmp("decimal", argv[0]))
+	else if (!strcmp("decimal", argv[0]) || !strcmp("dec", argv[0]))
 		g_output = CMD_OUTPUT_DECIMAL;
-	else if (!strcmp("octal", argv[0]))
+	else if (!strcmp("octal", argv[0]) || !strcmp("oct", argv[0]))
 		g_output = CMD_OUTPUT_OCTAL;
-	else if (!strcmp("binary", argv[0]))
+	else if (!strcmp("binary", argv[0]) || !strcmp("bin", argv[0]))
 		g_output = CMD_OUTPUT_BINARY;
 	else if (!strcmp("all", argv[0]))
 		g_output = CMD_OUTPUT_ALL;
