@@ -18,6 +18,7 @@ static const char *interactive_mode = "Type numbers in different bases and direc
 				       "'@'  Set bit width to 16bit.\n" \
 				       "'$'  Set bit width to 32bit.\n" \
 				       "'*'  Set bit width to 64bit.\n" \
+				       "'r'  Reverse the endianness\n" \
 				       "':'  Switch to command mode.\n" \
 				       "'q'  Exit back to shell.\n";
 

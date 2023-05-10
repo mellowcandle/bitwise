@@ -696,6 +696,21 @@ int start_interactive(uint64_t start)
 			g_val = ~g_val & MASK(g_width);
 			paint_screen();
 			break;
+		case 'r':
+			unpaint_screen();
+			switch (g_width) {
+				case 16:
+					g_val = __builtin_bswap16(g_val);
+					break;
+				case 32:
+					g_val = __builtin_bswap32(g_val);
+					break;
+				case 64:
+					g_val = __builtin_bswap64(g_val);
+					break;
+			}
+			paint_screen();
+			break;
 		case '>':
 			unpaint_screen();
 			g_val = g_val >> 1;
