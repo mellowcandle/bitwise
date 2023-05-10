@@ -68,6 +68,10 @@ When changing the bit width, the number is *masked* with the new width, so you m
 
 Press <kbd> ~ </kbd> to perform the NOT operator.
 
+##### Reversing Endianness:
+
+Press <kbd> r </kbd> to reverse the endianness.
+
 ##### Shifts
 
 Press <kbd> < </kbd> and <kbd> > </kbd> to perform the left or right shift.
