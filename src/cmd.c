@@ -91,6 +91,9 @@ void show_error(Status status)
 	case ERROR_WRONG_ARGUMENTS:
 		message = "Wrong arguments";
 		break;
+	case ERROR_DIVIDE_BY_ZERO:
+		message = "Divide by zero";
+		break;
 	default:
 		message = "Unknown error";
 	}

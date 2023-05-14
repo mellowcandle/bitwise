@@ -346,6 +346,8 @@ Status apply_operator(const Operator *operator, Stack **operands)
 		x = x * y;
 		break;
 	case '/':
+		if (y == 0)
+			return ERROR_DIVIDE_BY_ZERO;
 		x = x / y;
 		break;
 	case '%':
