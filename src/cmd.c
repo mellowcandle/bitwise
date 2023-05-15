@@ -296,6 +296,10 @@ void process_cmd(int ch)
 		if (new_char == ERR) {
 			LOG("IT's a real escape\n");
 			active_win = last_win;
+
+			// Re-enable mouse events
+			mousemask(BUTTON1_CLICKED, NULL);
+
 			if (active_win == FIELDS_WIN) {
 				set_active_field(false);
 				form_driver(form, REQ_END_LINE);

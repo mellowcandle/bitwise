@@ -737,6 +737,9 @@ int start_interactive(uint64_t start)
 			} else if (last_win == BINARY_WIN)
 				position_binary_curser(bit_pos, -1);
 
+			// Stop handling of mouse events
+			mousemask(0, NULL);
+
 			curs_set(1);
 			keypad(stdscr, FALSE);
 			intrflush(NULL, FALSE);
