@@ -480,7 +480,9 @@ void process_fields(int ch)
 		wrefresh(fields_win);
 		break;
 	case KEY_BACKSPACE:
+	case KEY_DC:
 	case 127:
+	case 8:
 		LOG("Backspace\n");
 		form_driver(form, REQ_DEL_CHAR);
 		form_driver(form, REQ_DEL_PREV);
