@@ -180,6 +180,10 @@ static int parse_cmd(char *cmdline)
 			return -1;
 		} else {
 			char result_string[256];
+			if (result > MASK(g_width)) {
+				result &= MASK(g_width);
+				append_to_history("Overflow!", TYPE_OUTPUT_ERROR);
+			}
 			g_val = result;
 
 			if (g_output == CMD_OUTPUT_ALL) {

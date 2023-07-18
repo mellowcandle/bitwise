@@ -493,7 +493,7 @@ void process_fields(int ch)
 		wrefresh(fields_win);
 		break;
 	default:
-		LOG("default char\n");
+		LOG("default char: %d\n", ch);
 
 		tmp_field = current_field(form);
 		cur_base = field_userptr(tmp_field);
@@ -651,7 +651,6 @@ int start_interactive(uint64_t start)
 			}
 			break;
 
-				
 		case KEY_F(1):
 			unpaint_screen();
 			show_help();

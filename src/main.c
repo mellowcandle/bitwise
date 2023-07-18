@@ -226,6 +226,8 @@ int main(int argc, char *argv[])
 		free(expression);
 		if (!g_width)
 			set_width_by_val(val);
+		if (val > MASK(g_width))
+			fprintf(stderr, "%sExpression overflowed!\n", color_red);
 		val &= MASK(g_width);
 		if (!interactive)
 			return print_conversions(val, si);
