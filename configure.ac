@@ -43,6 +43,30 @@ AC_TYPE_UINT64_T
 AC_FUNC_STRCOLL
 AC_CHECK_FUNCS([memchr memmove memset stpcpy strchr strcspn strdup strerror strpbrk strrchr strspn strstr])
 
+# Then check for the variable considering both possible locations
+AC_CHECK_DECL([rl_change_environment],
+    [AC_DEFINE([HAVE_RL_CHANGE_ENVIRONMENT], [1], [Define if rl_change_environment is available])],
+    [AC_MSG_WARN([rl_change_environment not found])],
+    [[#ifdef HAVE_READLINE_H
+      #include <readline.h>
+      #endif
+      #ifdef HAVE_READLINE_READLINE_H
+      #include <readline/readline.h>
+      #endif
+    ]])
+
+AC_CHECK_DECL([rl_input_available_hook],
+    [AC_DEFINE([HAVE_RL_INPUT_AVAILABLE_HOOK], [1], [Define if rl_input_available_hook is available])],
+    [AC_MSG_WARN([rl_input_available_hook not found])],
+    [[#ifdef HAVE_READLINE_H
+      #include <readline.h>
+      #endif
+      #ifdef HAVE_READLINE_READLINE_H
+      #include <readline/readline.h>
+      #endif
+    ]])
+
+
 AC_CONFIG_FILES([Makefile])
 
 AC_ARG_ENABLE([gcov],

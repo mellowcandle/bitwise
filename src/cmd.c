@@ -4,6 +4,7 @@
 #include <string.h>
 #include <inttypes.h>
 #include <ctype.h>
+#include <unistd.h>
 #include "bitwise.h"
 #include "shunting-yard.h"
 
@@ -225,6 +226,12 @@ static int readline_input_avail(void)
 
 static int readline_getc(FILE *dummy)
 {
+#ifndef HAVE_RL_INPUT_AVAILABLE_HOOK
+	/* Block until input is available when hook is not supported */
+	while (!g_input_avail) {
+		usleep(1000);
+	}
+#endif
 	g_input_avail = false;
 	return g_input;
 }
@@ -272,9 +279,13 @@ void init_readline(void)
 	rl_catch_sigwinch = 0;
 	rl_deprep_term_function = NULL;
 	rl_prep_term_function = NULL;
+#ifdef HAVE_RL_CHANGE_ENVIRONMENT
 	rl_change_environment = 0;
+#endif
 	rl_getc_function = readline_getc;
+#ifdef HAVE_RL_INPUT_AVAILABLE_HOOK
 	rl_input_available_hook = readline_input_avail;
+#endif
 	rl_redisplay_function = readline_redisplay;
 	//rl_bind_key('\t', rl_insert);
 	rl_callback_handler_install(":", got_command);
