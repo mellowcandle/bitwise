@@ -25,13 +25,17 @@ if test "$ac_cv_have_readline" = no; then
     AC_MSG_ERROR([requires readline library])
 fi
 
+# Checks for header files. Ncurses is a bit of a mess in windows/mingw, has form in separate include location
+AC_CHECK_HEADERS([fcntl.h inttypes.h stdint.h stdlib.h string.h curses.h form.h ncursesw/ncurses.h ncursesw/form.h])
+
 # Checks for libraries.
 AC_CHECK_LIB([form], [form_driver])
+AC_CHECK_LIB([formw], [form_driver])
 AC_CHECK_LIB([ncurses], [newwin])
+AC_CHECK_LIB([ncursesw], [newwin])
 AC_SEARCH_LIBS([sqrt], [m])
 
-# Checks for header files.
-AC_CHECK_HEADERS([fcntl.h inttypes.h stdint.h stdlib.h string.h curses.h form.h])
+
 
 AC_CHECK_DECLS([bswap_32], [], [], [[#include <byteswap.h>]])
 AM_CONDITIONAL(HAVE_BYTESWAP_H, [test "x$ac_cv_have_decl_bswap_32" = "xyes"])
@@ -42,7 +46,7 @@ AC_TYPE_UINT64_T
 
 # Checks for library functions.
 AC_FUNC_STRCOLL
-AC_CHECK_FUNCS([memchr memmove memset stpcpy strchr strcspn strdup strerror strpbrk strrchr strspn strstr])
+AC_CHECK_FUNCS([memchr memmove memset stpcpy strchr strcspn strdup strndup strerror strpbrk strrchr strspn strstr l64a])
 
 # Then check for the variable considering both possible locations
 AC_CHECK_DECL([rl_change_environment],
