@@ -1,9 +1,9 @@
 bin_PROGRAMS=bitwise
-bitwise_SOURCES= src/main.c src/misc.c \
+bitwise_SOURCES= src/main.c src/misc.c src/compat.c\
 				 src/interactive.c src/cmd.c \
 				 src/stack.c src/shunting-yard.c \
-				 src/help.c inc/bitwise.h inc/stack.h \
-				 inc/shunting-yard.h
+				 src/help.c inc/bitwise.h \
+				 inc/stack.h inc/shunting-yard.h
 
 dist_man_MANS=bitwise.1
 
@@ -24,7 +24,7 @@ AM_CFLAGS = $(MAYBE_COVERAGE) $(MAYBE_DEBUG) $(MAYBE_TRACE)
 check_PROGRAMS = tests/test-shunting-yard
 tests_test_shunting_yard_SOURCES = src/shunting-yard.c inc/shunting-yard.h \
                                    src/stack.c inc/stack.h inc/bitwise.h \
-								   src/misc.c \
+				   src/misc.c src/compat.c \
                                    tests/test-shunting-yard.c
 tests_test_shunting_yard_LDADD = -lcunit
 

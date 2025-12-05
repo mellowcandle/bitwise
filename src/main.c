@@ -8,7 +8,6 @@
 #include <stdint.h>
 #include <getopt.h>
 #include <locale.h>
-#include <arpa/inet.h>
 #include <limits.h>
 
 #ifdef HAVE_DECL_BSWAP_32
@@ -23,14 +22,12 @@
 #include "bitwise.h"
 #include "shunting-yard.h"
 
-
 int print_conversions(uint64_t val, bool si)
 {
 	char buf_size[16];
 	char binary[512];
 	int pos = 0;
 	int i, j;
-	struct in_addr ip_addr;
 
 	buf_size[0] = '\0';
 	sprintf_size(val, buf_size, si);
@@ -69,10 +66,10 @@ int print_conversions(uint64_t val, bool si)
 	if (val > UINT_MAX) {
 		printf("%sIPv4: %s%s\n", color_green, color_blue, "Value too big to be a valid IPv4 address");
 	} else {
-		ip_addr.s_addr = val;
-		printf("%sIPv4 (Network byte order - Big): %s %s\n", color_green, color_blue, inet_ntoa(ip_addr));
-		ip_addr.s_addr = bswap_32(val);
-		printf("%sIPv4 (Reversed byte order - Little): %s %s\n", color_green, color_blue, inet_ntoa(ip_addr));
+		char ipstrbuf[16];
+		printf("%sIPv4 (Network byte order - Big): %s %s\n", color_green, color_blue, ipv4_to_str(val, ipstrbuf));
+		const uint64_t reversedval = bswap_32(val);
+		printf("%sIPv4 (Reversed byte order - Little): %s %s\n", color_green, color_blue, ipv4_to_str(reversedval, ipstrbuf));
 	}
 
 	printf("%sASCII: %s", color_green, color_blue);

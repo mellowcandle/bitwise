@@ -3,7 +3,6 @@
  */
 
 #include <stdlib.h>
-#include <form.h>
 #include <ctype.h>
 #include <stdint.h>
 #include <inttypes.h>
@@ -14,6 +13,11 @@
 #include <sys/stat.h>
 #include <math.h>
 #include "bitwise.h"
+#if defined(HAVE_NCURSESW_FORM_H)
+#include <ncursesw/form.h>
+#else
+#include <form.h>
+#endif
 
 #define MAX_DEC_DIGITS_64 20
 #define MAX_HEX_DIGITS_64 16

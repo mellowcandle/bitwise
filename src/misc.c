@@ -360,3 +360,17 @@ int set_width(char width)
 
 	return 0;
 }
+
+
+const char *
+ipv4_to_str(uint32_t ip, char out[static 16])
+{
+    const unsigned char b0 = (ip >> 24) & 0xFF;
+    const unsigned char b1 = (ip >> 16) & 0xFF;
+    const unsigned char b2 = (ip >> 8)  & 0xFF;
+    const unsigned char b3 = ip & 0xFF;
+
+    snprintf(out, 16, "%u.%u.%u.%u", b0, b1, b2, b3);
+    return out;
+}
+
