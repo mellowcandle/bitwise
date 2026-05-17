@@ -392,6 +392,8 @@ Status apply_unary_operator(const Operator *operator, Stack **operands)
 		break;
 	case '~':
 		x = ~x;
+		if (g_width)
+			x &= MASK(g_width);
 		break;
 	case '!':
 		x = !x;
