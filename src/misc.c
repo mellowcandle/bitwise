@@ -243,7 +243,7 @@ int lltostr(uint64_t val, char *buf, int base)
 		break;
 	case 2:
 	default:
-		sprintf(buf, "Not implemeted");
+		sprintf(buf, "Not implemented");
 		return -1;
 	}
 
