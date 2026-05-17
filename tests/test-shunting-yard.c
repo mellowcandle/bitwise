@@ -90,6 +90,66 @@ static void test_precedence()
 	ASSERT_RESULT("2+6/2*5+10/3-2/6", 20);
 }
 
+static void test_bitwise_and()
+{
+	ASSERT_RESULT("0xFF & 0x0F", 0x0F);
+	ASSERT_RESULT("7 & 3", 3);
+	ASSERT_RESULT("0xABCD & 0xFF00", 0xAB00);
+}
+
+static void test_bitwise_or()
+{
+	ASSERT_RESULT("0xF0 | 0x0F", 0xFF);
+	ASSERT_RESULT("4 | 2", 6);
+	ASSERT_RESULT("0 | 0", 0);
+}
+
+static void test_bitwise_xor()
+{
+	ASSERT_RESULT("0xFF ^ 0x0F", 0xF0);
+	ASSERT_RESULT("5 ^ 5", 0);
+	ASSERT_RESULT("0xA ^ 0x5", 0xF);
+}
+
+static void test_bitwise_not()
+{
+	extern int g_width;
+
+	/* With 8-bit width, ~0 should be 0xFF */
+	g_width = 8;
+	ASSERT_RESULT("~0", 0xFF);
+	ASSERT_RESULT("~0xFF", 0);
+	ASSERT_RESULT("~0x0F", 0xF0);
+
+	/* With 16-bit width */
+	g_width = 16;
+	ASSERT_RESULT("~0", 0xFFFF);
+	ASSERT_RESULT("~0xFF", 0xFF00);
+
+	/* With 32-bit width */
+	g_width = 32;
+	ASSERT_RESULT("~0", 0xFFFFFFFF);
+	ASSERT_RESULT("~1", 0xFFFFFFFE);
+
+	/* Reset */
+	g_width = 0;
+}
+
+static void test_logical_not()
+{
+	ASSERT_RESULT("!0", 1);
+	ASSERT_RESULT("!1", 0);
+	ASSERT_RESULT("!42", 0);
+}
+
+static void test_combined_operations()
+{
+	ASSERT_RESULT("(1 << 4) | (1 << 2)", 20);
+	ASSERT_RESULT("0xFF & (0x0F << 4)", 0xF0);
+	ASSERT_RESULT("(3 + 2) * (8 - 3)", 25);
+	ASSERT_RESULT("BIT(0) | BIT(1) | BIT(2)", 7);
+}
+
 static void test_errors()
 {
 	ASSERT_STATUS("2+*2", ERROR_SYNTAX);
@@ -103,9 +163,7 @@ static void test_errors()
 	ASSERT_STATUS("", ERROR_NO_INPUT);
 	ASSERT_STATUS("       ", ERROR_NO_INPUT);
 	ASSERT_STATUS("foo(2)", ERROR_UNDEFINED_FUNCTION);
-//	ASSERT_STATUS("bit(foo)", ERROR_FUNCTION_ARGUMENTS);
-//    ASSERT_STATUS("foo", ERROR_UNDEFINED_CONSTANT);
-
+	ASSERT_STATUS("10 / 0", ERROR_DIVIDE_BY_ZERO);
 }
 
 int main()
@@ -124,6 +182,12 @@ int main()
 	    !CU_add_test(suite, "multiplication", test_multiplication) ||
 	    !CU_add_test(suite, "division", test_division) ||
 	    !CU_add_test(suite, "modulus", test_modulus) ||
+	    !CU_add_test(suite, "bitwise AND", test_bitwise_and) ||
+	    !CU_add_test(suite, "bitwise OR", test_bitwise_or) ||
+	    !CU_add_test(suite, "bitwise XOR", test_bitwise_xor) ||
+	    !CU_add_test(suite, "bitwise NOT", test_bitwise_not) ||
+	    !CU_add_test(suite, "logical NOT", test_logical_not) ||
+	    !CU_add_test(suite, "combined operations", test_combined_operations) ||
 	    !CU_add_test(suite, "functions", test_functions) ||
 	    !CU_add_test(suite, "constants", test_constants) ||
 	    !CU_add_test(suite, "operator precedence", test_precedence) ||
