@@ -156,7 +156,7 @@ brew install bitwise
 ```
 
 ### Windows
-NCurses doesn't support Windows. You can use the Windows Subsystem for Linux as a workaround.
+Bitwise is possible to compile on Windows under mingw or msys2
 
 ### Nix
 ```

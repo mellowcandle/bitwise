@@ -9,11 +9,15 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdbool.h>
-#include <form.h>
 #include <string.h>
 #include "config.h"
+#include "compat.h"
+#if defined(HAVE_NCURSESW_FORM_H)
+#include <ncursesw/form.h>
+#else
+#include <form.h>
+#endif
 /* Readine checks */
-
 #ifdef HAVE_LIBREADLINE
 #  if defined(HAVE_READLINE_READLINE_H)
 #    include <readline/readline.h>
@@ -68,6 +72,7 @@ int sprintf_type(uint64_t val, char *buf, output_type type);
 
 void init_terminal(void);
 void deinit_terminal(void);
+const char *ipv4_to_str(uint32_t ip, char out[static 16]);
 
 /* Interactive */
 extern FORM *form;
