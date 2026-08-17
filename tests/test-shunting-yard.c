@@ -142,6 +142,21 @@ static void test_logical_not()
 	ASSERT_RESULT("!42", 0);
 }
 
+static void test_compound_assignment()
+{
+	ASSERT_RESULT("$ |= BIT(0)", 0x513);
+	ASSERT_RESULT("0x0F |= 0xF0", 0xFF);
+
+	ASSERT_RESULT("$ &= ~BIT(4)", 0x502);
+	ASSERT_RESULT("0xFF &= 0x0F", 0x0F);
+
+	ASSERT_RESULT("$ ^= BIT(0)", 0x513);
+	ASSERT_RESULT("$ ^= BIT(1)", 0x510);
+
+	ASSERT_RESULT("$ & BIT(1)", 0x2);
+	ASSERT_RESULT("$ & BIT(0)", 0);
+}
+
 static void test_combined_operations()
 {
 	ASSERT_RESULT("(1 << 4) | (1 << 2)", 20);
@@ -188,6 +203,7 @@ int main()
 	    !CU_add_test(suite, "bitwise XOR", test_bitwise_xor) ||
 	    !CU_add_test(suite, "bitwise NOT", test_bitwise_not) ||
 	    !CU_add_test(suite, "logical NOT", test_logical_not) ||
+	    !CU_add_test(suite, "compound assignment", test_compound_assignment) ||
 	    !CU_add_test(suite, "combined operations", test_combined_operations) ||
 	    !CU_add_test(suite, "functions", test_functions) ||
 	    !CU_add_test(suite, "constants", test_constants) ||
