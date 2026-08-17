@@ -23,7 +23,7 @@ static const char *interactive_mode = "Type numbers in different bases and direc
 				       "'q'  Exit back to shell.\n";
 
 static const char *command_mode = "Type expressions or commands, result will be appended to history window.\n" \
-				   "Supported operators: (,),+, -, *, /, !, ~, <<_, >>_, BIT(_).\n" \
+				   "Supported operators: (,),+, -, *, /, !, ~, <<_, >>_, BIT(_), |=, &=, ^=.\n" \
 				   "Precedence of operators is defined as C language precedence.\n\n" \
 				   "You can referr to the last result with '$' inside an expression.\n" \
 				   "To return to interactive mode type 'ESC'.\n\n" \

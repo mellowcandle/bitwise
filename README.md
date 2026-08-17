@@ -87,6 +87,7 @@ The result will be printed in the history window and also printed in the binary 
 ###### operators and functions
 * All C operators are supported, additionally, you can use the "$" symbol to refer to the last result.
 * Refer to a specific bit by using the function _BIT(x)_.
+* Set, clear, toggle or test a bit using `$ |= BIT(n)`, `$ &= ~BIT(n)`, `$ ^= BIT(n)` and `$ & BIT(n)`.
 
 ###### commands
 * _h(elp)_ - Show the help screen.

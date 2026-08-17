@@ -63,6 +63,9 @@ static const Operator OPERATORS[] = {
 	{"&", 1, 5, OPERATOR_BINARY, OPERATOR_LEFT},
 	{"^", 1, 5, OPERATOR_BINARY, OPERATOR_LEFT},
 	{"|", 1, 6, OPERATOR_BINARY, OPERATOR_LEFT},
+	{"&=", 2, 5, OPERATOR_BINARY, OPERATOR_LEFT},
+	{"^=", 2, 5, OPERATOR_BINARY, OPERATOR_LEFT},
+	{"|=", 2, 6, OPERATOR_BINARY, OPERATOR_LEFT},
 	{"(", 1, 7, OPERATOR_OTHER,  OPERATOR_NONE}
 };
 
@@ -148,6 +151,9 @@ Token *tokenize(const char *expression)
 		else if (*c == ')')
 			token.type = TOKEN_CLOSE_PARENTHESIS;
 		else if (!strncmp("<<", c, 2) || !strncmp(">>", c, 2)) {
+			token.type = TOKEN_OPERATOR;
+			token.value = strndup(c, 2);
+		} else if (strchr("^|&", *c) && *(c + 1) == '=') {
 			token.type = TOKEN_OPERATOR;
 			token.value = strndup(c, 2);
 		} else if (strchr("~!^*/%+-|&", *c)) {
