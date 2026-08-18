@@ -183,8 +183,8 @@ On Mac systems:
 brew install automake
 brew install autoconf
 brew install readline
-export LDFLAGS="-L/usr/local/opt/readline/lib"
-export CPPFLAGS="-I/usr/local/opt/readline/include"
+export LDFLAGS="-L$(brew --prefix readline)/lib"
+export CPPFLAGS="-I$(brew --prefix readline)/include"
 ```
 - Download [the latest release](https://github.com/mellowcandle/bitwise/releases/latest)
 
