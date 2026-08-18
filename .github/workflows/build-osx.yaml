@@ -8,16 +8,16 @@ on:
 
 jobs:
   build:
-    env:
-      LDFLAGS: "-L/usr/local/opt/readline/lib"
-      CPPFLAGS: "-I/usr/local/opt/readline/include"
-
     runs-on: macos-latest
 
     steps:
     - uses: actions/checkout@v2
     - name: Install lib-cunit
       run: brew install readline cunit autoconf automake
+    - name: Set readline flags
+      run: |
+        echo "CPPFLAGS=-I$(brew --prefix readline)/include" >> "$GITHUB_ENV"
+        echo "LDFLAGS=-L$(brew --prefix readline)/lib" >> "$GITHUB_ENV"
     - name: Bootstrap
       run: ./bootstrap.sh
     - name: configure
