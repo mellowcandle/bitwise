@@ -14,10 +14,10 @@ jobs:
     - uses: actions/checkout@v2
     - name: Install lib-cunit
       run: brew install readline cunit autoconf automake
-    - name: Set readline flags
+    - name: Set readline/cunit flags
       run: |
-        echo "CPPFLAGS=-I$(brew --prefix readline)/include" >> "$GITHUB_ENV"
-        echo "LDFLAGS=-L$(brew --prefix readline)/lib" >> "$GITHUB_ENV"
+        echo "CPPFLAGS=-I$(brew --prefix readline)/include -I$(brew --prefix cunit)/include" >> "$GITHUB_ENV"
+        echo "LDFLAGS=-L$(brew --prefix readline)/lib -L$(brew --prefix cunit)/lib" >> "$GITHUB_ENV"
     - name: Bootstrap
       run: ./bootstrap.sh
     - name: configure

@@ -183,8 +183,9 @@ On Mac systems:
 brew install automake
 brew install autoconf
 brew install readline
-export LDFLAGS="-L$(brew --prefix readline)/lib"
-export CPPFLAGS="-I$(brew --prefix readline)/include"
+brew install cunit
+export LDFLAGS="-L$(brew --prefix readline)/lib -L$(brew --prefix cunit)/lib"
+export CPPFLAGS="-I$(brew --prefix readline)/include -I$(brew --prefix cunit)/include"
 ```
 - Download [the latest release](https://github.com/mellowcandle/bitwise/releases/latest)
 
