@@ -3,7 +3,8 @@ bitwise_SOURCES= src/main.c src/misc.c src/compat.c\
 				 src/interactive.c src/cmd.c \
 				 src/stack.c src/shunting-yard.c \
 				 src/help.c inc/bitwise.h \
-				 inc/stack.h inc/shunting-yard.h
+				 inc/stack.h inc/shunting-yard.h \
+				 inc/compat.h
 
 dist_man_MANS=bitwise.1
 
