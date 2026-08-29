@@ -135,7 +135,14 @@ Status shunting_yard(const char *expression, uint64_t *result)
 	return status;
 }
 
-#define MAX_TOKEN_SIZE 64
+/*
+ * Character sets for the number and identifier tokens. Spans are measured
+ * with strspn() rather than scanned into a fixed-size buffer, so an
+ * arbitrarily long token can neither overflow nor be silently truncated.
+ */
+static const char NUMBER_CHARS[] = "xX0123456789abcdefABCDEF.";
+static const char IDENTIFIER_CHARS[] =
+	"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz$";
 
 Token *tokenize(const char *expression)
 {
@@ -143,7 +150,7 @@ Token *tokenize(const char *expression)
 	Token *tokens = malloc(sizeof * tokens);
 	const char *c = expression;
 	while (*c) {
-		char cur_token[MAX_TOKEN_SIZE];
+		size_t span;
 		Token token = {TOKEN_UNKNOWN, NULL};
 
 		if (*c == '(')
@@ -162,12 +169,12 @@ Token *tokenize(const char *expression)
 		} else if (!strncmp("bit", c, 3) || !strncmp("BIT", c, 3)) {
 			token.value = strndup(c, 3);
 			token.type = TOKEN_IDENTIFIER;
-		} else if (sscanf(c, "%[xX0-9a-fA-F.]", cur_token)) {
+		} else if ((span = strspn(c, NUMBER_CHARS)) != 0) {
 			token.type = TOKEN_NUMBER;
-			token.value = strdup(cur_token);
-		} else if (sscanf(c, "%[A-Za-z$]", cur_token)) {
+			token.value = strndup(c, span);
+		} else if ((span = strspn(c, IDENTIFIER_CHARS)) != 0) {
 			token.type = TOKEN_IDENTIFIER;
-			token.value = strdup(cur_token);
+			token.value = strndup(c, span);
 		}
 
 		if (!isspace(*c)) {
