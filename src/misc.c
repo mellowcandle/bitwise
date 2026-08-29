@@ -3,6 +3,7 @@
  */
 
 #include <ctype.h>
+#include <errno.h>
 #include <inttypes.h>
 #include <stdarg.h>
 #include "bitwise.h"
@@ -131,6 +132,7 @@ int validate_input(int ch, int base)
 int binary_scanf(const char *buf, uint64_t *val)
 {
 	uint64_t value = 0;
+	bool seen_digit = false;
 
 	/* Skip the leading 0 */
 	if (buf[0] == '0') {
@@ -144,11 +146,16 @@ int binary_scanf(const char *buf, uint64_t *val)
 		switch (*buf) {
 
 		case '0':
-			value <<= 1;
-			break;
 		case '1':
-			value <<= 1;
-			value++;
+			/*
+			 * A set top bit would be shifted out of the value
+			 * entirely, so the string does not fit in 64 bits.
+			 * Leading zeros still cost nothing.
+			 */
+			if (value >> 63)
+				return 0;
+			value = (value << 1) | (uint64_t)(*buf - '0');
+			seen_digit = true;
 			break;
 		default:
 			return 0;
@@ -156,37 +163,52 @@ int binary_scanf(const char *buf, uint64_t *val)
 		buf++;
 	}
 
+	/* A bare "b" or "0b" prefix is not the number zero. */
+	if (!seen_digit)
+		return 0;
+
 	*val = value;
 
 	return 1;
 }
 
+/*
+ * Parse buf as a whole unsigned number in the given base. Anything the
+ * string is not is rejected: no digits at all, trailing garbage after the
+ * number, a sign, or a value that does not fit in uint64_t.
+ * Returns 0 on success.
+ */
 int base_scanf(const char *buf, int base, uint64_t *value)
 {
-	int ret = 0;
+	char *end;
+	uint64_t parsed;
 
-	switch (base) {
-	case 10:
-		ret = sscanf(buf, "%" PRIu64, value);
-		break;
-	case 16:
-		ret = sscanf(buf, "%" PRIX64, value);
-		break;
-	case 8:
-		ret = sscanf(buf, "%" PRIo64, value);
-		break;
-	case 2:
-		ret = binary_scanf(buf, value);
-		break;
-	default:
-		fprintf(stderr, "Unknown base\n");
-		break;
+	if (base == 2) {
+		if (!binary_scanf(buf, value)) {
+			LOG("Couldn't parse number: %s\n", buf);
+			return 1;
+		}
+		return 0;
 	}
 
-	if (ret == EOF || !ret) {
+	if (base != 8 && base != 10 && base != 16) {
+		LOG("Unknown base: %d\n", base);
+		return 1;
+	}
+
+	/* strtoull() wraps a negative value round rather than refusing it. */
+	if (buf[0] == '-')
+		return 1;
+
+	errno = 0;
+	parsed = strtoull(buf, &end, base);
+
+	if (end == buf || *end != '\0' || errno == ERANGE) {
 		LOG("Couldn't parse number: %s\n", buf);
 		return 1;
 	}
+
+	*value = parsed;
 
 	return 0;
 }
