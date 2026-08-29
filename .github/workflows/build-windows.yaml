@@ -1,0 +1,39 @@
+name: C build (Windows/msys2)
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    defaults:
+      run:
+        shell: msys2 {0}
+
+    steps:
+    - uses: actions/checkout@v4
+    - uses: msys2/setup-msys2@v2
+      with:
+        msystem: MSYS
+        update: true
+        install: >-
+          base-devel
+          gcc
+          autoconf
+          automake
+          ncurses-devel
+          readline-devel
+    - name: Bootstrap
+      run: ./bootstrap.sh
+    - name: configure
+      run: ./configure
+    # Compilation is what this job guards: the msys2 support is a set of
+    # configure checks and #ifdefs that nothing else exercises. Running the
+    # test suite here as well would additionally need CUnit available in the
+    # MSYS environment.
+    - name: make
+      run: make
