@@ -1,7 +1,18 @@
+/*
+ * The HAVE_* guards below come from config.h, so it has to be included
+ * here: without it both fallbacks compile unconditionally and shadow the
+ * platform's own strndup() and l64a().
+ */
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #include <stdlib.h>
 #include <string.h>
 #include <limits.h>
 #include <stdint.h>
+
+#include "compat.h"
 
 #ifndef HAVE_STRNDUP
 char *strndup(const char *s, size_t n)
