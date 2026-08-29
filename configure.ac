@@ -99,4 +99,18 @@ AC_ARG_ENABLE([debug],
 	[enable_debug=no])
 AM_CONDITIONAL([COND_DEBUG],[test '!' "$enable_debug" = no])
 
+AC_ARG_ENABLE([asan],
+	[AS_HELP_STRING([--enable-asan],
+		[Build with AddressSanitizer])],
+	[],
+	[enable_asan=no])
+AM_CONDITIONAL([COND_ASAN],[test '!' "$enable_asan" = no])
+
+AC_ARG_ENABLE([ubsan],
+	[AS_HELP_STRING([--enable-ubsan],
+		[Build with UndefinedBehaviorSanitizer])],
+	[],
+	[enable_ubsan=no])
+AM_CONDITIONAL([COND_UBSAN],[test '!' "$enable_ubsan" = no])
+
 AC_OUTPUT

@@ -20,7 +20,18 @@ if COND_DEBUG
 MAYBE_DEBUG=-g -O0
 endif
 
-AM_CFLAGS = $(MAYBE_COVERAGE) $(MAYBE_DEBUG) $(MAYBE_TRACE)
+# The sanitizers have to reach the link too, hence AM_LDFLAGS below.
+if COND_ASAN
+MAYBE_ASAN=-fsanitize=address -fno-omit-frame-pointer
+endif
+
+if COND_UBSAN
+MAYBE_UBSAN=-fsanitize=undefined -fno-sanitize-recover=all
+endif
+
+AM_CFLAGS = -Wall -Wextra $(MAYBE_COVERAGE) $(MAYBE_DEBUG) $(MAYBE_TRACE) \
+	    $(MAYBE_ASAN) $(MAYBE_UBSAN)
+AM_LDFLAGS = $(MAYBE_ASAN) $(MAYBE_UBSAN)
 
 check_PROGRAMS = tests/test-shunting-yard
 tests_test_shunting_yard_SOURCES = src/shunting-yard.c inc/shunting-yard.h \
