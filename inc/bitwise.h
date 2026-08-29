@@ -49,6 +49,11 @@ extern int read_history();
 #define BINARY_WIN  1
 #define COMMAND_WIN 2
 
+/* The widest value the tool operates on, and the widest colour escape
+ * sequence init_colors() can install ("\x1B[3Nm" is 5, rounded up). */
+#define MAX_WIDTH 64
+#define MAX_COLOR_LEN 8
+
 #define BIT(nr) (1ULL << (nr))
 #define MASK(s) (~0ULL >> (64 - s))
 #define ARRAY_SIZE(x)	(sizeof(x) / sizeof((x)[0]))

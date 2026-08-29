@@ -4,6 +4,7 @@
 
 #include <ctype.h>
 #include <inttypes.h>
+#include <stdarg.h>
 #include <stdlib.h>
 #include <stdint.h>
 #include <getopt.h>
@@ -22,11 +23,45 @@
 #include "bitwise.h"
 #include "shunting-yard.h"
 
+/*
+ * Append a formatted fragment at buf[pos], never writing past buf + size.
+ * Returns the new length, clamped to size, so a truncated write can't walk
+ * the offset out of the buffer on the following call.
+ */
+static size_t append_fmt(char *buf, size_t size, size_t pos,
+			 const char *fmt, ...)
+{
+	va_list args;
+	int written;
+
+	if (pos >= size)
+		return size;
+
+	va_start(args, fmt);
+	written = vsnprintf(&buf[pos], size - pos, fmt, args);
+	va_end(args);
+
+	if (written < 0)
+		return pos;
+
+	pos += (size_t)written;
+
+	return pos > size ? size : pos;
+}
+
 int print_conversions(uint64_t val, bool si)
 {
 	char buf_size[16];
-	char binary[512];
-	int pos = 0;
+	/*
+	 * Each of the g_width bits contributes a colour escape, the digit
+	 * and a trailing space; every eighth bit adds a separator, itself an
+	 * escape plus "| ". Size the buffer from those bounds rather than
+	 * guessing: at 64 bits the old 512 bytes left 15 to spare, so a
+	 * slightly longer escape sequence would have overflowed it.
+	 */
+	char binary[MAX_WIDTH * (MAX_COLOR_LEN + 2) +
+		    (MAX_WIDTH / 8) * (MAX_COLOR_LEN + 2) + 1];
+	size_t pos = 0;
 	int i, j;
 
 	buf_size[0] = '\0';
@@ -82,26 +117,21 @@ int print_conversions(uint64_t val, bool si)
 	}
 
 	printf("\n%sBinary:\n%s", color_green, color_reset);
+	binary[0] = '\0';
 	for (i = g_width; i > 0; i--) {
-		if ((i % 8 == 0) && (i != g_width)) {
-			pos += sprintf(&binary[pos], "%s", color_white);
-			binary[pos] = '|';
-			binary[pos + 1] = ' ';
-			pos += 2;
-		}
-		if (val & BIT(i - 1)) {
-			pos += sprintf(&binary[pos], "%s", color_blue);
-			binary[pos] = '1';
-		}
-		else {
-			pos += sprintf(&binary[pos], "%s", color_magenta);
-			binary[pos] = '0';
-		}
-		binary[pos + 1] = ' ';
-		pos += 2;
+		bool set = val & BIT(i - 1);
+
+		if ((i % 8 == 0) && (i != g_width))
+			pos = append_fmt(binary, sizeof(binary), pos, "%s| ",
+					 color_white);
+		pos = append_fmt(binary, sizeof(binary), pos, "%s%c ",
+				 set ? color_blue : color_magenta,
+				 set ? '1' : '0');
 	}
 
-	binary[pos-1] = '\0';
+	/* Drop the trailing space. */
+	if (pos)
+		binary[pos - 1] = '\0';
 	printf("%s\n    ", binary);
 	fputs(color_cyan, stdout);
 	for (i = 0; i < g_width / 8; i++) {
