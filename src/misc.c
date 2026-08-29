@@ -4,6 +4,7 @@
 
 #include <ctype.h>
 #include <inttypes.h>
+#include <stdarg.h>
 #include "bitwise.h"
 
 /* IEC Standard */
