@@ -1,3 +1,85 @@
+Bitwise v0.60
+==========================================
+* Added set, clear, toggle and test bit operators
+* Fixed the NOT (~) operator to respect the configured bit width
+* Fixed a crash on modulus by zero
+* Fixed parsing of binary prefixes
+* Build fixes for msys2 on Windows, macOS and Apple Silicon
+* Support readline older than 6.3
+
+Bitwise v0.50
+==========================================
+* Added the 'r' command to reverse endianness in interactive mode
+* Commands can be abbreviated
+* Fixed a crash on divide by zero
+* Fixed overflow handling, including the bit() function
+* IPv4: treat 0xffffffff as a valid address
+* Disabled mouse events while in interactive command mode
+* Fixed the backwards key not working in some terminals
+
+Bitwise v0.43
+==========================================
+* Added IPv4 parsing and output in command line mode
+* Fixed -Werror=format-security errors from mvwprintw()
+
+Bitwise v0.42
+==========================================
+* Added support for a leading 0 on binary numbers
+* Dropped the libncurses5 and libreadline5 dependencies from the
+  Debian package
+
+Bitwise v0.41
+==========================================
+* Initial mouse support
+
+Bitwise v0.40
+==========================================
+* Added a help screen, opened with F1 in interactive mode
+* Added the "output" command
+* Command line mode prints Radix64 for 32-bit numbers
+* Display an error message when a function fails
+
+Bitwise v0.33
+==========================================
+* The bit width now extends dynamically while typing in a field
+* Added bit shift hotkeys
+* Command line mode also prints the signed value
+* Fixed a bit position going out of bounds after reducing the width
+* Fixed residual characters left behind when resizing the binary field
+* Fixed fields being read as signed instead of unsigned 64-bit
+* configure now fails if readline is missing
+
+Bitwise v0.32
+==========================================
+* Trailing arguments are treated as a single expression
+* Portability fixes for 32-bit and macOS builds
+* COPYING now carries the GPLv3 text the project ships under
+
+Bitwise v0.31
+==========================================
+* Fixed backspacing out of an empty field
+* Fixed the binary field updating before evaluation, and when deleting
+  a character
+* Added m4 macros for curses and readline detection
+
+Bitwise v0.30
+==========================================
+* Added a history window, and a "clear" command to flush it
+* Added the '$' constant, which evaluates to the last result
+* Print the ASCII value of a number when it is in range
+* Differentiate between the SI and IEC standards
+* Color support in command line mode
+
+Bitwise v0.22
+==========================================
+* Fixed the OR and AND operators
+* Fixed lltostr
+* "help" takes an expression instead of a number
+
+Bitwise v0.21
+==========================================
+* Support building on 32-bit machines
+
 Bitwise v0.20
 ==========================================
 * Added calculator mode

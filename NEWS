@@ -1,0 +1,25 @@
+Bitwise NEWS - user-visible changes between releases.
+
+The full per-release list lives in ChangeLog; this file carries the
+highlights of the current release.
+
+v0.60
+-----
+
+New in interactive and command line mode:
+
+* set, clear, toggle and test bit operators in expressions.
+
+Fixes:
+
+* ~ (NOT) now respects the configured bit width instead of always
+  operating on 64 bits.
+* Modulus by zero no longer crashes; it reports an error, as divide by
+  zero already did.
+* Binary prefixes ("0b101") parse correctly again.
+
+Portability:
+
+* Builds on Windows under msys2.
+* Builds on macOS on Apple Silicon, where readline lives elsewhere.
+* Builds against readline older than 6.3.
