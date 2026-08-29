@@ -54,6 +54,14 @@ typedef struct {
 
 static const Token NO_TOKEN = {TOKEN_NONE, NULL};
 
+/*
+ * get_operator() matches on the first op_len characters of the token, so
+ * the single-character entries also claim their "&=", "^=" and "|=" forms:
+ * those tokens find "&", "^" and "|" here and evaluate identically, which
+ * is what this calculator means by them anyway -- there is nothing to
+ * assign to. Do not add compound-assignment rows; they would sit after the
+ * single-character ones and never be reached.
+ */
 static const Operator OPERATORS[] = {
 	{"!", 1, 1, OPERATOR_UNARY,  OPERATOR_RIGHT},
 	{"~", 1, 1, OPERATOR_UNARY,  OPERATOR_RIGHT},
@@ -67,9 +75,6 @@ static const Operator OPERATORS[] = {
 	{"&", 1, 5, OPERATOR_BINARY, OPERATOR_LEFT},
 	{"^", 1, 5, OPERATOR_BINARY, OPERATOR_LEFT},
 	{"|", 1, 6, OPERATOR_BINARY, OPERATOR_LEFT},
-	{"&=", 2, 5, OPERATOR_BINARY, OPERATOR_LEFT},
-	{"^=", 2, 5, OPERATOR_BINARY, OPERATOR_LEFT},
-	{"|=", 2, 6, OPERATOR_BINARY, OPERATOR_LEFT},
 	{"(", 1, 7, OPERATOR_OTHER,  OPERATOR_NONE}
 };
 
