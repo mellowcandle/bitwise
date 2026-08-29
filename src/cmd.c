@@ -108,19 +108,23 @@ void show_error(Status status)
 /* Remove trailing and leading white spaces, and NULL if all-white */
 static char *trim_whitespace(char *str)
 {
-	char *str_end = &str[strlen(str) - 1];
-	size_t i;
+	char *str_end;
 
-	/* Remove leding white characters */
-	while (isspace(str[0]))
+	/* Remove leading white characters */
+	while (isspace((unsigned char)str[0]))
 		str++;
 
 	/* There are only white characters */
 	if (str[0] == '\0')
 		return NULL;
 
-	/*  There is at least one non-white character, find the last one */
-	while (isspace(str_end[0]))
+	/*
+	 * There is at least one non-white character, find the last one.
+	 * str is known non-empty here, so this stays inside the string and
+	 * the scan back is guaranteed to stop on that character.
+	 */
+	str_end = &str[strlen(str) - 1];
+	while (isspace((unsigned char)str_end[0]))
 		str_end--;
 
 	str_end[1] = '\0';
