@@ -6,6 +6,10 @@ AC_INIT([bitwise], [v0.60], [rfried.dev@gmail.com])
 AC_CONFIG_SRCDIR([src/misc.c])
 AC_CONFIG_HEADERS([inc/config.h])
 
+dnl  Keep the generated helper scripts (install-sh, missing, compile,
+dnl  depcomp, config.guess, config.sub, test-driver) out of the top level.
+AC_CONFIG_AUX_DIR([build-aux])
+
 dnl  Document where we keep our .m4 file.
 AC_CONFIG_MACRO_DIR([m4])
 dnl  Make sure aclocal actually found it!
