@@ -23,4 +23,13 @@ jobs:
       run: ./configure --enable-gcov
     - name: make check
       run: make check
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v5
+      with:
+        # Public repositories still upload without a token, but rate
+        # limiting makes it flaky; add CODECOV_TOKEN as a repository
+        # secret to make it reliable. A missing token must not fail the
+        # build, hence fail_ci_if_error below.
+        token: ${{ secrets.CODECOV_TOKEN }}
+        fail_ci_if_error: false
 
