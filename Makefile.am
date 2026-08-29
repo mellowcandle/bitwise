@@ -8,6 +8,10 @@ bitwise_SOURCES= src/main.c src/misc.c src/compat.c\
 
 dist_man_MANS=bitwise.1
 
+# Automake ships README, ChangeLog, AUTHORS, NEWS and COPYING on its own;
+# these it does not know about.
+EXTRA_DIST = README.md CONTRIBUTING.md LICENSE
+
 if COND_GCOV
 MAYBE_COVERAGE=--coverage --no-inline
 endif

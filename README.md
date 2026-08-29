@@ -206,3 +206,6 @@ Running unit tests by typing
 * Run ```./bootstrap.sh```
 * Follow the building from source section.
 * commit and send pull request
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for the style, testing and commit
+conventions patches are expected to follow.

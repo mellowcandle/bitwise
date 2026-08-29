@@ -87,5 +87,17 @@ config.sub
 *.tar.xz
 bitwise-*/
 
+# Coverage output
+*.gcno
+*.gcda
+*.gcov
+
+# Fuzzer output: the corpus and whatever libFuzzer saves when it wins
+corpus/
+crash-*
+leak-*
+oom-*
+timeout-*
+
 # tracing stuff
 log.txt
