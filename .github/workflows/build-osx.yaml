@@ -11,8 +11,8 @@ jobs:
     runs-on: macos-latest
 
     steps:
-    - uses: actions/checkout@v2
-    - name: Install lib-cunit
+    - uses: actions/checkout@v4
+    - name: Install dependencies
       run: brew install readline cunit autoconf automake
     - name: Set readline/cunit flags
       run: |
