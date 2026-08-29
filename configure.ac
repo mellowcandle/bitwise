@@ -113,4 +113,12 @@ AC_ARG_ENABLE([ubsan],
 	[enable_ubsan=no])
 AM_CONDITIONAL([COND_UBSAN],[test '!' "$enable_ubsan" = no])
 
+dnl  libFuzzer is a clang feature; the harness is only built on request.
+AC_ARG_ENABLE([fuzzer],
+	[AS_HELP_STRING([--enable-fuzzer],
+		[Build the libFuzzer harness (requires clang)])],
+	[],
+	[enable_fuzzer=no])
+AM_CONDITIONAL([COND_FUZZER],[test '!' "$enable_fuzzer" = no])
+
 AC_OUTPUT

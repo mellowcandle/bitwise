@@ -67,3 +67,37 @@ jobs:
     - name: Show test log on failure
       if: failure()
       run: cat test-suite.log tests/*.log 2>/dev/null || true
+
+  fuzz:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y clang libcunit1-dev libreadline-dev libncurses-dev
+    - name: Bootstrap
+      run: ./bootstrap.sh
+    - name: configure
+      run: ./configure CC=clang --enable-fuzzer --enable-asan --enable-ubsan --enable-debug
+    - name: Build the harness
+      run: make tests/fuzz-shunting-yard
+    # A bounded smoke run, not a fuzzing campaign: enough to catch a
+    # regression that crashes on trivially reachable input, short enough
+    # to keep in the per-push CI.
+    - name: Fuzz
+      run: |
+        mkdir -p corpus
+        ./tests/fuzz-shunting-yard -max_len=128 -max_total_time=120 \
+            -print_final_stats=1 corpus
+    - name: Upload crashes
+      if: failure()
+      uses: actions/upload-artifact@v4
+      with:
+        name: fuzz-crashes
+        path: |
+          crash-*
+          timeout-*
+          oom-*
+        if-no-files-found: ignore

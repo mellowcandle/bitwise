@@ -40,7 +40,19 @@ tests_test_shunting_yard_SOURCES = src/shunting-yard.c inc/shunting-yard.h \
                                    tests/test-shunting-yard.c
 tests_test_shunting_yard_LDADD = -lcunit
 
-TESTS = $(check_PROGRAMS)
+# The fuzzer is built by "make check" but deliberately kept out of TESTS:
+# libFuzzer runs until it finds a crash, which is not a unit test.
+TESTS = tests/test-shunting-yard
+
+if COND_FUZZER
+check_PROGRAMS += tests/fuzz-shunting-yard
+tests_fuzz_shunting_yard_SOURCES = src/shunting-yard.c inc/shunting-yard.h \
+                                   src/stack.c inc/stack.h inc/bitwise.h \
+				   src/misc.c src/compat.c \
+                                   tests/fuzz-shunting-yard.c
+tests_fuzz_shunting_yard_CFLAGS = $(AM_CFLAGS) -fsanitize=fuzzer
+tests_fuzz_shunting_yard_LDFLAGS = $(AM_LDFLAGS) -fsanitize=fuzzer
+endif
 
 clean-local:
 		rm -f *.gcno
