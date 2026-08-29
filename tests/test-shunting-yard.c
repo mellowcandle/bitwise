@@ -8,7 +8,9 @@
 #include "../inc/shunting-yard.h"
 
 #include <CUnit/Basic.h>
+#include <stdint.h>
 #include <stdlib.h>
+#include <string.h>
 
 #define ASSERT_RESULT(expression, expected) \
         ASSERT_STATUS(expression, STATUS_OK); \
@@ -142,6 +144,111 @@ static void test_logical_not()
 	ASSERT_RESULT("!42", 0);
 }
 
+/*
+ * Number parsing. base_scanf() used to accept anything sscanf() managed a
+ * partial conversion on, so a bare prefix, trailing garbage and an
+ * out-of-range literal all came back as valid numbers.
+ */
+static void test_number_parsing()
+{
+	char expr[80];
+
+	/* Well-formed literals in every base still parse. */
+	ASSERT_RESULT("0777", 511);
+	ASSERT_RESULT("b101", 5);
+	ASSERT_RESULT("0b101", 5);
+	ASSERT_RESULT("0x1f", 31);
+	ASSERT_RESULT("0xFFFFFFFFFFFFFFFF", UINT64_MAX);
+	ASSERT_RESULT("18446744073709551615", UINT64_MAX);
+
+	/* A prefix with no digits behind it is not the number zero. */
+	ASSERT_STATUS("0x", ERROR_SYNTAX);
+	ASSERT_STATUS("b", ERROR_SYNTAX);
+	ASSERT_STATUS("0b", ERROR_SYNTAX);
+
+	/* Trailing garbage is not silently dropped. */
+	ASSERT_STATUS("12a", ERROR_SYNTAX);
+
+	/* Values past UINT64_MAX are refused, not clamped to it. */
+	ASSERT_STATUS("18446744073709551616", ERROR_SYNTAX);
+	ASSERT_STATUS("9999999999999999999999", ERROR_SYNTAX);
+	ASSERT_STATUS("0xFFFFFFFFFFFFFFFFF", ERROR_SYNTAX);
+
+	/* 64 binary digits fit; a 65th significant one does not. */
+	expr[0] = '0';
+	expr[1] = 'b';
+	memset(&expr[2], '1', 64);
+	expr[66] = '\0';
+	ASSERT_RESULT(expr, UINT64_MAX);
+
+	expr[2] = '1';
+	memset(&expr[3], '0', 64);
+	expr[67] = '\0';
+	ASSERT_STATUS(expr, ERROR_SYNTAX);
+
+	/* Leading zeros are free, so this is 1 rather than an overflow. */
+	memset(&expr[2], '0', 64);
+	expr[66] = '1';
+	expr[67] = '\0';
+	ASSERT_RESULT(expr, 1);
+}
+
+/*
+ * Shifting a uint64_t by 64 or more is undefined; every bit is shifted
+ * out, so the answer is 0. On x86 the count used to be masked to 6 bits,
+ * making "1 << 64" evaluate to 1.
+ */
+static void test_shift_edges()
+{
+	ASSERT_RESULT("1 << 63", 0x8000000000000000ULL);
+	ASSERT_RESULT("1 << 64", 0);
+	ASSERT_RESULT("1 << 65", 0);
+	ASSERT_RESULT("1 << 200", 0);
+
+	ASSERT_RESULT("0x8000000000000000 >> 63", 1);
+	ASSERT_RESULT("1 >> 64", 0);
+	ASSERT_RESULT("0xFFFFFFFFFFFFFFFF >> 64", 0);
+	ASSERT_RESULT("0xFFFFFFFFFFFFFFFF >> 200", 0);
+
+	/* BIT() is a shift too, with the count coming straight from input. */
+	ASSERT_RESULT("BIT(63)", 0x8000000000000000ULL);
+	ASSERT_RESULT("BIT(64)", 0);
+	ASSERT_RESULT("BIT(200)", 0);
+}
+
+/*
+ * Tokens longer than the old fixed 64-byte scratch buffer. These used to
+ * overflow the stack while tokenizing; the point of the test is that they
+ * return a status at all rather than what the status is.
+ */
+static void test_long_tokens()
+{
+	char expr[512];
+
+	memset(expr, 'a', 300);
+	expr[300] = '\0';
+	ASSERT_STATUS(expr, ERROR_SYNTAX);
+
+	expr[0] = '0';
+	expr[1] = 'x';
+	memset(&expr[2], 'a', 200);
+	expr[202] = '\0';
+	ASSERT_STATUS(expr, ERROR_SYNTAX);
+
+	memset(expr, '9', 400);
+	expr[400] = '\0';
+	ASSERT_STATUS(expr, ERROR_SYNTAX);
+
+	/* Long but in range: 0x, 61 zeros, then "1f" -- still 31. */
+	expr[0] = '0';
+	expr[1] = 'x';
+	memset(&expr[2], '0', 61);
+	expr[63] = '1';
+	expr[64] = 'f';
+	expr[65] = '\0';
+	ASSERT_RESULT(expr, 31);
+}
+
 static void test_compound_assignment()
 {
 	ASSERT_RESULT("$ |= BIT(0)", 0x513);
@@ -208,7 +315,10 @@ int main()
 	    !CU_add_test(suite, "functions", test_functions) ||
 	    !CU_add_test(suite, "constants", test_constants) ||
 	    !CU_add_test(suite, "operator precedence", test_precedence) ||
-	    !CU_add_test(suite, "error handling", test_errors))
+	    !CU_add_test(suite, "error handling", test_errors) ||
+	    !CU_add_test(suite, "number parsing", test_number_parsing) ||
+	    !CU_add_test(suite, "shift edges", test_shift_edges) ||
+	    !CU_add_test(suite, "long tokens", test_long_tokens))
 		goto exit;
 
 	CU_basic_set_mode(CU_BRM_NORMAL);
