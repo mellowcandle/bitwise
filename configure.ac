@@ -18,11 +18,11 @@ m4_pattern_forbid([^AX_])
 AM_INIT_AUTOMAKE([-Wall -Werror foreign subdir-objects])
 
 # Checks for programs.
+# No explicit C99 selection: Autoconf 2.70+ folds it into AC_PROG_CC, and
+# every compiler this builds with defaults to gnu11 or later regardless.
 AC_PROG_CC
 AM_PROG_CC_C_O
-AC_PROG_CC_STDC
 AC_PROG_INSTALL
-AC_PROG_CC_C99
 
 AX_LIB_READLINE
 if test "$ac_cv_have_readline" = no; then
