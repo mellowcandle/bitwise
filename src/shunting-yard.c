@@ -181,7 +181,7 @@ Token *tokenize(const char *expression)
 			token.value = strndup(c, span);
 		}
 
-		if (!isspace(*c)) {
+		if (!isspace((unsigned char)*c)) {
 			tokens = realloc(tokens, sizeof * tokens *
 					 (++length + 1));
 			tokens[length - 1] = token;

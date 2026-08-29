@@ -119,7 +119,14 @@ int validate_input(int ch, int base)
 			return 0;
 		break;
 	case 10:
-		if (isdigit(ch))
+		/*
+		 * A plain range check, like the other bases above. ch comes
+		 * straight from getch(), so it can be a key code such as
+		 * KEY_RESIZE (410); isdigit() is only defined for values
+		 * representable as unsigned char or EOF, and glibc indexes a
+		 * table with it, reading out of bounds for anything larger.
+		 */
+		if (ch >= '0' && ch <= '9')
 			return 0;
 		break;
 	default:
@@ -235,10 +242,10 @@ int parse_input(const char *input, uint64_t *val)
 
 	if (strchr(input, '.'))
 		return ip_scanf(input, val);
-	if (tolower(input[0]) == 'b')
+	if (tolower((unsigned char)input[0]) == 'b')
 		base = 2;
 	else if (input[0] == '0')
-		if (tolower(input[1]) == 'b')
+		if (tolower((unsigned char)input[1]) == 'b')
 			base = 2;
 		else if (input[1] == 'x' || input[1] == 'X')
 			base = 16;
@@ -370,13 +377,13 @@ void set_width_by_val(uint64_t val)
 
 int set_width(char width)
 {
-	if (tolower(width) == 'b')
+	if (tolower((unsigned char)width) == 'b')
 		g_width = 8;
-	else if (tolower(width) == 'w')
+	else if (tolower((unsigned char)width) == 'w')
 		g_width = 16;
-	else if (tolower(width) == 'l')
+	else if (tolower((unsigned char)width) == 'l')
 		g_width = 32;
-	else if (tolower(width) == 'd')
+	else if (tolower((unsigned char)width) == 'd')
 		g_width = 64;
 	else
 		return 1;
