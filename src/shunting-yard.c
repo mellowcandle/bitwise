@@ -4,6 +4,7 @@
 // found in the LICENSE file.
 
 #include <ctype.h>
+#include <limits.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -47,6 +48,9 @@ typedef struct {
 	OperatorArity arity;
 	OperatorAssociativity associativity;
 } Operator;
+
+/* Width, in bits, of the type every expression is evaluated in. */
+#define VALUE_BITS (sizeof(uint64_t) * CHAR_BIT)
 
 static const Token NO_TOKEN = {TOKEN_NONE, NULL};
 
@@ -374,11 +378,17 @@ Status apply_operator(const Operator *operator, Stack **operands)
 	case '-':
 		x = x - y;
 		break;
+	/*
+	 * Shifting by more than the operand width is undefined behaviour in
+	 * C; every bit is shifted out, so yield the expected 0 instead.
+	 * Shifts smaller than that are left alone: the caller masks the
+	 * result down to g_width and reports the overflow itself.
+	 */
 	case '>':
-		x = x >> y;
+		x = (y >= VALUE_BITS) ? 0 : x >> y;
 		break;
 	case '<':
-		x = x << y;
+		x = (y >= VALUE_BITS) ? 0 : x << y;
 		break;
 	case '|':
 		x = x | y;
@@ -428,7 +438,11 @@ Status apply_function(const char *function, Stack **operands)
 	uint64_t x = pop_num(operands);
 
 	if (strcasecmp(function, "bit") == 0)
-		x = BIT(x);
+		/*
+		 * Same guard as the shift operators: BIT() is a shift, and a
+		 * bit index at or past the value width shifts every bit out.
+		 */
+		x = (x >= VALUE_BITS) ? 0 : BIT(x);
 	else
 		return ERROR_UNDEFINED_FUNCTION;
 
