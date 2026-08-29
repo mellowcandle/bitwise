@@ -107,9 +107,15 @@ int print_conversions(uint64_t val, bool si)
 		printf("%sIPv4 (Reversed byte order - Little): %s %s\n", color_green, color_blue, ipv4_to_str(reversedval, ipstrbuf));
 	}
 
+	/*
+	 * Most significant byte first. Extract the bytes by shifting rather
+	 * than by indexing the object representation: reading &val as bytes
+	 * walks memory order, which prints the value backwards on a
+	 * big-endian host.
+	 */
 	printf("%sASCII: %s", color_green, color_blue);
 	for (i = sizeof(uint64_t) - 1; i >= 0; i--) {
-		char c = ((char *)&val)[i];
+		unsigned char c = (unsigned char)(val >> (i * 8));
 		if (isgraph(c))
 			printf("%s%c", color_blue, c);
 		else
