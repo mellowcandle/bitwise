@@ -74,6 +74,18 @@ missing
 test-driver
 compile
 depcomp
+# Only reachable in trees bootstrapped before AC_CONFIG_AUX_DIR([build-aux]);
+# automake puts these under build-aux/ now.
+config.guess
+config.sub
+# autoreconf --force leaves these behind
+*~
+
+# Distribution tarballs from "make dist" / "make distcheck"
+*.tar.gz
+*.tar.bz2
+*.tar.xz
+bitwise-*/
 
 # tracing stuff
 log.txt
