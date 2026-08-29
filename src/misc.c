@@ -221,7 +221,7 @@ int ip_scanf(const char *input, uint64_t *val)
 	} ip;
 	if (sscanf(input, "%hhu.%hhu.%hhu.%hhu",
 		   &ip.ip[0], &ip.ip[1], &ip.ip[2], &ip.ip[3]) != 4) {
-		fprintf(stderr, "Failed parsing IPv4 address\n");
+		LOG("Failed parsing IPv4 address: %s\n", input);
 		return 1;
 	}
 
