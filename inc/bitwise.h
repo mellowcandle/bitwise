@@ -55,7 +55,12 @@ extern int read_history();
 #define MAX_COLOR_LEN 8
 
 #define BIT(nr) (1ULL << (nr))
-#define MASK(s) (~0ULL >> (64 - s))
+/*
+ * MASK(0) is a shift by the full width of the type, which is undefined.
+ * Every caller checks the width before asking, but the macro shouldn't
+ * depend on that; zero bits wide means no bits set either way.
+ */
+#define MASK(s) ((s) ? (~0ULL >> (MAX_WIDTH - (s))) : 0ULL)
 #define ARRAY_SIZE(x)	(sizeof(x) / sizeof((x)[0]))
 
 typedef enum output_type {
