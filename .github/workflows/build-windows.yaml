@@ -20,13 +20,16 @@ jobs:
       with:
         msystem: MSYS
         update: true
+        # MSYS2 splits readline into libreadline/libreadline-devel;
+        # there is no "readline-devel" in the msys repo. ncurses is
+        # the one that does use the plain -devel name.
         install: >-
           base-devel
           gcc
           autoconf
           automake
           ncurses-devel
-          readline-devel
+          libreadline-devel
     - name: Bootstrap
       run: ./bootstrap.sh
     - name: configure
