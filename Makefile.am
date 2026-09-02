@@ -6,6 +6,11 @@ bitwise_SOURCES= src/main.c src/misc.c src/compat.c\
 				 inc/stack.h inc/shunting-yard.h \
 				 inc/compat.h
 
+# The headers live in inc/, which automake only puts on the include path
+# for the build tree (it holds the generated config.h). A VPATH build --
+# what "make distcheck" does -- also needs the source tree's copy.
+AM_CPPFLAGS = -I$(top_srcdir)/inc -I$(top_builddir)/inc
+
 dist_man_MANS=bitwise.1
 
 # Automake ships README, ChangeLog, AUTHORS, NEWS and COPYING on its own;

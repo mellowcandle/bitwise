@@ -44,6 +44,14 @@ inc/stamp-h1
 src/.deps/
 src/.dirstamp
 tests/.deps/
+tests/.dirstamp
+
+# "make check" output
+tests/test-shunting-yard
+tests/fuzz-shunting-yard
+test-suite.log
+*.log
+*.trs
 
 # Debug files
 *.dSYM/

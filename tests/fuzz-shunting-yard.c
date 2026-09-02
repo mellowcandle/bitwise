@@ -17,7 +17,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "../inc/shunting-yard.h"
+#include "shunting-yard.h"
 
 /*
  * Normally defined in interactive.c, which drags in curses. The parser

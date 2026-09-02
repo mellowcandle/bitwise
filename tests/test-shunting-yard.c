@@ -5,7 +5,7 @@
 //
 // Based on CUnit example code: <http://cunit.sourceforge.net/example.html>.
 
-#include "../inc/shunting-yard.h"
+#include "shunting-yard.h"
 
 #include <CUnit/Basic.h>
 #include <stdint.h>
