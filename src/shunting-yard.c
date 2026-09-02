@@ -65,6 +65,16 @@ static const Token NO_TOKEN = {TOKEN_NONE, NULL};
 static const Operator OPERATORS[] = {
 	{"!", 1, 1, OPERATOR_UNARY,  OPERATOR_RIGHT},
 	{"~", 1, 1, OPERATOR_UNARY,  OPERATOR_RIGHT},
+	/*
+	 * "+" and "-" appear twice: get_arity() decides from the preceding
+	 * token which form a given occurrence is, and get_operator() then
+	 * matches on the symbol *and* that arity. Without the unary rows the
+	 * lookup returned NULL and "-5", "5 * -2" and "10 - -2" were all
+	 * rejected as syntax errors, even though apply_unary_operator()
+	 * has always known how to evaluate them.
+	 */
+	{"+", 1, 1, OPERATOR_UNARY,  OPERATOR_RIGHT},
+	{"-", 1, 1, OPERATOR_UNARY,  OPERATOR_RIGHT},
 	{"*", 1, 2, OPERATOR_BINARY, OPERATOR_LEFT},
 	{"/", 1, 2, OPERATOR_BINARY, OPERATOR_LEFT},
 	{"%", 1, 2, OPERATOR_BINARY, OPERATOR_LEFT},

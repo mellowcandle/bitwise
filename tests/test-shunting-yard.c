@@ -145,6 +145,49 @@ static void test_logical_not()
 }
 
 /*
+ * Unary plus and minus. The operator table carried only the binary forms,
+ * so get_operator() found no match for the unary use and every one of
+ * these was rejected as a syntax error.
+ *
+ * Results are the unsigned wrap of the signed value: negation happens in
+ * uint64_t and, unlike "~", is not masked to g_width here. Callers mask
+ * the final result themselves.
+ */
+static void test_unary_sign()
+{
+	ASSERT_RESULT("-5", UINT64_C(0xFFFFFFFFFFFFFFFB));
+	ASSERT_RESULT("-0", 0);
+	ASSERT_RESULT("+5", 5);
+	ASSERT_RESULT("+ 5", 5);
+
+	/* After another operator. */
+	ASSERT_RESULT("10 - -2", 12);
+	ASSERT_RESULT("10 - +2", 8);
+	ASSERT_RESULT("10 + -2", 8);
+	ASSERT_RESULT("5 * -2", UINT64_C(0xFFFFFFFFFFFFFFF6));
+	ASSERT_RESULT("2 * +3", 6);
+
+	/* Stacked, and against a parenthesis. */
+	ASSERT_RESULT("- -5", 5);
+	ASSERT_RESULT("-(3)", UINT64_C(0xFFFFFFFFFFFFFFFD));
+	ASSERT_RESULT("(-3)", UINT64_C(0xFFFFFFFFFFFFFFFD));
+	ASSERT_RESULT("-(2 + 3)", UINT64_C(0xFFFFFFFFFFFFFFFB));
+
+	/* Unary binds tighter than the binary operators. */
+	ASSERT_RESULT("-5 + 8", 3);
+	ASSERT_RESULT("-2 * 3", UINT64_C(0xFFFFFFFFFFFFFFFA));
+
+	/* Still an error with nothing to apply it to. */
+	ASSERT_STATUS("-", ERROR_SYNTAX);
+	ASSERT_STATUS("+", ERROR_SYNTAX);
+	ASSERT_STATUS("5 -", ERROR_SYNTAX);
+
+	/* A missing unary form is still a syntax error for other symbols. */
+	ASSERT_STATUS("*1", ERROR_SYNTAX);
+	ASSERT_STATUS("2+*2", ERROR_SYNTAX);
+}
+
+/*
  * Number parsing. base_scanf() used to accept anything sscanf() managed a
  * partial conversion on, so a bare prefix, trailing garbage and an
  * out-of-range literal all came back as valid numbers.
@@ -310,6 +353,7 @@ int main()
 	    !CU_add_test(suite, "bitwise XOR", test_bitwise_xor) ||
 	    !CU_add_test(suite, "bitwise NOT", test_bitwise_not) ||
 	    !CU_add_test(suite, "logical NOT", test_logical_not) ||
+	    !CU_add_test(suite, "unary sign", test_unary_sign) ||
 	    !CU_add_test(suite, "compound assignment", test_compound_assignment) ||
 	    !CU_add_test(suite, "combined operations", test_combined_operations) ||
 	    !CU_add_test(suite, "functions", test_functions) ||
