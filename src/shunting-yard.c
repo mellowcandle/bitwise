@@ -83,9 +83,17 @@ static const Operator OPERATORS[] = {
 	{">>", 2, 4, OPERATOR_BINARY, OPERATOR_LEFT},
 	{"<<", 2, 4, OPERATOR_BINARY, OPERATOR_LEFT},
 	{"&", 1, 5, OPERATOR_BINARY, OPERATOR_LEFT},
-	{"^", 1, 5, OPERATOR_BINARY, OPERATOR_LEFT},
-	{"|", 1, 6, OPERATOR_BINARY, OPERATOR_LEFT},
-	{"(", 1, 7, OPERATOR_OTHER,  OPERATOR_NONE}
+	{"^", 1, 6, OPERATOR_BINARY, OPERATOR_LEFT},
+	{"|", 1, 7, OPERATOR_BINARY, OPERATOR_LEFT},
+	/*
+	 * "(" must stay strictly looser than every real operator. It is a
+	 * sentinel, not something apply_operator() can evaluate:
+	 * push_operator() stops popping once it compares as tighter than the
+	 * incoming operator, and if it ever ties instead, the open
+	 * parenthesis is popped and applied, which fails with
+	 * ERROR_UNRECOGNIZED. Bump this when adding a looser operator.
+	 */
+	{"(", 1, 8, OPERATOR_OTHER,  OPERATOR_NONE}
 };
 
 // Returns an array of tokens extracted from the expression. The array is

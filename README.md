@@ -101,19 +101,18 @@ of precedence, tightest binding first:
 | 2 | `*` `/` `%` | |
 | 3 | `+` `-` | |
 | 4 | `<<` `>>` | |
-| 5 | `&` `^` | equal precedence, unlike C -- see below |
-| 6 | `\|` | |
+| 5 | `&` | |
+| 6 | `^` | |
+| 7 | `\|` | |
 
 Parentheses group as usual, and multiplication can be written implicitly:
 `2(3)` and `(2)(3)` both give 6.
 
-Two things differ from C:
+This is the same ordering a C compiler uses, so an expression lifted out of
+source evaluates to the same thing here.
 
-* `&` and `^` share one precedence level, where C binds `&` more tightly than
-  `^`. So `3 ^ 1 & 2` is `(3 ^ 1) & 2`, which is 2, where a C compiler would
-  read `3 ^ (1 & 2)` and give 3. Parenthesise when you mix the two.
-* `&=`, `^=` and `|=` are accepted, but there is nothing to assign to: they
-  evaluate exactly like `&`, `^` and `|`.
+One difference from C: `&=`, `^=` and `|=` are accepted, but there is nothing
+to assign to, so they evaluate exactly like `&`, `^` and `|`.
 
 Not supported: comparison and equality (`<` `>` `<=` `>=` `==` `!=`), logical
 `&&` and `||`, the ternary `?:`, and exponentiation.

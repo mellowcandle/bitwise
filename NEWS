@@ -9,9 +9,15 @@ v0.60
 New in interactive and command line mode:
 
 * set, clear, toggle and test bit operators in expressions.
+* unary plus and minus, so "-5", "5 * -2" and "10 - -2" evaluate
+  instead of being rejected as syntax errors.
 
 Fixes:
 
+* &, ^ and | now have three distinct precedence levels in the C order,
+  where & and ^ used to share one. "3 ^ 1 & 2" is 3, as a C compiler
+  reads it, and no longer 2. An expression that mixes these operators
+  without parentheses may evaluate differently than in earlier releases.
 * ~ (NOT) now respects the configured bit width instead of always
   operating on 64 bits.
 * Modulus by zero no longer crashes; it reports an error, as divide by

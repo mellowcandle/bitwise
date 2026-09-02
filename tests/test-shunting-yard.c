@@ -92,6 +92,43 @@ static void test_precedence()
 	ASSERT_RESULT("2+6/2*5+10/3-2/6", 20);
 }
 
+/*
+ * "&", "^" and "|" used to share two precedence levels between them, with
+ * "&" and "^" equal, so "3 ^ 1 & 2" evaluated as "(3 ^ 1) & 2" and quietly
+ * returned a different answer from the same expression in C. Every value
+ * below was produced by compiling the expression.
+ */
+static void test_bitwise_precedence()
+{
+	/* & tighter than ^ tighter than | */
+	ASSERT_RESULT("3 ^ 1 & 2", 3);
+	ASSERT_RESULT("1 | 2 ^ 3", 1);
+	ASSERT_RESULT("1 ^ 2 | 4 & 12", 7);
+	ASSERT_RESULT("0xF0 | 0x0F & 0x33", 243);
+	ASSERT_RESULT("0xFF & 0x0F ^ 0xF0", 255);
+	ASSERT_RESULT("1 | 2 & 0", 1);
+	ASSERT_RESULT("1 ^ 1 | 2", 2);
+	ASSERT_RESULT("8 | 4 ^ 2 & 1", 12);
+
+	/* against the arithmetic and shift levels */
+	ASSERT_RESULT("1 << 2 & 3", 0);
+	ASSERT_RESULT("1 + 1 << 2", 8);
+	ASSERT_RESULT("1 + 2 & 3", 3);
+	ASSERT_RESULT("2 * 3 ^ 1", 7);
+
+	/*
+	 * Parentheses still override, and are still not popped and applied
+	 * as if they were operators: "(" has to stay looser than every real
+	 * operator for this to hold.
+	 */
+	ASSERT_RESULT("(1 | 2)", 3);
+	ASSERT_RESULT("(1 | 2) | 4", 7);
+	ASSERT_RESULT("1 | (2 | 4)", 7);
+	ASSERT_RESULT("(3 ^ 1) & 2", 2);
+	ASSERT_RESULT("(1 | 2) ^ (4 | 8)", 15);
+	ASSERT_RESULT("0xF0 | (0x0F & 0x33)", 243);
+}
+
 static void test_bitwise_and()
 {
 	ASSERT_RESULT("0xFF & 0x0F", 0x0F);
@@ -359,6 +396,7 @@ int main()
 	    !CU_add_test(suite, "functions", test_functions) ||
 	    !CU_add_test(suite, "constants", test_constants) ||
 	    !CU_add_test(suite, "operator precedence", test_precedence) ||
+	    !CU_add_test(suite, "bitwise precedence", test_bitwise_precedence) ||
 	    !CU_add_test(suite, "error handling", test_errors) ||
 	    !CU_add_test(suite, "number parsing", test_number_parsing) ||
 	    !CU_add_test(suite, "shift edges", test_shift_edges) ||
