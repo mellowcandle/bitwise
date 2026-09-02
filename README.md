@@ -30,6 +30,13 @@ _bitwise_ detects the base by the prefix of the input (_0x/0X_ for hexadecimal, 
 
 **NEW** Bitwise now support parsing IPv4 addresses, it will also output the possible IPv4 address in both Network and reversed byte order.
 
+An expression starting with a minus sign would be taken for a command line
+option, so separate it with `--`:
+
+```
+bitwise -- '-5'
+```
+
 ### Examples:
 
 #### Simple base conversion
@@ -85,7 +92,33 @@ In this mode, you can type any expression you like to be evaluated.
 The result will be printed in the history window and also printed in the binary and various bases on top.
 
 ###### operators and functions
-* All C operators are supported, additionally, you can use the "$" symbol to refer to the last result.
+The expression syntax is a subset of C. These operators are supported, in order
+of precedence, tightest binding first:
+
+| Precedence | Operators | Notes |
+| --- | --- | --- |
+| 1 | `!` `~` `-` `+` | unary, right associative |
+| 2 | `*` `/` `%` | |
+| 3 | `+` `-` | |
+| 4 | `<<` `>>` | |
+| 5 | `&` `^` | equal precedence, unlike C -- see below |
+| 6 | `\|` | |
+
+Parentheses group as usual, and multiplication can be written implicitly:
+`2(3)` and `(2)(3)` both give 6.
+
+Two things differ from C:
+
+* `&` and `^` share one precedence level, where C binds `&` more tightly than
+  `^`. So `3 ^ 1 & 2` is `(3 ^ 1) & 2`, which is 2, where a C compiler would
+  read `3 ^ (1 & 2)` and give 3. Parenthesise when you mix the two.
+* `&=`, `^=` and `|=` are accepted, but there is nothing to assign to: they
+  evaluate exactly like `&`, `^` and `|`.
+
+Not supported: comparison and equality (`<` `>` `<=` `>=` `==` `!=`), logical
+`&&` and `||`, the ternary `?:`, and exponentiation.
+
+* You can refer to the last result with the `$` symbol.
 * Refer to a specific bit by using the function _BIT(x)_.
 * Set, clear, toggle or test a bit using `$ |= BIT(n)`, `$ &= ~BIT(n)`, `$ ^= BIT(n)` and `$ & BIT(n)`.
 
