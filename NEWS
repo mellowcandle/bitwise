@@ -3,29 +3,57 @@ Bitwise NEWS - user-visible changes between releases.
 The full per-release list lives in ChangeLog; this file carries the
 highlights of the current release.
 
-v0.60
+v0.70
 -----
 
 New in interactive and command line mode:
 
-* set, clear, toggle and test bit operators in expressions.
-* unary plus and minus, so "-5", "5 * -2" and "10 - -2" evaluate
-  instead of being rejected as syntax errors.
+* Unary plus and minus, so "-5", "5 * -2" and "10 - -2" evaluate
+  instead of being rejected as syntax errors. On the command line a
+  leading minus needs "--" to get past getopt: bitwise -- '-5'.
 
 Fixes:
 
 * &, ^ and | now have three distinct precedence levels in the C order,
   where & and ^ used to share one. "3 ^ 1 & 2" is 3, as a C compiler
   reads it, and no longer 2. An expression that mixes these operators
-  without parentheses may evaluate differently than in earlier releases.
-* ~ (NOT) now respects the configured bit width instead of always
-  operating on 64 bits.
-* Modulus by zero no longer crashes; it reports an error, as divide by
-  zero already did.
-* Binary prefixes ("0b101") parse correctly again.
+  without parentheses may evaluate differently than in earlier
+  releases.
+* Numbers that don't parse cleanly are refused instead of silently
+  producing a wrong answer. "12a" used to evaluate as 12, a bare "0x"
+  or "0b" as 0, and a literal past UINT64_MAX as UINT64_MAX; all four
+  are syntax errors now.
+* Shifts and BIT() at or past the width of the value give 0 instead of
+  an answer computed from a masked shift count. "1 << 64" used to be 1
+  and "1 << 200" used to be 256.
+* A token longer than 64 characters no longer overflows a stack buffer.
+  This was reachable from both the command line and the ':' prompt.
+* Radix64 output now matches the system's l64a() on platforms that have
+  one; a fallback shim was overriding libc and printing a different
+  alphabet.
+* Parse errors no longer scribble on the curses display; they go to the
+  log and to the command window, like the rest of the diagnostics.
+* The ASCII line of the conversion output is no longer byte-reversed on
+  big-endian hosts.
 
-Portability:
+Documentation:
 
-* Builds on Windows under msys2.
-* Builds on macOS on Apple Silicon, where readline lives elsewhere.
-* Builds against readline older than 6.3.
+* README lists the operators that actually exist, with their precedence,
+  and says which C operators are not supported. It used to claim all of
+  them were.
+* ChangeLog, NEWS and AUTHORS are filled in - "make dist" was shipping
+  three empty or stale files.
+* CONTRIBUTING.md describes the style, testing and commit conventions.
+
+Build and testing:
+
+* "make distcheck" works: VPATH builds could not find the headers in
+  inc/ at all.
+* -Wall -Wextra are on by default, and --enable-asan, --enable-ubsan and
+  --enable-fuzzer are available alongside the existing --enable-gcov,
+  --enable-trace and --enable-debug.
+* The test suite covers number parsing, shift edges and long tokens, and
+  a libFuzzer harness over the expression parser is built with
+  --enable-fuzzer.
+* CI builds on Linux, macOS and Windows/msys2, and runs distcheck, the
+  sanitizers and a bounded fuzzing run on every push.

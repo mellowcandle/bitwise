@@ -1,8 +1,22 @@
+Bitwise v0.70
+==========================================
+* Added unary plus and minus to the expression parser
+* Fixed &, ^ and | precedence to match the C order
+* Rejected numbers that don't parse cleanly instead of guessing a value
+* Fixed undefined shifts at and past the width of the value
+* Fixed a stack buffer overflow when tokenizing long tokens
+* Fixed Radix64 output overriding the system l64a()
+* Stopped parse errors from corrupting the curses display
+* Fixed the ASCII conversion line on big-endian hosts
+* Documented the operators that are actually supported
+* Fixed VPATH builds and "make distcheck"
+* Added --enable-asan, --enable-ubsan and --enable-fuzzer
+* Added tests for number parsing, shift edges and long tokens
+* Added CI for Linux, macOS and Windows/msys2
+
 Bitwise v0.60
 ==========================================
 * Added set, clear, toggle and test bit operators
-* Added unary plus and minus to the expression parser
-* Fixed &, ^ and | precedence to match the C order
 * Fixed the NOT (~) operator to respect the configured bit width
 * Fixed a crash on modulus by zero
 * Fixed parsing of binary prefixes
