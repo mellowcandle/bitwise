@@ -147,8 +147,8 @@ and also shown in binary and the various bases at the top.
 
 #### Operators
 
-The expression syntax is a subset of C. These operators are supported, in order of precedence,
-tightest binding first:
+The expression syntax is a subset of C, plus Verilog's bit select (below). These operators are
+supported, in order of precedence, tightest binding first:
 
 | Precedence | Operators | Notes |
 | --- | --- | --- |
@@ -171,6 +171,35 @@ evaluate exactly like `&`, `^` and `|`.
 
 Not supported: comparison and equality (`<` `>` `<=` `>=` `==` `!=`), logical `&&` and `||`, the
 ternary `?:`, and exponentiation.
+
+#### Verilog bit select
+
+Fields can be pulled out with Verilog's notation, the same way a datasheet writes them:
+
+| Expression | Meaning |
+| --- | --- |
+| `v[msb:lsb]` | The bits from `msb` down to `lsb` |
+| `v[bit]` | A single bit |
+
+```
+bitwise '0x875423[31:23]'
+bitwise '0x875423[15]'
+```
+
+The field comes back **right-aligned**, as it does in Verilog and as a datasheet means it — not
+masked in place. So `0xdeadbeef[31:16]` is `0xdead`, not `0xdead0000`, and reading a field no longer
+means working out its mask by hand:
+
+```
+0xdeadbeef[31:16]        instead of      (0xdeadbeef >> 16) & 0xffff
+```
+
+The indices are ordinary expressions, so `v[15 + 16:16]` works, and a slice is itself a value, so it
+can be sliced or combined further. Both indices must fit the 64-bit value and `msb` must not be
+below `lsb`; anything else is reported rather than quietly returning zero.
+
+This is the one place the syntax is not C's — in C, `v[3]` would be array indexing. It is deliberate,
+and it is the notation the registers being decoded are documented in.
 
 #### Bits and the last result
 

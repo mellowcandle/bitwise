@@ -25,6 +25,8 @@ static const char *interactive_mode = "Type numbers in different bases and direc
 static const char *command_mode = "Type expressions or commands, result will be appended to history window.\n" \
 				   "Supported operators: (,),+, -, *, /, !, ~, <<_, >>_, BIT(_), |=, &=, ^=.\n" \
 				   "Precedence of operators is defined as C language precedence.\n\n" \
+				   "Bit select uses Verilog notation: 'v[msb:lsb]' and 'v[bit]'.\n" \
+				   "The field is returned right-aligned: 0xdeadbeef[31:16] is 0xdead.\n\n" \
 				   "You can referr to the last result with '$' inside an expression.\n" \
 				   "To return to interactive mode type 'ESC'.\n\n" \
 				   "Supported commands:\n" \
