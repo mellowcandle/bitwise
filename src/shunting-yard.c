@@ -242,6 +242,15 @@ Status parse(const Token *tokens, Stack **operands, Stack **operators,
 				else
 					status = apply_operator(operator, operands);
 			}
+			/*
+			 * Only decide about the parenthesis if nothing went
+			 * wrong on the way here: the loop above also stops on
+			 * a failed apply_operator(), and overwriting that
+			 * status reported "(10 / 0)" as an extra parenthesis
+			 * rather than as a division by zero.
+			 */
+			if (status != STATUS_OK)
+				break;
 			if (!found_parenthesis)
 				status = ERROR_CLOSE_PARENTHESIS;
 			else if (*functions)
