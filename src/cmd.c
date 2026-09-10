@@ -95,6 +95,15 @@ void show_error(Status status)
 	case ERROR_DIVIDE_BY_ZERO:
 		message = "Divide by zero";
 		break;
+	case ERROR_OPEN_BRACKET:
+		message = "Missing bracket";
+		break;
+	case ERROR_CLOSE_BRACKET:
+		message = "Extra bracket";
+		break;
+	case ERROR_BIT_RANGE:
+		message = "Bit index out of range";
+		break;
 	default:
 		message = "Unknown error";
 	}

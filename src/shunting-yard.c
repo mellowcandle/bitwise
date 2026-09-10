@@ -19,6 +19,9 @@ typedef enum {
 	TOKEN_UNKNOWN,
 	TOKEN_OPEN_PARENTHESIS,
 	TOKEN_CLOSE_PARENTHESIS,
+	TOKEN_OPEN_BRACKET,
+	TOKEN_CLOSE_BRACKET,
+	TOKEN_COLON,
 	TOKEN_OPERATOR,
 	TOKEN_NUMBER,
 	TOKEN_IDENTIFIER
@@ -96,6 +99,26 @@ static const Operator OPERATORS[] = {
 	{"(", 1, 8, OPERATOR_OTHER,  OPERATOR_NONE}
 };
 
+/*
+ * Sentinels for the Verilog-style bit select, "v[msb:lsb]" and "v[bit]".
+ * They are kept out of OPERATORS because get_operator() matches on the
+ * first op_len characters and "[" would shadow "[:". Like "(" they are
+ * markers rather than anything apply_operator() can evaluate, so they must
+ * stay strictly looser than every real operator or push_operator() would
+ * pop one and try to apply it.
+ *
+ * Which of the two is on the stack records whether a ":" has been seen, so
+ * the ninth token of "v[31:23]" needs no state outside the operator stack,
+ * and slices nest for free.
+ */
+static const Operator OP_BRACKET =       {"[",  1, 8, OPERATOR_OTHER, OPERATOR_NONE};
+static const Operator OP_BRACKET_RANGE = {"[:", 2, 8, OPERATOR_OTHER, OPERATOR_NONE};
+
+static bool is_bracket(const Operator *operator)
+{
+	return operator->symbol[0] == '[';
+}
+
 // Returns an array of tokens extracted from the expression. The array is
 // terminated by a token with type `TOKEN_NONE`.
 static Token *tokenize(const char *expression);
@@ -133,6 +156,9 @@ static Status apply_unary_operator(const Operator *operator, Stack **operands);
 
 // Applies a function to the top operand.
 static Status apply_function(const char *function, Stack **operands);
+
+// Extracts a bit or a bit range from the operand beneath the indices.
+static Status apply_slice(bool range, Stack **operands);
 
 // Returns the arity of an operator, using the previous token for context.
 static OperatorArity get_arity(char *symbol, const Token *previous);
@@ -184,6 +210,12 @@ Token *tokenize(const char *expression)
 			token.type = TOKEN_OPEN_PARENTHESIS;
 		else if (*c == ')')
 			token.type = TOKEN_CLOSE_PARENTHESIS;
+		else if (*c == '[')
+			token.type = TOKEN_OPEN_BRACKET;
+		else if (*c == ']')
+			token.type = TOKEN_CLOSE_BRACKET;
+		else if (*c == ':')
+			token.type = TOKEN_COLON;
 		else if (!strncmp("<<", c, 2) || !strncmp(">>", c, 2)) {
 			token.type = TOKEN_OPERATOR;
 			token.value = strndup(c, 2);
@@ -225,8 +257,9 @@ Status parse(const Token *tokens, Stack **operands, Stack **operators,
 	     token->type != TOKEN_NONE; previous = token, token = next++) {
 		switch (token->type) {
 		case TOKEN_OPEN_PARENTHESIS:
-			// Implicit multiplication: "(2)(2)".
-			if (previous->type == TOKEN_CLOSE_PARENTHESIS)
+			// Implicit multiplication: "(2)(2)" or "v[0](2)".
+			if (previous->type == TOKEN_CLOSE_PARENTHESIS ||
+			    previous->type == TOKEN_CLOSE_BRACKET)
 				status = push_multiplication(operands, operators);
 
 			stack_push(operators, get_operator("(", OPERATOR_OTHER));
@@ -239,6 +272,8 @@ Status parse(const Token *tokens, Stack **operands, Stack **operators,
 				const Operator *operator = stack_pop(operators);
 				if (!strncmp(operator->symbol, "(", 1))
 					found_parenthesis = true;
+				else if (is_bracket(operator))
+					status = ERROR_OPEN_BRACKET;
 				else
 					status = apply_operator(operator, operands);
 			}
@@ -258,6 +293,63 @@ Status parse(const Token *tokens, Stack **operands, Stack **operators,
 			break;
 		}
 
+		case TOKEN_OPEN_BRACKET:
+			stack_push(operators, &OP_BRACKET);
+			break;
+
+		case TOKEN_COLON: {
+			/*
+			 * Reduce the msb expression, then swap the plain
+			 * bracket for the range one so "]" knows two indices
+			 * are waiting. Stopping at "(" keeps a stray colon
+			 * outside a slice from eating the whole stack.
+			 */
+			bool found = false;
+			while (*operators && status == STATUS_OK) {
+				const Operator *top = stack_top(*operators);
+				if (is_bracket(top)) {
+					found = true;
+					break;
+				}
+				if (!strncmp(top->symbol, "(", 1))
+					break;
+				status = apply_operator(stack_pop(operators),
+						        operands);
+			}
+			if (status != STATUS_OK)
+				break;
+			// Not in a slice at all, or a second colon: "v[1:2:3]".
+			if (!found || stack_top(*operators) == &OP_BRACKET_RANGE)
+				status = ERROR_SYNTAX;
+			else {
+				stack_pop(operators);
+				stack_push(operators, &OP_BRACKET_RANGE);
+			}
+			break;
+		}
+
+		case TOKEN_CLOSE_BRACKET: {
+			// Apply operators until the matching bracket is found.
+			bool found = false, range = false;
+			while (*operators && status == STATUS_OK && !found) {
+				const Operator *operator = stack_pop(operators);
+				if (is_bracket(operator)) {
+					found = true;
+					range = operator == &OP_BRACKET_RANGE;
+				} else if (!strncmp(operator->symbol, "(", 1))
+					break;
+				else
+					status = apply_operator(operator, operands);
+			}
+			if (status != STATUS_OK)
+				break;
+			if (!found)
+				status = ERROR_CLOSE_BRACKET;
+			else
+				status = apply_slice(range, operands);
+			break;
+		}
+
 		case TOKEN_OPERATOR:
 			status = push_operator(
 			             get_operator(token->value,
@@ -267,6 +359,7 @@ Status parse(const Token *tokens, Stack **operands, Stack **operators,
 
 		case TOKEN_NUMBER:
 			if (previous->type == TOKEN_CLOSE_PARENTHESIS ||
+			    previous->type == TOKEN_CLOSE_BRACKET ||
 			    previous->type == TOKEN_NUMBER ||
 			    previous->type == TOKEN_IDENTIFIER)
 				status = ERROR_SYNTAX;
@@ -306,6 +399,8 @@ Status parse(const Token *tokens, Stack **operands, Stack **operators,
 		const Operator *operator = stack_pop(operators);
 		if (!strncmp(operator->symbol, "(", 1))
 			status = ERROR_OPEN_PARENTHESIS;
+		else if (is_bracket(operator))
+			status = ERROR_OPEN_BRACKET;
 		else
 			status = apply_operator(operator, operands);
 	}
@@ -482,10 +577,51 @@ Status apply_function(const char *function, Stack **operands)
 	return STATUS_OK;
 }
 
+/*
+ * "v[msb:lsb]" is Verilog's, not C's: the selected field is returned
+ * right-aligned, so 0x875423[31:23] is 1 rather than 0x800000. A single
+ * index is the one-bit case of the same thing.
+ *
+ * The indices were pushed after the value, so they come off first.
+ */
+Status apply_slice(bool range, Stack **operands)
+{
+	uint64_t value, msb, lsb;
+
+	if (!*operands)
+		return ERROR_SYNTAX;
+	lsb = pop_num(operands);
+	msb = lsb;
+
+	if (range) {
+		if (!*operands)
+			return ERROR_SYNTAX;
+		msb = pop_num(operands);
+	}
+
+	if (!*operands)
+		return ERROR_SYNTAX;
+	value = pop_num(operands);
+
+	/*
+	 * Unlike BIT(), which yields 0 for an index it cannot represent, a
+	 * slice says which bits the caller believes exist: "v[64]" or
+	 * "v[7:15]" is a mistake worth reporting rather than a quiet 0.
+	 * Rejecting msb >= VALUE_BITS also keeps the shift below defined.
+	 */
+	if (msb >= VALUE_BITS || lsb > msb)
+		return ERROR_BIT_RANGE;
+
+	push_num((value >> lsb) & MASK(msb - lsb + 1), operands);
+	return STATUS_OK;
+}
+
 OperatorArity get_arity(char *symbol, const Token *previous)
 {
 	if (*symbol == '!' || previous->type == TOKEN_NONE ||
 	    previous->type == TOKEN_OPEN_PARENTHESIS ||
+	    previous->type == TOKEN_OPEN_BRACKET ||
+	    previous->type == TOKEN_COLON ||
 	    (previous->type == TOKEN_OPERATOR && *previous->value != '!'))
 		return OPERATOR_UNARY;
 	return OPERATOR_BINARY;

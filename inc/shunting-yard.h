@@ -20,6 +20,9 @@ typedef enum {
 	ERROR_UNDEFINED_CONSTANT,
 	ERROR_WRONG_ARGUMENTS,
 	ERROR_DIVIDE_BY_ZERO,
+	ERROR_OPEN_BRACKET,
+	ERROR_CLOSE_BRACKET,
+	ERROR_BIT_RANGE,
 } Status;
 
 // Calculates the result of a mathematical expression.

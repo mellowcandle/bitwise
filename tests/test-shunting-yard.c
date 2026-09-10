@@ -352,6 +352,61 @@ static void test_combined_operations()
 	ASSERT_RESULT("BIT(0) | BIT(1) | BIT(2)", 7);
 }
 
+static void test_bit_select()
+{
+	// The two forms from the feature request, issue #58.
+	ASSERT_RESULT("0x875423[31:23]", 1);
+	ASSERT_RESULT("0x875423[15]", 0);
+
+	// A range comes back right-aligned, as in Verilog, not in place.
+	ASSERT_RESULT("0xf0[7:4]", 0xf);
+	ASSERT_RESULT("0xdeadbeef[31:16]", 0xdead);
+	ASSERT_RESULT("0xdeadbeef[15:0]", 0xbeef);
+	ASSERT_RESULT("0xff[3:3]", 1);
+
+	// Single bits.
+	ASSERT_RESULT("0xff[0]", 1);
+	ASSERT_RESULT("0xff[7]", 1);
+	ASSERT_RESULT("0x100[8]", 1);
+	ASSERT_RESULT("0x100[7]", 0);
+
+	// The widest slice there is: MASK() must not shift by 64.
+	ASSERT_RESULT("0xffffffffffffffff[63:0]", UINT64_MAX);
+	ASSERT_RESULT("0xffffffffffffffff[63]", 1);
+
+	// A slice is an operand like any other.
+	ASSERT_RESULT("(1 << 12)[12]", 1);
+	ASSERT_RESULT("0xff00[15:8] + 1", 256);
+	ASSERT_RESULT("0xf0[7:4] * 2", 30);
+	ASSERT_RESULT("BIT(5)[5]", 1);
+	ASSERT_RESULT("0xdeadbeef[31:16][15:8]", 0xde);
+	ASSERT_RESULT("$[11:8]", 5);
+	ASSERT_RESULT("$[4]", 1);
+
+	// Implicit multiplication still applies after "]".
+	ASSERT_RESULT("0xf0[7:4](2)", 30);
+
+	// Indices are expressions, and whitespace is not significant.
+	ASSERT_RESULT("0xff [7 : 4]", 0xf);
+	ASSERT_RESULT("0xdeadbeef[15 + 16:16]", 0xdead);
+
+	// Bounds. An index the value cannot have is a mistake, not a 0.
+	ASSERT_STATUS("0xff[7:15]", ERROR_BIT_RANGE);
+	ASSERT_STATUS("0xff[64]", ERROR_BIT_RANGE);
+	ASSERT_STATUS("0xff[64:0]", ERROR_BIT_RANGE);
+
+	// Malformed slices.
+	ASSERT_STATUS("0xff[3", ERROR_OPEN_BRACKET);
+	ASSERT_STATUS("0xff]", ERROR_CLOSE_BRACKET);
+	ASSERT_STATUS("(2+2]", ERROR_CLOSE_BRACKET);
+	ASSERT_STATUS("(0xff[3)", ERROR_OPEN_BRACKET);
+	ASSERT_STATUS("0xff[1:2:3]", ERROR_SYNTAX);
+	ASSERT_STATUS("0xff[]", ERROR_SYNTAX);
+	ASSERT_STATUS("[3]", ERROR_SYNTAX);
+	ASSERT_STATUS("0xff[3]4", ERROR_SYNTAX);
+	ASSERT_STATUS("2:3", ERROR_SYNTAX);
+}
+
 static void test_errors()
 {
 	ASSERT_STATUS("2+*2", ERROR_SYNTAX);
@@ -401,7 +456,8 @@ int main()
 	    !CU_add_test(suite, "error handling", test_errors) ||
 	    !CU_add_test(suite, "number parsing", test_number_parsing) ||
 	    !CU_add_test(suite, "shift edges", test_shift_edges) ||
-	    !CU_add_test(suite, "long tokens", test_long_tokens))
+	    !CU_add_test(suite, "long tokens", test_long_tokens) ||
+	    !CU_add_test(suite, "bit select", test_bit_select))
 		goto exit;
 
 	CU_basic_set_mode(CU_BRM_NORMAL);
