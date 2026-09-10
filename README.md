@@ -1,99 +1,154 @@
-# Bitwise
-## Terminal based bitwise calculator in curses
-[![Snap Status](https://build.snapcraft.io/badge/mellowcandle/bitwise.svg)](https://build.snapcraft.io/user/mellowcandle/bitwise)<a href="https://scan.coverity.com/projects/mellowcandle-bitwise">
-  <img alt="Coverity Scan Build Status"
-       src="https://img.shields.io/coverity/scan/18170.svg"/>
+<div align="center">
+
+<h1>bitwise</h1>
+
+<p><strong>Multi-base interactive calculator and bit manipulator for the terminal.</strong></p>
+
+<p>Convert between bases as you type, flip individual bits by hand, and evaluate C-style
+expressions — without leaving the console.</p>
+
+<p>
+<a href="https://github.com/mellowcandle/bitwise/actions/workflows/c-cpp.yml"><img alt="CI" src="https://github.com/mellowcandle/bitwise/actions/workflows/c-cpp.yml/badge.svg"></a>
+<a href="https://scan.coverity.com/projects/mellowcandle-bitwise"><img alt="Coverity Scan" src="https://img.shields.io/coverity/scan/18170.svg"></a>
+<a href="https://github.com/mellowcandle/bitwise/releases/latest"><img alt="Latest release" src="https://img.shields.io/github/v/release/mellowcandle/bitwise"></a>
+<a href="LICENSE"><img alt="License: GPL-3.0-or-later" src="https://img.shields.io/badge/license-GPL--3.0--or--later-blue.svg"></a>
+</p>
+
+<img src="https://github.com/mellowcandle/bitwise/raw/master/resources/bitwise.gif" alt="Bitwise demo" width="800">
+
+</div>
+
+---
+
+_bitwise_ is a handy tool for low level hackers, kernel developers and device driver developers:
+anyone who spends their day staring at a register dump wondering which bit is set.
+
+* **Every base at once** — decimal (signed and unsigned), hexadecimal, octal and binary, side by side.
+* **Interactive ncurses interface** — edit a number in any field and watch the rest follow.
+* **Individual bit manipulation** — walk the binary row and toggle bits with the cursor.
+* **C-style expression calculator** — `&`, `|`, `^`, `~`, `<<`, `>>`, `*`, `/`, `%`, `+`, `-`, with C's precedence.
+* **Selectable bit width** — 8, 16, 32 or 64 bit, switchable on the fly.
+* **Extras that save a lookup** — human-readable sizes (IEC or SI), IPv4 in both byte orders, ASCII and Radix64.
+
+## Quick tour
+
+Pass a number and get every representation at once — signed and unsigned decimal, hexadecimal,
+octal, a human-readable size, Radix64, both IPv4 byte orders, and a labelled bit grid:
+
+![Simple base conversion](https://github.com/mellowcandle/bitwise/raw/master/resources/cmdline.png "Bitwise conversion")
+
+Or pass a whole C-style expression and let bitwise evaluate it first:
+
+![C style syntax calculator](https://github.com/mellowcandle/bitwise/raw/master/resources/conversion.png "Bitwise calculator")
+
+Run it with no arguments for the full-screen interactive mode.
+
+## Installation
+
+<table>
+<tr>
+<td valign="top" width="52%">
+
+| Platform | Install |
+| --- | --- |
+| Debian / Ubuntu 20.04+ | `sudo apt-get install bitwise` |
+| Fedora | `sudo dnf install bitwise` |
+| openSUSE | `zypper install bitwise` |
+| Void | `sudo xbps-install -S bitwise` |
+| Arch | [AUR package](https://aur.archlinux.org/packages/bitwise/) |
+| Snap | `sudo snap install bitwise` |
+| Nix | `nix-env -i bitwise` |
+| macOS (Homebrew) | `brew install bitwise` |
+| macOS (MacPorts) | `sudo port install bitwise` |
+| Buildroot / Yocto | In-tree; see their docs |
+| Windows | [From source](#building-from-source), under mingw or msys2 |
+
+<details>
+<summary>Ubuntu older than 20.04</summary>
+
+```sh
+sudo add-apt-repository ppa:ramon-fried/bitwise
+sudo apt-get update
+sudo apt-get install bitwise
+```
+
+</details>
+
+</td>
+<td valign="top" width="48%">
+
 <a href="https://repology.org/project/bitwise/versions">
-    <img src="https://repology.org/badge/vertical-allrepos/bitwise.svg" alt="Packaging status" align="right">
+    <img src="https://repology.org/badge/vertical-allrepos/bitwise.svg?exclude_unsupported=1&amp;columns=2" alt="Packaging status" width="100%">
 </a>
 
-_Bitwise_ is multi base interactive calculator supporting dynamic base conversion and bit manipulation.
-It's a handy tool for low level hackers, kernel developers and device drivers developers.
+</td>
+</tr>
+</table>
 
-Some of the features include:
-* Interactive ncurses interface
-* Command line calculator supporting all bitwise operations.
-* Individual bit manipulator.
-* Bitwise operations such as NOT, OR, AND, XOR, and shifts.
+## Command line mode
 
-##
+In command line mode, bitwise calculates the given expression and prints the result in all bases,
+including the binary representation.
 
-![Demo](https://github.com/mellowcandle/bitwise/raw/master/resources/bitwise.gif "Bitwise demo2")
+The base is detected from the prefix of the input: _0x/0X_ for hexadecimal, a leading _0_ for octal,
+_b_ for binary, and everything else is decimal. IPv4 addresses are parsed too, and are reported in
+both network and reversed byte order.
 
-## Usage
-_bitwise_ can be used both interactively and in command line mode.
+| Option | Meaning |
+| --- | --- |
+| `-i`, `--interactive` | Load interactive mode (the default when there is no input) |
+| `-w`, `--width [b\|w\|l\|d]` | Set bit width: `b`yte (8), `w`ord (16), `l`ong (32) or `d`ouble (64). Default: `l` |
+| `-s`, `--si` | Print sizes using the SI standard (default: IEC) |
+| `--no-color` | Start without color support |
+| `-v`, `--version` | Output version information and exit |
+| `-h`, `--help` | Display help and exit |
 
-### Command line calculator mode
-In command line mode, bitwise will calculate the given expression and will output the result in all bases including binary representation.
+An expression starting with a minus sign would be taken for a command line option, so separate it
+with `--`:
 
-_bitwise_ detects the base by the prefix of the input (_0x/0X_ for hexadecimal, leading _0_ for octal, _b_ for binary, and the rest is decimal).
-
-**NEW** Bitwise now support parsing IPv4 addresses, it will also output the possible IPv4 address in both Network and reversed byte order.
-
-An expression starting with a minus sign would be taken for a command line
-option, so separate it with `--`:
-
-```
+```sh
 bitwise -- '-5'
 ```
 
-### Examples:
+## Interactive mode
 
-#### Simple base conversion
+_bitwise_ starts in interactive mode if no command line parameters are passed, or if the
+`-i | --interactive` flag is given. Input a number, manipulate it, and watch the other bases change
+as you go — including individual bits in the binary row. Press <kbd>F1</kbd> for the help screen.
 
-![conversion](https://github.com/mellowcandle/bitwise/raw/master/resources/cmdline.png "Bitwise conversion")
+### Navigation
 
+| Key | Action |
+| --- | --- |
+| <kbd>←</kbd> <kbd>↓</kbd> <kbd>↑</kbd> <kbd>→</kbd> or <kbd>h</kbd> <kbd>j</kbd> <kbd>k</kbd> <kbd>l</kbd> | Move around |
+| <kbd>space</kbd> | Toggle the bit under the cursor |
+| <kbd>w</kbd> / <kbd>b</kbd> | Jump one byte forward / backward |
+| <kbd>F1</kbd> | Show the help screen |
+| <kbd>q</kbd> | Quit |
 
-#### C style syntax Calculator
+### Operations
 
-![calculator](https://github.com/mellowcandle/bitwise/raw/master/resources/conversion.png "Bitwise calculator")
+| Key | Action |
+| --- | --- |
+| <kbd>~</kbd> | NOT |
+| <kbd>r</kbd> | Reverse endianness |
+| <kbd>&lt;</kbd> / <kbd>&gt;</kbd> | Shift left / right |
+| <kbd>!</kbd> <kbd>@</kbd> <kbd>$</kbd> <kbd>*</kbd> | Set the width to 8, 16, 32 or 64 bit |
 
-### Interactive mode
-_bitwise_ starts in interactive mode if no command line parameters are passed or if the _-i | --interactive_ flag is passed.
-In this mode, you can input a number and manipulate it and see the other bases change dynamically.
-It also allows changing individual bits in the binary.
-You can show the help screen by pressing <kbd> F1 </kbd>.
+> [!WARNING]
+> When changing the bit width, the number is *masked* with the new width, so you might lose
+> precision. Use with care.
 
-#### Navigation in interactive mode
-To move around use the arrow keys, or use _vi_ key bindings : <kbd> h </kbd> <kbd> j </kbd> <kbd> k </kbd> <kbd> l </kbd>.
-Leave the program by pressing <kbd> q </kbd>.
+### Expression calculator
 
-##### Binary specific movement
-You can toggle a bit using the <kbd> space </kbd> key.
-You can jump a byte forward using <kbd> w </kbd> and backwards one byte using <kbd> b </kbd>.
+Enter the expression calculator by typing <kbd>:</kbd> (just like in vim), and leave it with
+<kbd>ESC</kbd>. Anything you type there is evaluated; the result is printed in the history window
+and also shown in binary and the various bases at the top.
 
-#### Bitwise operation in interactive mode
+#### Operators
 
-##### Setting the bit width:
-
-Reducing or extending the bit width interactively is also very easy, just use:
-<kbd> ! </kbd> for 8bit, <kbd> @ </kbd>  for 16Bit, <kbd> $ </kbd> for 32Bit and <kbd> * </kbd> for 64Bit.
-When changing the bit width, the number is *masked* with the new width, so you might lose precision, use with care.
-
-##### NOT:
-
-Press <kbd> ~ </kbd> to perform the NOT operator.
-
-##### Reversing Endianness:
-
-Press <kbd> r </kbd> to reverse the endianness.
-
-##### Shifts
-
-Press <kbd> < </kbd> and <kbd> > </kbd> to perform the left or right shift.
-
-#### expression calculator in interactive mode
-
-You can enter expression calculator mode by typing <kbd> : </kbd> (Just like in vim).
-
-To exit the mode, just press <kbd> ESC </kbd>.
-
-In this mode, you can type any expression you like to be evaluated.
-The result will be printed in the history window and also printed in the binary and various bases on top.
-
-###### operators and functions
-The expression syntax is a subset of C. These operators are supported, in order
-of precedence, tightest binding first:
+The expression syntax is a subset of C. These operators are supported, in order of precedence,
+tightest binding first:
 
 | Precedence | Operators | Notes |
 | --- | --- | --- |
@@ -105,113 +160,88 @@ of precedence, tightest binding first:
 | 6 | `^` | |
 | 7 | `\|` | |
 
-Parentheses group as usual, and multiplication can be written implicitly:
-`2(3)` and `(2)(3)` both give 6.
+Parentheses group as usual, and multiplication can be written implicitly: `2(3)` and `(2)(3)` both
+give 6.
 
-This is the same ordering a C compiler uses, so an expression lifted out of
-source evaluates to the same thing here.
+This is the same ordering a C compiler uses, so an expression lifted out of source evaluates to the
+same thing here.
 
-One difference from C: `&=`, `^=` and `|=` are accepted, but there is nothing
-to assign to, so they evaluate exactly like `&`, `^` and `|`.
+One difference from C: `&=`, `^=` and `|=` are accepted, but there is nothing to assign to, so they
+evaluate exactly like `&`, `^` and `|`.
 
-Not supported: comparison and equality (`<` `>` `<=` `>=` `==` `!=`), logical
-`&&` and `||`, the ternary `?:`, and exponentiation.
+Not supported: comparison and equality (`<` `>` `<=` `>=` `==` `!=`), logical `&&` and `||`, the
+ternary `?:`, and exponentiation.
 
-* You can refer to the last result with the `$` symbol.
-* Refer to a specific bit by using the function _BIT(x)_.
+#### Bits and the last result
+
+* Refer to the last result with the `$` symbol.
+* Refer to a specific bit with the function `BIT(x)`.
 * Set, clear, toggle or test a bit using `$ |= BIT(n)`, `$ &= ~BIT(n)`, `$ ^= BIT(n)` and `$ & BIT(n)`.
 
-###### commands
-* _h(elp)_ - Show the help screen.
-* _c(lear)_ - Clear the history window.
-* _w(idth)_ [8 | 16 | 32 | 64] - Set the required width mask
-* _o(utput)_ [dec(imal) | hex(adecimal) | oct(al) | bin(ary) | all] - Set the default output for results.
-* _q(uit)_ - Exit
+#### Commands
 
-## Integration with other software
-### Vim
-* [vim-bitwise](https://github.com/mellowcandle/vim-bitwise "vim bitwise")
+| Command | Action |
+| --- | --- |
+| `h(elp)` | Show the help screen |
+| `c(lear)` | Clear the history window |
+| `w(idth) [8 \| 16 \| 32 \| 64]` | Set the required width mask |
+| `o(utput) [dec(imal) \| hex(adecimal) \| oct(al) \| bin(ary) \| all]` | Set the default output for results |
+| `q(uit)` | Exit |
 
-## Installation
+## Editor integration
 
-### Linux
-#### Ubuntu
-From 20.04 you can just type
-```
-sudo apt-get install bitwise
-```
-For earlier versions:
-```
-sudo add-apt-repository ppa:ramon-fried/bitwise
-sudo apt-get update
-sudo apt-get install bitwise
-```
-#### Snap
-If your distribution supports Snap just type:
-`
-sudo snap install bitwise
-`
-#### OpenSuse
-`
-zypper install bitwise
-`
+### Vim and Neovim
 
-#### Arch
-You can use the AUR repository: https://aur.archlinux.org/packages/bitwise/
+[vim-bitwise](https://github.com/mellowcandle/vim-bitwise "vim-bitwise") runs bitwise on the number
+under your cursor, without leaving the editor.
 
-#### Void
-_bitwise_ is in the default repository, so just type:
-`
-sudo xbps-install -S bitwise
-`
+![vim-bitwise](https://github.com/mellowcandle/vim-bitwise/raw/master/assets/demo.gif "vim-bitwise demo")
 
-#### Fedora Linux
+Rest the cursor on a numeric literal and its representations appear beside it. There is also an
+operator, so `<Leader>biw` runs bitwise on the word under the cursor and `<Leader>bi(` on the
+expression inside the parentheses, plus a `:Bitwise` command for anything you want to type out.
+Hexadecimal, binary, octal and decimal literals are all recognised, including digit separators and
+size suffixes such as `0xFF_u8`.
 
-bitwise is available in the [official repository](https://src.fedoraproject.org/rpms/bitwise)
+Install it with your plugin manager:
 
-```
-sudo dnf install bitwise
+```lua
+-- lazy.nvim. Not lazy-loaded on a key: the hover is driven by an autocmd.
+{ "mellowcandle/vim-bitwise", lazy = false }
 ```
 
-#### Buildroot / Yocto
-Bitwise is available both in Buildroot and in Yocto, please refer to the documentation on how to add those to your target image.
-
-### macOS
-
-#### MacPorts
-```
-sudo port install bitwise
+```vim
+" vim-plug
+Plug 'mellowcandle/vim-bitwise'
 ```
 
-#### Homebrew
-```
-brew install bitwise
-```
+It needs this `bitwise` binary on your `$PATH`, which you have already installed if you are reading
+this. See the plugin's README for configuration and `:checkhealth bitwise` if anything looks wrong.
 
-### Windows
-Bitwise is possible to compile on Windows under mingw or msys2
+## Building from source
 
-### Nix
-```
-nix-env -i bitwise
-```
+### Prerequisites
 
-### Building from source
-
-#### Prerequisites
 * libreadline
 * libncurses (with forms)
 * libcunit (only needed for testing)
 
-On Ubuntu/Debian system you can just paste:
-```
+<details>
+<summary>Ubuntu / Debian</summary>
+
+```sh
 sudo apt-get install build-essential
 sudo apt-get install libncurses5-dev
 sudo apt-get install libreadline-dev
 sudo apt-get install libcunit1-dev
 ```
-On Mac systems:
-```
+
+</details>
+
+<details>
+<summary>macOS</summary>
+
+```sh
 brew install automake
 brew install autoconf
 brew install readline
@@ -219,7 +249,12 @@ brew install cunit
 export LDFLAGS="-L$(brew --prefix readline)/lib -L$(brew --prefix cunit)/lib"
 export CPPFLAGS="-I$(brew --prefix readline)/include -I$(brew --prefix cunit)/include"
 ```
-- Download [the latest release](https://github.com/mellowcandle/bitwise/releases/latest)
+
+</details>
+
+### Build
+
+Download [the latest release](https://github.com/mellowcandle/bitwise/releases/latest), then:
 
 ```sh
 tar xfz RELEASE-FILE.TAR.GZ
@@ -229,15 +264,23 @@ make
 sudo make install
 ```
 
-Running unit tests by typing
-``` make check ```
+Run the unit tests with:
 
-### Contribution
-* Install prerequisites
-* Fork the repo
-* Run ```./bootstrap.sh```
-* Follow the building from source section.
-* commit and send pull request
+```sh
+make check
+```
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for the style, testing and commit
-conventions patches are expected to follow.
+## Contributing
+
+* Install the prerequisites above.
+* Fork the repo.
+* Run `./bootstrap.sh`.
+* Follow the [building from source](#building-from-source) section.
+* Commit and send a pull request.
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for the style, testing and commit conventions patches are
+expected to follow.
+
+## License
+
+GPL-3.0-or-later. See [LICENSE](LICENSE).

@@ -1,1 +1,10 @@
+# How the README screenshots were taken.
+#
+# Originally by hand, with a terminal sized to the region below:
 scrot -a 1,50,1000,160
+
+# These days use render-screenshot.py instead -- it runs the binary itself,
+# so the images cannot drift out of date with the output:
+#
+#   ./resources/render-screenshot.py 'bitwise 0xdeadbeef' resources/cmdline.png
+#   ./resources/render-screenshot.py 'bitwise "(1 << 31) | 0xff"' resources/conversion.png
